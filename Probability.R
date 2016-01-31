@@ -11,26 +11,14 @@ kvant <- function(sample, min, max, n) {
   }
 }
 
-xmin <- 0
-xmax <- 10
-count <- 100000
-sample1 <- runif(count, min = xmin, max = xmax)
-sample2 <- my_exp(count, lambda = 1)
-plot(kvant(sample1, xmin, xmax, 10), xmin-1, xmax+1)
-plot(kvant(sample2, 0, 4, 100), 0, 4)
-
 my_exp <- function(n, lambda = 1) {
   sapply(runif(count), function(x) {
     log(1-x)/(-lambda)
   })
 }
 
-norm <- function(x) dnorm(x, 3, 1)
-#sample3 <- rnorm(10000, 3, 1)
-sample3 <- mh_sample(10000, norm)
-plot(kvant(sample3, 0, 6, 50), 0, 6)
 #плотность может быть указана с точностью до нормировочной константы
-mh_sample <- function (count, dencity) {
+metropolis_hastings <- function (count, dencity) {
   x <- c(1:(count+1))
   x[1] <- 0
   for(i in c(1:count)) {
@@ -41,3 +29,17 @@ mh_sample <- function (count, dencity) {
   
   x[2:count]
 }
+
+xmin <- 0
+xmax <- 10
+count <- 100000
+sample1 <- runif(count, min = xmin, max = xmax)
+sample2 <- my_exp(count, lambda = 1)
+plot(kvant(sample1, xmin, xmax, 10), xmin-1, xmax+1)
+plot(kvant(sample2, 0, 4, 100), 0, 4)
+
+
+norm <- function(x) dnorm(x, 3, 1)
+sample3 <- metropolis_hastings(10000, norm)
+plot(kvant(sample3, 0, 6, 50), 0, 6)
+
