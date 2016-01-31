@@ -1,2 +1,5 @@
-bin
-obj
+[B,b]in
+[O,o]bj
+/packages
+*.user
+*.suo
