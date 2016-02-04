@@ -22,12 +22,27 @@ namespace WinClient
         {
             // Генерация данных
             var words = TextModeling.GenerateWords(50);
-            var themas = TextModeling.GenerateThemas(20, words);
-            var documents = TextModeling.GenerateDocuments(100, 40, 100, themas);
+            var themas = TextModeling.GenerateThemas(5, words);
+            var documents = TextModeling.GenerateDocuments(20, 40, 100, themas);
 
             // Обучение
             var result = TextModeling.EmPlsa(
                 documents.Select(d => new TextModeling.Document {Words = d.Words}).ToList(), 20);
+
+            var totalThemas = result.First().ThemaDistribution.Keys.ToList();
+            var total = totalThemas.Select(t => t.WordsDistribution.OrderByDescending(pair => pair.Value)
+                .Take(5).Select(w => w.Key).ToList()).ToList();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            //Тест на нормальных данных
+            var docs = TextModeling.GenerateReadableDocuments();
+            var result = TextModeling.EmPlsa(docs, 2);
+
+            var themas = result.First().ThemaDistribution.Keys.ToList();
+            var total = themas.Select(t => t.WordsDistribution.OrderByDescending(pair => pair.Value)
+                .Take(5).Select(w => w.Key).ToList()).ToList();
         }
     }
 }
