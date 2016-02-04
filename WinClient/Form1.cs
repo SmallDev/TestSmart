@@ -20,7 +20,9 @@ namespace WinClient
 
         private void button1_Click(object sender, EventArgs e)
         {
-            new Class1().Test();
+            var data = new Class1().Test().ToList();
+
+
         }
     }
 }
