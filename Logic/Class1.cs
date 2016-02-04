@@ -39,11 +39,11 @@ namespace Logic
 
         public void Test()
         {
-            var dir = new Dirichlet(0.1, 0.1, 0.1);
-            var types = Enumerable.Range(1, 100).Select(i =>
-            {
-                (Type) Discrete.Sample(dir.Sample())
-            }).ToList();
+            //var dir = new Dirichlet(0.1, 0.1, 0.1);
+            //var types = Enumerable.Range(1, 100).Select(i =>
+            //{
+            //    (Type) Discrete.Sample(dir.Sample())
+            //}).ToList();
         }
     }
 }

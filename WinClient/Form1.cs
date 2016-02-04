@@ -20,7 +20,14 @@ namespace WinClient
 
         private void button1_Click(object sender, EventArgs e)
         {
-            new Class1().Test();
+            // Генерация данных
+            var words = TextModeling.GenerateWords(50);
+            var themas = TextModeling.GenerateThemas(20, words);
+            var documents = TextModeling.GenerateDocuments(100, 40, 100, themas);
+
+            // Обучение
+            var result = TextModeling.EmPlsa(
+                documents.Select(d => new TextModeling.Document {Words = d.Words}).ToList(), 20);
         }
     }
 }
