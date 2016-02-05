@@ -154,7 +154,87 @@ namespace Logic
                     w => w.Count()*Math.Log(themas.Sum(t => t.WordsDistribution[w.Key]*document.ThemaDistribution[t])))))/
                                           (-words.Count));
                 if (currentPerplexity > 0)
-                    perplexityEpsilon = Math.Abs(perplexity - currentPerplexity);
+                    perplexityEpsilon = currentPerplexity - perplexity;
+
+                currentPerplexity = perplexity;
+                Debug.WriteLine("{0}: {1}", ++index, perplexity);
+            }
+
+            return documents;
+        }
+
+        // GEM
+        public static IList<Document> EmPlsaGem(IList<Document> documents, Int32 themaNumber)
+        {
+            var words = documents.SelectMany(d => d.Words).Distinct().ToList();
+            var themas = Enumerable.Range(1, themaNumber).Select(i =>
+            {
+                var sample = new Dirichlet(words.Select(w => 0.3).ToArray()).Sample();
+                return new Thema
+                {
+                    WordsDistribution = Enumerable.Range(0, words.Count).ToDictionary(j => words[j], j => sample[j])
+                };
+            }).ToList();
+
+            documents.ForEach(d =>
+            {
+                var sample = new Dirichlet(themas.Select(w => 0.1).ToArray()).Sample();
+                d.ThemaDistribution = Enumerable.Range(0, themas.Count).ToDictionary(j => themas[j], j => sample[j]);
+            });
+
+            var perplexityEpsilon = 2.0;
+            var currentPerplexity = 0.0;
+            var index = 0;
+
+            while (perplexityEpsilon > 0.01)
+            {
+                var nwt = themas.ToDictionary(t => t, t => t.WordsDistribution.Keys.ToDictionary(w => w, w => 0.0));
+                var ndt = documents.ToDictionary(d => d, d => d.ThemaDistribution.Keys.ToDictionary(t => t, t => 0.0));
+                var nt = themas.ToDictionary(t => t, t => 0.0);
+                var nd = documents.ToDictionary(d => d, d => 0.0);
+                var ndwt = documents.ToDictionary(d => d, d => d.ThemaDistribution.Keys.ToDictionary(
+                    t => t, t => t.WordsDistribution.Keys.ToDictionary(w => w, w => 0.0)));
+
+                foreach (var document in documents)
+                {
+                    foreach (var word in document.Words.GroupBy(w => w))
+                    {
+                        var z = themas.Sum(thema => thema.WordsDistribution[word.Key]*document.ThemaDistribution[thema]);
+                        foreach (var thema in themas)
+                        {
+                            var delta = thema.WordsDistribution[word.Key]*document.ThemaDistribution[thema]*
+                                        word.Count()/z;
+
+                            var d = delta - ndwt[document][thema][word.Key];
+                            if (d > 0)
+                            {
+                                nwt[thema][word.Key] += d;
+                                ndt[document][thema] += d;
+                                nt[thema] += d;
+                                nd[document] += d;
+                                ndwt[document][thema][word.Key] = delta;
+                            }
+                        }
+
+                        if (index > 0)
+                        {
+                            themas.ForEach(thema => thema.WordsDistribution[word.Key] = nwt[thema][word.Key] / nt[thema]);
+                        }
+                    }
+
+                    if (index > 0)
+                    {
+                        document.ThemaDistribution.Keys.ToList().ForEach(thema =>
+                                document.ThemaDistribution[thema] = ndt[document][thema] / nd[document]);
+                    }
+                }
+
+                var perplexity = Math.Exp((documents.Sum(document => document.Words.GroupBy(w => w).Sum(
+                   w => w.Count() * Math.Log(themas.Sum(t => t.WordsDistribution[w.Key] * document.ThemaDistribution[t]))))) /
+                                         (-words.Count));
+
+                if (currentPerplexity > 0)
+                    perplexityEpsilon = currentPerplexity - perplexity;
 
                 currentPerplexity = perplexity;
                 Debug.WriteLine("{0}: {1}", ++index, perplexity);
