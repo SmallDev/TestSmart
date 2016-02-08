@@ -41,20 +41,26 @@ namespace Logic
         {
             public Dictionary<Thema, Dictionary<Word, Double>> WordsDistribution { get; set; }
             public Dictionary<Document, Dictionary<Thema, Double>> ThemaDistribution { get; set; }
+            public Double[] WordsValues { get; set; }
+            public Double[] ThemasValues { get; set; }
 
             public static Profile Generate(IList<Document> documents, Int32 themasNumber)
             {
-                var result = new Profile();
-
                 var words = documents.SelectMany(d => d.Words).Distinct().ToList();
                 var themas = Enumerable.Range(0, themasNumber).Select(i => new Thema()).ToList();
 
-                var wordsProb = new Dirichlet(words.Select(w => 0.3).ToArray());
+                var result = new Profile
+                {
+                    WordsValues = Enumerable.Repeat(0.3, words.Count).ToArray(),
+                    ThemasValues = Enumerable.Repeat(0.1, themasNumber).ToArray()
+                };
+
+                var wordsProb = new Dirichlet(result.WordsValues);
                 result.WordsDistribution = themas.Select(t => new {Thema = t, Sample = wordsProb.Sample()})
                     .ToDictionary(pair => pair.Thema, pair => Enumerable.Range(0, words.Count)
                         .ToDictionary(j => words[j], j => pair.Sample[j]));
 
-                var themaProb = new Dirichlet(Enumerable.Repeat(0.1, themasNumber).ToArray());
+                var themaProb = new Dirichlet(result.ThemasValues);
                 result.ThemaDistribution = documents.Select(d => new {Document = d, Sample = themaProb.Sample()})
                     .ToDictionary(pair => pair.Document, pair => Enumerable.Range(0, themas.Count)
                         .ToDictionary(j => themas[j], j => pair.Sample[j]));
@@ -146,7 +152,7 @@ namespace Logic
         }
 
         // EM-алгоритм для модели PLSA
-        public static Profile PlsaEm(Profile profile, Double perplexityPres = 1e-6, Int32 maxSteps = 1000)
+        public static Profile PlsaEm(Profile profile, Double perplexityPres = 1e-4, Int32 maxSteps = 1000)
         {
             var index = 0;
             Debug.WriteLine("{0}: Perplexity={1}\tLogLikelihood={2}", index, profile.Perplexity(), profile.LogLikelihood());
@@ -202,7 +208,7 @@ namespace Logic
         }
 
         // Generalized EM-алгоритм для модели PLSA
-        public static Profile PlsaGem(Profile profile, Double perplexityPres = 1e-6, Int32 maxSteps = 1000)
+        public static Profile PlsaGem(Profile profile, Double perplexityPres = 1e-4, Int32 maxSteps = 1000)
         {
             var index = 0;
             Debug.WriteLine("{0}: Perplexity={1}\tLogLikelihood={2}", index, profile.Perplexity(), profile.LogLikelihood());
@@ -273,6 +279,70 @@ namespace Logic
 
                 Debug.WriteLine("{0}: Perplexity={1}\tLogLikelihood={2}", index, profile.Perplexity(), profile.LogLikelihood());
             } while (index++ == 0 || perplexityEpsilon > perplexityPres && index <= maxSteps);
+
+            return profile;
+        }
+
+        // EM-алгоритм для модели LDA
+        public static Profile LdaEm(Profile profile, Double perplexityPres = 1e-4, Int32 maxSteps = 1000)
+        {
+            var index = 0;
+            Debug.WriteLine("{0}: Perplexity={1}\tLogLikelihood={2}", index, profile.Perplexity(), profile.LogLikelihood());
+
+            var words = profile.WordsDistribution.SelectMany(p => p.Value.Keys).Distinct().ToList();
+            var themas = profile.WordsDistribution.Keys;
+            var documents = profile.ThemaDistribution.Keys;
+
+            var a = profile.WordsValues;
+            var a0 = profile.WordsValues.Sum();
+            var b = profile.ThemasValues;
+            var b0 = profile.ThemasValues.Sum();
+
+            Double perplexityEpsilon;
+            do
+            {
+                var nwt = profile.WordsDistribution.ToDictionary(p => p.Key, p => p.Value.Keys.ToDictionary(w => w, w => 0.0));
+                var ndt = profile.ThemaDistribution.ToDictionary(p => p.Key, p => p.Value.Keys.ToDictionary(t => t, t => 0.0));
+                var nt = themas.ToDictionary(t => t, t => 0.0);
+
+                var newProfile = new Profile
+                {
+                    WordsDistribution = profile.WordsDistribution.ToDictionary(p => p.Key, p => p.Value.ToDictionary(
+                        pp => pp.Key, pp => pp.Value)),
+                    ThemaDistribution = profile.ThemaDistribution.ToDictionary(p => p.Key, p => p.Value.ToDictionary(
+                        pp => pp.Key, pp => pp.Value))
+                };
+
+                foreach (var document in documents)
+                    foreach (var word in document.Words.GroupBy(w => w))
+                    {
+                        var z = themas.Sum(thema => newProfile.WordsDistribution[thema][word.Key] * newProfile.ThemaDistribution[document][thema]);
+                        foreach (var thema in themas)
+                        {
+                            var delta = newProfile.WordsDistribution[thema][word.Key] * newProfile.ThemaDistribution[document][thema] *
+                                        word.Count() / z;
+                            if (delta > 0)
+                            {
+                                nwt[thema][word.Key] += delta;
+                                ndt[document][thema] += delta;
+                                nt[thema] += delta;
+                            }
+                        }
+                    }
+
+                themas.ForEach(thema => newProfile.WordsDistribution[thema].Keys
+                    .ToList().ForEach(word => newProfile.WordsDistribution[thema][word] =
+                        (nwt[thema][word] + a[words.IndexOf(word)])/(nt[thema] + a0)));
+                documents.ForEach(doc => newProfile.ThemaDistribution[doc].Keys
+                    .ToList().ForEach(thema => newProfile.ThemaDistribution[doc][thema] =
+                        (ndt[doc][thema] + b[themas.IndexOf(thema)])/((Double) doc.Words.Count + b0)));
+
+                perplexityEpsilon = 1 - newProfile.Perplexity() / profile.Perplexity();
+                if (perplexityEpsilon > 0)
+                    profile = newProfile;
+
+                Debug.WriteLine("{0}: Perplexity={1}\tLogLikelihood={2}", ++index, profile.Perplexity(), profile.LogLikelihood());
+            } while (perplexityEpsilon > perplexityPres && index < maxSteps);
 
             return profile;
         }
