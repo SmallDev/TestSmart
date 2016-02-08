@@ -9,7 +9,6 @@ namespace Logic
 {
     public static class TextModeling
     {
-        //public class WordComparer
         public class Word
         {
             public String Value { get; set; }
@@ -136,12 +135,6 @@ namespace Logic
         }
         public static IList<Document> GenerateReadableDocuments()
         {
-            //var st1 = new[] { "I", "like", "to", "eat", "broccoli", "and", "banana" };
-            //var st2 = new[] { "I", "ate", "a", "banana", "and", "spinach", "smoothie","for", "breakfast" };
-            //var st3 = new[] { "Chinchilla", "and", "kitten", "are", "cute"};
-            //var st4 = new[] { "My", "sister", "adopted", "a", "kitten", "yesterday"};
-            //var st5 = new[] { "Look", "at", "this", "cute", "hamster", "munching", "on", "a", "piece", "of", "broccoli"};
-
             var st1 = new[] { "I", "like", "broccoli", "banana" };
             var st2 = new[] { "I", "banana", "spinach", "smoothie", "breakfast" };
             var st3 = new[] { "Chinchilla", "kitten", "cute" };
@@ -152,8 +145,8 @@ namespace Logic
                 st => new Document {Words = st.Select(s => new Word {Value = s}).ToList()}).ToList();
         }
 
-        // Возвращает докуенты с распределениями по темам
-        public static Profile EmPlsa(Profile profile, Double perplexityPres = 0.01, Int32 maxSteps = 1000)
+        // EM-алгоритм для модели PLSA
+        public static Profile PlsaEm(Profile profile, Double perplexityPres = 1e-6, Int32 maxSteps = 1000)
         {
             var index = 0;
             Debug.WriteLine("{0}: Perplexity={1}\tLogLikelihood={2}", index, profile.Perplexity(), profile.LogLikelihood());
@@ -168,13 +161,21 @@ namespace Logic
                 var ndt = profile.ThemaDistribution.ToDictionary(p => p.Key, p => p.Value.Keys.ToDictionary(t => t, t => 0.0));
                 var nt = themas.ToDictionary(t => t, t => 0.0);
 
+                var newProfile = new Profile
+                {
+                    WordsDistribution = profile.WordsDistribution.ToDictionary(p => p.Key, p => p.Value.ToDictionary(
+                        pp => pp.Key, pp => pp.Value)),
+                    ThemaDistribution = profile.ThemaDistribution.ToDictionary(p => p.Key, p => p.Value.ToDictionary(
+                        pp => pp.Key, pp => pp.Value))
+                };
+
                 foreach (var document in documents)
                     foreach (var word in document.Words.GroupBy(w => w))
                     {
-                        var z = themas.Sum(thema => profile.WordsDistribution[thema][word.Key]*profile.ThemaDistribution[document][thema]);
+                        var z = themas.Sum(thema => newProfile.WordsDistribution[thema][word.Key] * newProfile.ThemaDistribution[document][thema]);
                         foreach (var thema in themas)
                         {
-                            var delta = profile.WordsDistribution[thema][word.Key]*profile.ThemaDistribution[document][thema]*
+                            var delta = newProfile.WordsDistribution[thema][word.Key] * newProfile.ThemaDistribution[document][thema] *
                                         word.Count()/z;
                             if (delta > 0)
                             {
@@ -185,18 +186,12 @@ namespace Logic
                         }
                     }
 
-                var newProfile = new Profile
-                {
-                    WordsDistribution = profile.WordsDistribution.ToDictionary(thema => thema.Key,
-                        thema => thema.Value.ToDictionary(word => word.Key, word =>
-                            nwt[thema.Key][word.Key]/nt[thema.Key])),
+                newProfile.WordsDistribution.Keys.ToList().ForEach(thema => newProfile.WordsDistribution[thema].Keys
+                    .ToList().ForEach(word => newProfile.WordsDistribution[thema][word] = nwt[thema][word] / nt[thema]));
+                newProfile.ThemaDistribution.Keys.ToList().ForEach(doc => newProfile.ThemaDistribution[doc].Keys
+                    .ToList().ForEach(thema => newProfile.ThemaDistribution[doc][thema] = ndt[doc][thema] / (Double)doc.Words.Count));
 
-                    ThemaDistribution = profile.ThemaDistribution.ToDictionary(doc => doc.Key,
-                        doc => doc.Value.ToDictionary(thema => thema.Key, thema =>
-                            ndt[doc.Key][thema.Key]/(Double) doc.Key.Words.Count))
-                };
-
-                perplexityEpsilon = profile.Perplexity() - newProfile.Perplexity();
+                perplexityEpsilon = 1 - newProfile.Perplexity()/profile.Perplexity();
                 if (perplexityEpsilon > 0)
                     profile = newProfile;
 
@@ -206,114 +201,41 @@ namespace Logic
             return profile;
         }
 
-        // GEM
-        public static IList<Document> EmPlsaGem(IList<Document> documents, Int32 themaNumber, Double perplexityPres = 0.01, Int32 maxSteps = 1000)
-        {
-            var words = documents.SelectMany(d => d.Words).Distinct().ToList();
-            var themas = Enumerable.Range(1, themaNumber).Select(i =>
-            {
-                var sample = new Dirichlet(words.Select(w => 0.3).ToArray()).Sample();
-                return new Thema
-                {
-                    WordsDistribution = Enumerable.Range(0, words.Count).ToDictionary(j => words[j], j => sample[j])
-                };
-            }).ToList();
-
-            documents.ForEach(d =>
-            {
-                var sample = new Dirichlet(themas.Select(w => 0.1).ToArray()).Sample();
-                d.ThemaDistribution = Enumerable.Range(0, themas.Count).ToDictionary(j => themas[j], j => sample[j]);
-            });
-
-            var perplexityEpsilon = 2.0;
-            var currentPerplexity = 0.0;
-            var index = 0;
-
-            while (perplexityEpsilon > perplexityPres && index < maxSteps)
-            {
-                var nwt = themas.ToDictionary(t => t, t => t.WordsDistribution.Keys.ToDictionary(w => w, w => 0.0));
-                var ndt = documents.ToDictionary(d => d, d => d.ThemaDistribution.Keys.ToDictionary(t => t, t => 0.0));
-                var nt = themas.ToDictionary(t => t, t => 0.0);
-                var nd = documents.ToDictionary(d => d, d => 0.0);
-                var ndwt = documents.ToDictionary(d => d, d => d.ThemaDistribution.Keys.ToDictionary(
-                    t => t, t => t.WordsDistribution.Keys.ToDictionary(w => w, w => 0.0)));
-
-                foreach (var document in documents)
-                {
-                    foreach (var word in document.Words.GroupBy(w => w))
-                    {
-                        var z = themas.Sum(thema => thema.WordsDistribution[word.Key]*document.ThemaDistribution[thema]);
-                        foreach (var thema in themas)
-                        {
-                            var delta = thema.WordsDistribution[word.Key]*document.ThemaDistribution[thema]*
-                                        word.Count()/z;
-
-                            var d = delta - ndwt[document][thema][word.Key];
-                            if (d > 0)
-                            {
-                                nwt[thema][word.Key] += d;
-                                ndt[document][thema] += d;
-                                nt[thema] += d;
-                                nd[document] += d;
-                                ndwt[document][thema][word.Key] = delta;
-                            }
-                        }
-
-                        if (index > 0)
-                        {
-                            themas.ForEach(thema => thema.WordsDistribution[word.Key] = nwt[thema][word.Key] / nt[thema]);
-                        }
-                    }
-
-                    if (index > 0)
-                    {
-                        document.ThemaDistribution.Keys.ToList().ForEach(thema =>
-                                document.ThemaDistribution[thema] = ndt[document][thema] / nd[document]);
-                    }
-                }
-
-                var perplexity = Math.Exp((documents.Sum(document => document.Words.GroupBy(w => w).Sum(
-                   w => w.Count() * Math.Log(themas.Sum(t => t.WordsDistribution[w.Key] * document.ThemaDistribution[t]))))) /
-                                         (-words.Count));
-
-                if (currentPerplexity > 0)
-                    perplexityEpsilon = currentPerplexity - perplexity;
-
-                currentPerplexity = perplexity;
-                Debug.WriteLine("{0}: {1}", ++index, perplexity);
-            }
-
-            return documents;
-        }
-
-        // GEM
-        public static IList<Document> EmPlsaGem2(Profile profile, Double perplexityPres = 0.01, Int32 maxSteps = 1000)
+        // Generalized EM-алгоритм для модели PLSA
+        public static Profile PlsaGem(Profile profile, Double perplexityPres = 1e-6, Int32 maxSteps = 1000)
         {
             var index = 0;
             Debug.WriteLine("{0}: Perplexity={1}\tLogLikelihood={2}", index, profile.Perplexity(), profile.LogLikelihood());
 
-            var themas = profile.WordsDistribution.Keys;
-            var documents = profile.ThemaDistribution.Keys;
+            var themas = profile.WordsDistribution.Keys.ToList();
+            var documents = profile.ThemaDistribution.Keys.ToList();
 
-            Double perplexityEpsilon;
+            var perplexityEpsilon = 0.0;
+            var nwt = themas.ToDictionary(t => t, t => profile.WordsDistribution[t].Keys.ToDictionary(w => w, w => 0.0));
+            var ndt = documents.ToDictionary(d => d, d => profile.ThemaDistribution[d].Keys.ToDictionary(t => t, t => 0.0));
+            var nt = themas.ToDictionary(t => t, t => 0.0);
+            var nd = documents.ToDictionary(d => d, d => 0.0);
+            var ndwt = documents.ToDictionary(d => d, d => profile.ThemaDistribution[d].Keys.ToDictionary(
+                t => t, t => profile.WordsDistribution[t].Keys.ToDictionary(w => w, w => 0.0)));
+
             do
             {
-                var nwt = profile.WordsDistribution.ToDictionary(p => p.Key, p => p.Value.Keys.ToDictionary(w => w, w => 0.0));
-                var ndt = profile.ThemaDistribution.ToDictionary(p => p.Key, p => p.Value.Keys.ToDictionary(t => t, t => 0.0));
-                var nt = themas.ToDictionary(t => t, t => 0.0);
-                var nd = documents.ToDictionary(d => d, d => 0.0);
-                //var ndwt = documents.ToDictionary(d => d, d => d.ThemaDistribution.Keys.ToDictionary(
-                //    t => t, t => t.WordsDistribution.Keys.ToDictionary(w => w, w => 0.0)));
+                var newProfile = new Profile
+                {
+                    WordsDistribution = profile.WordsDistribution.ToDictionary(p => p.Key, p => p.Value.ToDictionary(
+                        pp => pp.Key, pp => pp.Value)),
+                    ThemaDistribution = profile.ThemaDistribution.ToDictionary(p => p.Key, p => p.Value.ToDictionary(
+                        pp => pp.Key, pp => pp.Value))
+                };
 
-                var newProfile = new Profile();
                 foreach (var document in documents)
                 {
                     foreach (var word in document.Words.GroupBy(w => w))
                     {
-                        var z = themas.Sum(thema => profile.WordsDistribution[thema][word.Key] * profile.ThemaDistribution[document][thema]);
+                        var z = themas.Sum(thema => newProfile.WordsDistribution[thema][word.Key] * newProfile.ThemaDistribution[document][thema]);
                         foreach (var thema in themas)
                         {
-                            var delta = profile.WordsDistribution[thema][word.Key] * profile.ThemaDistribution[document][thema] *
+                            var delta = newProfile.WordsDistribution[thema][word.Key] * newProfile.ThemaDistribution[document][thema] *
                                         word.Count() / z;
 
                             var d = delta - ndwt[document][thema][word.Key];
@@ -329,29 +251,30 @@ namespace Logic
 
                         if (index > 0)
                         {
-                            themas.ForEach(thema => thema.WordsDistribution[word.Key] = nwt[thema][word.Key] / nt[thema]);
+                            themas.ForEach(thema => newProfile.WordsDistribution[thema][word.Key] = nwt[thema][word.Key]/nt[thema]);
                         }
                     }
 
                     if (index > 0)
                     {
-                        document.ThemaDistribution.Keys.ToList().ForEach(thema =>
-                                document.ThemaDistribution[thema] = ndt[document][thema] / nd[document]);
+                        themas.ForEach(t => newProfile.ThemaDistribution[document][t] = ndt[document][t]/nd[document]);
                     }
                 }
 
-                var perplexity = Math.Exp((documents.Sum(document => document.Words.GroupBy(w => w).Sum(
-                   w => w.Count() * Math.Log(themas.Sum(t => t.WordsDistribution[w.Key] * document.ThemaDistribution[t]))))) /
-                                         (-words.Count));
+                if (index == 0)
+                {
+                    profile = newProfile;
+                    continue;
+                }
 
-                if (currentPerplexity > 0)
-                    perplexityEpsilon = currentPerplexity - perplexity;
+                perplexityEpsilon = 1 - newProfile.Perplexity()/profile.Perplexity();
+                if (perplexityEpsilon > 0)
+                    profile = newProfile;
 
-                currentPerplexity = perplexity;
-                Debug.WriteLine("{0}: {1}", ++index, perplexity);
-            }
+                Debug.WriteLine("{0}: Perplexity={1}\tLogLikelihood={2}", index, profile.Perplexity(), profile.LogLikelihood());
+            } while (index++ == 0 || perplexityEpsilon > perplexityPres && index <= maxSteps);
 
-            return documents;
+            return profile;
         }
     }
 }

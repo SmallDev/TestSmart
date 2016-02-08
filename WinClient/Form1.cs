@@ -20,7 +20,7 @@ namespace WinClient
             var documents = TextModeling.GenerateDocuments(20, 40, 100, themas);
 
             var profile = TextModeling.Profile.Generate(documents, 20);
-            var result = TextModeling.EmPlsa(profile, maxSteps: 100);
+            var result = TextModeling.PlsaEm(profile, maxSteps: 100);
 
             var totalThemas = result.ToModel().First().ThemaDistribution.Keys.ToList();
             var total = totalThemas.Select(t => t.WordsDistribution.OrderByDescending(pair => pair.Value)
@@ -32,7 +32,7 @@ namespace WinClient
             //Тест на нормальных данных
             var docs = TextModeling.GenerateReadableDocuments(); 
             var profile = TextModeling.Profile.Generate(docs, 2);
-            var result = TextModeling.EmPlsa(profile, maxSteps: 20);
+            var result = TextModeling.PlsaEm(profile, maxSteps: 20);
 
             var themas = result.ToModel().First().ThemaDistribution.Keys.ToList();
             var total = themas.Select(t => t.WordsDistribution.OrderByDescending(pair => pair.Value)
@@ -44,13 +44,13 @@ namespace WinClient
             // Генерация данных
             var words = TextModeling.GenerateWords(50);
             var themas = TextModeling.GenerateThemas(5, words);
-            var documents = TextModeling.GenerateDocuments(20, 40, 100, themas);
+            var documents = TextModeling.GenerateDocuments(50, 40, 100, themas);
 
             // Обучение
-            var result = TextModeling.EmPlsaGem(
-                documents.Select(d => new TextModeling.Document { Words = d.Words }).ToList(), 20);
+            var profile = TextModeling.Profile.Generate(documents, 5);
+            var result = TextModeling.PlsaGem(profile, maxSteps: 20);
 
-            var totalThemas = result.First().ThemaDistribution.Keys.ToList();
+            var totalThemas = result.ToModel().First().ThemaDistribution.Keys.ToList();
             var total = totalThemas.Select(t => t.WordsDistribution.OrderByDescending(pair => pair.Value)
                 .Take(5).Select(w => w.Key).ToList()).ToList();
         }
