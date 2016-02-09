@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac">
+      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="Infer.Compiler, Version=2.6.41114.1, Culture=neutral, PublicKeyToken=e4813102a62778da, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Research.InferNET.2.6.41114.1\lib\net45\Infer.Compiler.dll</HintPath>
       <Private>True</Private>
@@ -47,13 +50,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="StbModeling.cs" />
+    <Compile Include="Algorithms\StbModeling.cs" />
+    <Compile Include="Dal\Repositories\IClusterRepository.cs" />
+    <Compile Include="Dal\IDataManader.cs" />
+    <Compile Include="Dal\Repositories\IRepository.cs" />
+    <Compile Include="Dal\Repositories\IUserRepository.cs" />
+    <Compile Include="Dal\Wcf\ClusterWcfRepository.cs" />
+    <Compile Include="Dal\Wcf\UserWcfRepository.cs" />
+    <Compile Include="Dal\Wcf\WcfDataManager.cs" />
+    <Compile Include="Facades\Facade.cs" />
+    <Compile Include="Model\Cluster.cs" />
+    <Compile Include="Model\IEntity.cs" />
+    <Compile Include="Model\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TextModeling.cs" />
+    <Compile Include="Algorithms\TextModeling.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

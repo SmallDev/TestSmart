@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Forms;
 using Logic;
+using Logic.Algorithms;
 
 namespace WinClient
 {

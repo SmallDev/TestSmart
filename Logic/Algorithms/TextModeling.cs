@@ -5,7 +5,7 @@ using System.Linq;
 using MicrosoftResearch.Infer.Collections;
 using MicrosoftResearch.Infer.Distributions;
 
-namespace Logic
+namespace Logic.Algorithms
 {
     public static class TextModeling
     {

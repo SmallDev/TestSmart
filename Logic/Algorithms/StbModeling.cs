@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using MicrosoftResearch.Infer.Collections;
 using MicrosoftResearch.Infer.Distributions;
-using EnumerableExtensions = MicrosoftResearch.Infer.Collections.EnumerableExtensions;
 
-namespace Logic
+namespace Logic.Algorithms
 {
     public enum Type1
     {
