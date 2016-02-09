@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using MicrosoftResearch.Infer.Distributions;
+using EnumerableExtensions = MicrosoftResearch.Infer.Collections.EnumerableExtensions;
 
 namespace Logic
 {
@@ -36,9 +37,9 @@ namespace Logic
             // Или другой идентификатор (MAC например)
             public Int32 Id { get; set; }
 
-            public IDictionary<Cluster, Double> Clusters { get; set; } 
+            public Dictionary<Cluster, Double> Clusters { get; set; } 
         }
-        public struct Features
+        public struct Feature
         {
             public Int32 UserId { get; set; }
 
@@ -50,14 +51,14 @@ namespace Logic
         {
             public Int32 Id { get; set; }
 
-            public IDictionary<Type1, Double> T1 { get; set; }
-            public IDictionary<Type2, Double> T2 { get; set; }
-            public IDictionary<Type3, Double> T3 { get; set; }
+            public Dictionary<Type1, Double> T1 { get; set; }
+            public Dictionary<Type2, Double> T2 { get; set; }
+            public Dictionary<Type3, Double> T3 { get; set; }
         }
 
         public class Profile
         {
-            public Dictionary<User, IDictionary<Cluster, Double>> UserDistribution { get; set; }
+            public Dictionary<User, Dictionary<Cluster, Double>> UserDistribution { get; set; }
             public Dictionary<User, Tuple<Dictionary<Type1, Int32>, Dictionary<Type2, Int32>,
                 Dictionary<Type3, Int32>>> UserStatistic { get; set; }
 
@@ -76,9 +77,37 @@ namespace Logic
                     cluster => UserDistribution[user][cluster.Key]*cluster.Value.Item3[type]));
 
                 return UserStatistic.Sum(user =>
-                    user.Value.Item1.Sum(t1 => t1.Value*log1(user.Key, t1.Key)) +
-                    user.Value.Item2.Sum(t2 => t2.Value*log2(user.Key, t2.Key)) +
-                    user.Value.Item3.Sum(t3 => t3.Value*log3(user.Key, t3.Key)));
+                    user.Value.Item1.Sum(t1 => t1.Value == 0 ? 0 : t1.Value*log1(user.Key, t1.Key)) +
+                    user.Value.Item2.Sum(t2 => t2.Value == 0 ? 0 : t2.Value*log2(user.Key, t2.Key)) +
+                    user.Value.Item3.Sum(t3 => t3.Value == 0 ? 0 : t3.Value*log3(user.Key, t3.Key)));
+            }
+
+            public static Profile Generate(IList<Feature> features, Int32 clusterCount)
+            {
+                Func<IEnumerable<Feature>, Dictionary<Type1, Int32>> type1Counter = f => Enum.GetValues(typeof (Type1))
+                    .Cast<Type1>().ToDictionary(t => t, t => f.Count(ff => ff.Type1 == t));
+                Func<IEnumerable<Feature>, Dictionary<Type2, Int32>> type2Counter = f => Enum.GetValues(typeof (Type2))
+                    .Cast<Type2>().ToDictionary(t => t, t => f.Count(ff => ff.Type2 == t));
+                Func<IEnumerable<Feature>, Dictionary<Type3, Int32>> type3Counter = f => Enum.GetValues(typeof (Type3))
+                    .Cast<Type3>().ToDictionary(t => t, t => f.Count(ff => ff.Type3 == t));
+
+                var result = new Profile();
+                var users = features.Select(f => f.UserId).Distinct().ToDictionary(i => i, i => new User {Id = i});
+                var clusters = Enumerable.Range(1, clusterCount).ToDictionary(i => i, i => new Cluster {Id = i});
+
+                result.UserStatistic = features.GroupBy(f => f.UserId).ToDictionary(group => users[group.Key], group =>
+                    new Tuple<Dictionary<Type1, Int32>, Dictionary<Type2, Int32>,
+                        Dictionary<Type3, Int32>>(type1Counter(group), type2Counter(group), type3Counter(group))
+                    );
+
+                result.ClusterDistribution = GenerateClusters(clusterCount).ToDictionary(cl => clusters[cl.Id], cl =>
+                    new Tuple<Dictionary<Type1, Double>, Dictionary<Type2, Double>,
+                        Dictionary<Type3, Double>>(cl.T1, cl.T2, cl.T3));
+
+                result.UserDistribution = GenerateUsers(users.Count, clusters.Values.ToList())
+                    .ToDictionary(u => users[u.Id], u => u.Clusters);
+
+                return result;
             }
         }
 
@@ -116,7 +145,7 @@ namespace Logic
                     Clusters = Enumerable.Range(0, clusters.Count).ToDictionary(j => clusters[j], j => p.Sample[j])
                 }).ToList();
         }
-        public static IList<Features> GenerateFeatures(IList<User> users, IList<Cluster> clusters, Int32 avgCount)
+        public static IList<Feature> GenerateFeatures(IList<User> users, IList<Cluster> clusters, Int32 avgCount)
         {
             var norm = new Gaussian(avgCount, avgCount/2.0);
             var features = clusters.ToDictionary(c => c, c => new
@@ -129,7 +158,7 @@ namespace Logic
             return users.Select(u => new {User = u, Prob = new Discrete(u.Clusters.Values.ToArray())})
                 .SelectMany(p => Enumerable.Range(0, (Int32) norm.Sample())
                     .Select(i => clusters[p.Prob.Sample()]).Select(cluster =>
-                        new Features
+                        new Feature
                         {
                             UserId = p.User.Id,
                             Type1 = (Type1) features[cluster].Item1.Sample(),
@@ -150,45 +179,113 @@ namespace Logic
             Double epsilon;
             do
             {
-                var nwt = profile.WordsDistribution.ToDictionary(p => p.Key, p => p.Value.Keys.ToDictionary(w => w, w => 0.0));
-                var ndt = profile.ThemaDistribution.ToDictionary(p => p.Key, p => p.Value.Keys.ToDictionary(t => t, t => 0.0));
-                var nt = themas.ToDictionary(t => t, t => 0.0);
+                var ncsj = clusters.ToDictionary(c => c, c =>
+                    new
+                    {
+                        Item1 = Enum.GetValues(typeof (Type1)).Cast<Type1>().ToDictionary(t => t, t => 0.0),
+                        Item2 = Enum.GetValues(typeof (Type2)).Cast<Type2>().ToDictionary(t => t, t => 0.0),
+                        Item3 = Enum.GetValues(typeof (Type3)).Cast<Type3>().ToDictionary(t => t, t => 0.0),
+                    });
+                var ncs = clusters.ToDictionary(c => c, c => new[]{0.0,0.0,0.0});
+                var ncu = users.ToDictionary(u => u, u => profile.UserDistribution[u].ToDictionary(c => c.Key, c => 0.0));
+                var nu = users.ToDictionary(u => u, c => 0.0);
 
                 var newProfile = new Profile
                 {
-                    WordsDistribution = profile.WordsDistribution.ToDictionary(p => p.Key, p => p.Value.ToDictionary(
-                        pp => pp.Key, pp => pp.Value)),
-                    ThemaDistribution = profile.ThemaDistribution.ToDictionary(p => p.Key, p => p.Value.ToDictionary(
-                        pp => pp.Key, pp => pp.Value))
+                    UserDistribution = profile.UserDistribution.ToDictionary(p => p.Key,
+                        p => p.Value.ToDictionary(pp => pp.Key, pp => pp.Value)),
+                    ClusterDistribution = profile.ClusterDistribution.ToDictionary(p => p.Key, p =>
+                        new Tuple<Dictionary<Type1, Double>, Dictionary<Type2, Double>, Dictionary<Type3, Double>>(
+                            p.Value.Item1.ToDictionary(pp => pp.Key, pp => pp.Value),
+                            p.Value.Item2.ToDictionary(pp => pp.Key, pp => pp.Value),
+                            p.Value.Item3.ToDictionary(pp => pp.Key, pp => pp.Value))),
+
+                    UserStatistic = profile.UserStatistic,
                 };
 
-                foreach (var document in documents)
-                    foreach (var word in document.Words.GroupBy(w => w))
+                foreach (var user in users)
+                {
+                    // Type1
+                    foreach (var type in Enum.GetValues(typeof (Type1)).Cast<Type1>())
                     {
-                        var z = themas.Sum(thema => newProfile.WordsDistribution[thema][word.Key] * newProfile.ThemaDistribution[document][thema]);
-                        foreach (var thema in themas)
+                        var z = clusters.Sum(
+                            c => newProfile.UserDistribution[user][c]*newProfile.ClusterDistribution[c].Item1[type]);
+
+                        foreach (var cluster in clusters)
                         {
-                            var delta = newProfile.WordsDistribution[thema][word.Key] * newProfile.ThemaDistribution[document][thema] *
-                                        word.Count() / z;
+                            var delta = newProfile.UserDistribution[user][cluster]*
+                                        newProfile.ClusterDistribution[cluster].Item1[type]
+                                        *newProfile.UserStatistic[user].Item1[type]/z;
                             if (delta > 0)
                             {
-                                nwt[thema][word.Key] += delta;
-                                ndt[document][thema] += delta;
-                                nt[thema] += delta;
+                                ncsj[cluster].Item1[type] += delta;
+                                ncs[cluster][0] += delta;
+                                ncu[user][cluster] += delta;
+                                nu[user] += delta;
                             }
                         }
                     }
 
-                newProfile.WordsDistribution.Keys.ToList().ForEach(thema => newProfile.WordsDistribution[thema].Keys
-                    .ToList().ForEach(word => newProfile.WordsDistribution[thema][word] = nwt[thema][word] / nt[thema]));
-                newProfile.ThemaDistribution.Keys.ToList().ForEach(doc => newProfile.ThemaDistribution[doc].Keys
-                    .ToList().ForEach(thema => newProfile.ThemaDistribution[doc][thema] = ndt[doc][thema] / (Double)doc.Words.Count));
+                    // Type2
+                    foreach (var type in Enum.GetValues(typeof(Type2)).Cast<Type2>())
+                    {
+                        var z = clusters.Sum(
+                            c => newProfile.UserDistribution[user][c] * newProfile.ClusterDistribution[c].Item2[type]);
 
-                epsilon = 1 - profile.LogLikelihood()/newProfile.LogLikelihood();
+                        foreach (var cluster in clusters)
+                        {
+                            var delta = newProfile.UserDistribution[user][cluster] *
+                                        newProfile.ClusterDistribution[cluster].Item2[type]
+                                        * newProfile.UserStatistic[user].Item2[type] / z;
+                            if (delta > 0)
+                            {
+                                ncsj[cluster].Item2[type] += delta;
+                                ncs[cluster][1] += delta;
+                                ncu[user][cluster] += delta;
+                                nu[user] += delta;
+                            }
+                        }
+                    }
+
+                    // Type3
+                    foreach (var type in Enum.GetValues(typeof(Type3)).Cast<Type3>())
+                    {
+                        var z = clusters.Sum(
+                            c => newProfile.UserDistribution[user][c] * newProfile.ClusterDistribution[c].Item3[type]);
+
+                        foreach (var cluster in clusters)
+                        {
+                            var delta = newProfile.UserDistribution[user][cluster] *
+                                        newProfile.ClusterDistribution[cluster].Item3[type]
+                                        * newProfile.UserStatistic[user].Item3[type] / z;
+                            if (delta > 0)
+                            {
+                                ncsj[cluster].Item3[type] += delta;
+                                ncs[cluster][2] += delta;
+                                ncu[user][cluster] += delta;
+                                nu[user] += delta;
+                            }
+                        }
+                    }
+                }
+
+                clusters.ForEach(c => users.ForEach(u => newProfile.UserDistribution[u][c] = ncu[u][c]/nu[u]));
+
+                clusters.ForEach(c =>
+                {
+                    EnumerableExtensions.ForEach(Enum.GetValues(typeof (Type1)).Cast<Type1>(),
+                        type1 => newProfile.ClusterDistribution[c].Item1[type1] = ncsj[c].Item1[type1]/ncs[c][0]);
+                    EnumerableExtensions.ForEach(Enum.GetValues(typeof (Type2)).Cast<Type2>(),
+                        type2 => newProfile.ClusterDistribution[c].Item2[type2] = ncsj[c].Item2[type2]/ncs[c][1]);
+                    EnumerableExtensions.ForEach(Enum.GetValues(typeof (Type3)).Cast<Type3>(),
+                        type3 => newProfile.ClusterDistribution[c].Item3[type3] = ncsj[c].Item3[type3]/ncs[c][2]);
+                });
+
+                epsilon = (newProfile.LogLikelihood() - profile.LogLikelihood())/Math.Abs(profile.LogLikelihood());
                 if (epsilon > 0)
                     profile = newProfile;
 
-                Debug.WriteLine("{0}: LogLikelihood={1}", ++index, profile.LogLikelihood());
+                Debug.WriteLine("{0}: LogLikelihood={1}\tepsilon={2}", ++index, profile.LogLikelihood(), epsilon);
             } while (epsilon > perplexityPres && index < maxSteps);
 
             return profile;

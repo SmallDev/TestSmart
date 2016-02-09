@@ -21,9 +21,12 @@ namespace WinClient
         private void button1_Click(object sender, EventArgs e)
         {
             // Генерация данных
-            var clusters = StbModeling.GenerateClusters(5);
-            var users = StbModeling.GenerateUsers(100, clusters);
-            var features = StbModeling.GenerateFeatures(users, clusters, 100);
+            var clusters = StbModeling.GenerateClusters(10);
+            var users = StbModeling.GenerateUsers(200, clusters);
+            var features = StbModeling.GenerateFeatures(users, clusters, 50);
+
+            var profile = StbModeling.Profile.Generate(features, clusters.Count);
+            var result = StbModeling.PlsaEm(profile, maxSteps: 50);
         }
     }
 }
