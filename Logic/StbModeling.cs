@@ -65,6 +65,11 @@ namespace Logic
             public Dictionary<Cluster, Tuple<Dictionary<Type1, Double>, Dictionary<Type2, Double>,
                 Dictionary<Type3, Double>>> ClusterDistribution { get; set; }
 
+            public Double[] Type1Values { get; set; }
+            public Double[] Type2Values { get; set; }
+            public Double[] Type3Values { get; set; }
+            public Double[] ClusterValues { get; set; }
+
             public Double LogLikelihood()
             {
                 Func<User, Type1, Double> log1 = (user, type) => Math.Log(ClusterDistribution.Sum(
@@ -106,6 +111,11 @@ namespace Logic
 
                 result.UserDistribution = GenerateUsers(users.Count, clusters.Values.ToList())
                     .ToDictionary(u => users[u.Id], u => u.Clusters);
+
+                result.Type1Values = Enumerable.Repeat(0.1, Enum.GetNames(typeof (Type1)).Length).ToArray();
+                result.Type2Values = Enumerable.Repeat(0.1, Enum.GetNames(typeof(Type2)).Length).ToArray();
+                result.Type3Values = Enumerable.Repeat(0.1, Enum.GetNames(typeof(Type3)).Length).ToArray();
+                result.ClusterValues = Enumerable.Repeat(0.3, clusters.Count).ToArray();
 
                 return result;
             }
@@ -168,7 +178,7 @@ namespace Logic
         }
 
         // EM-алгоритм для модели PLSA
-        public static Profile PlsaEm(Profile profile, Double perplexityPres = 1e-4, Int32 maxSteps = 1000)
+        public static Profile PlsaEm(Profile profile, Double ratePres = 1e-4, Int32 maxSteps = 1000)
         {
             var index = 0;
             Debug.WriteLine("{0}: LogLikelihood={1}", index, profile.LogLikelihood());
@@ -286,7 +296,144 @@ namespace Logic
                     profile = newProfile;
 
                 Debug.WriteLine("{0}: LogLikelihood={1}\tepsilon={2}", ++index, profile.LogLikelihood(), epsilon);
-            } while (epsilon > perplexityPres && index < maxSteps);
+            } while (epsilon > ratePres && index < maxSteps);
+
+            return profile;
+        }
+
+        // EM-алгоритм для модели LDA
+        public static Profile LdaEm(Profile profile, Double ratePres = 1e-4, Int32 maxSteps = 1000)
+        {
+            var index = 0;
+            Debug.WriteLine("{0}: LogLikelihood={1}", index, profile.LogLikelihood());
+
+            var clusters = profile.ClusterDistribution.Keys.ToList();
+            var users = profile.UserDistribution.Keys.ToList();
+
+            var a1 = profile.Type1Values;
+            var a10 = profile.Type1Values.Sum();
+            var a2 = profile.Type2Values;
+            var a20 = profile.Type2Values.Sum();
+            var a3 = profile.Type3Values;
+            var a30 = profile.Type3Values.Sum();
+            var b = profile.ClusterValues;
+            var b0 = profile.ClusterValues.Sum();
+
+            Double epsilon;
+            do
+            {
+                var ncsj = clusters.ToDictionary(c => c, c =>
+                    new
+                    {
+                        Item1 = Enum.GetValues(typeof(Type1)).Cast<Type1>().ToDictionary(t => t, t => 0.0),
+                        Item2 = Enum.GetValues(typeof(Type2)).Cast<Type2>().ToDictionary(t => t, t => 0.0),
+                        Item3 = Enum.GetValues(typeof(Type3)).Cast<Type3>().ToDictionary(t => t, t => 0.0),
+                    });
+                var ncs = clusters.ToDictionary(c => c, c => new[] { 0.0, 0.0, 0.0 });
+                var ncu = users.ToDictionary(u => u, u => profile.UserDistribution[u].ToDictionary(c => c.Key, c => 0.0));
+                var nu = users.ToDictionary(u => u, c => 0.0);
+
+                var newProfile = new Profile
+                {
+                    UserDistribution = profile.UserDistribution.ToDictionary(p => p.Key,
+                        p => p.Value.ToDictionary(pp => pp.Key, pp => pp.Value)),
+                    ClusterDistribution = profile.ClusterDistribution.ToDictionary(p => p.Key, p =>
+                        new Tuple<Dictionary<Type1, Double>, Dictionary<Type2, Double>, Dictionary<Type3, Double>>(
+                            p.Value.Item1.ToDictionary(pp => pp.Key, pp => pp.Value),
+                            p.Value.Item2.ToDictionary(pp => pp.Key, pp => pp.Value),
+                            p.Value.Item3.ToDictionary(pp => pp.Key, pp => pp.Value))),
+
+                    UserStatistic = profile.UserStatistic,
+                };
+
+                foreach (var user in users)
+                {
+                    // Type1
+                    foreach (var type in Enum.GetValues(typeof(Type1)).Cast<Type1>())
+                    {
+                        var z = clusters.Sum(
+                            c => newProfile.UserDistribution[user][c] * newProfile.ClusterDistribution[c].Item1[type]);
+
+                        foreach (var cluster in clusters)
+                        {
+                            var delta = newProfile.UserDistribution[user][cluster] *
+                                        newProfile.ClusterDistribution[cluster].Item1[type]
+                                        * newProfile.UserStatistic[user].Item1[type] / z;
+                            if (delta > 0)
+                            {
+                                ncsj[cluster].Item1[type] += delta;
+                                ncs[cluster][0] += delta;
+                                ncu[user][cluster] += delta;
+                                nu[user] += delta;
+                            }
+                        }
+                    }
+
+                    // Type2
+                    foreach (var type in Enum.GetValues(typeof(Type2)).Cast<Type2>())
+                    {
+                        var z = clusters.Sum(
+                            c => newProfile.UserDistribution[user][c] * newProfile.ClusterDistribution[c].Item2[type]);
+
+                        foreach (var cluster in clusters)
+                        {
+                            var delta = newProfile.UserDistribution[user][cluster] *
+                                        newProfile.ClusterDistribution[cluster].Item2[type]
+                                        * newProfile.UserStatistic[user].Item2[type] / z;
+                            if (delta > 0)
+                            {
+                                ncsj[cluster].Item2[type] += delta;
+                                ncs[cluster][1] += delta;
+                                ncu[user][cluster] += delta;
+                                nu[user] += delta;
+                            }
+                        }
+                    }
+
+                    // Type3
+                    foreach (var type in Enum.GetValues(typeof(Type3)).Cast<Type3>())
+                    {
+                        var z = clusters.Sum(
+                            c => newProfile.UserDistribution[user][c] * newProfile.ClusterDistribution[c].Item3[type]);
+
+                        foreach (var cluster in clusters)
+                        {
+                            var delta = newProfile.UserDistribution[user][cluster] *
+                                        newProfile.ClusterDistribution[cluster].Item3[type]
+                                        * newProfile.UserStatistic[user].Item3[type] / z;
+                            if (delta > 0)
+                            {
+                                ncsj[cluster].Item3[type] += delta;
+                                ncs[cluster][2] += delta;
+                                ncu[user][cluster] += delta;
+                                nu[user] += delta;
+                            }
+                        }
+                    }
+                }
+
+                clusters.ForEach(c => users.ForEach(u => newProfile.UserDistribution[u][c] =
+                    (ncu[u][c] + b[clusters.IndexOf(c)])/(nu[u] + b0)));
+
+                clusters.ForEach(c =>
+                {
+                    EnumerableExtensions.ForEach(Enum.GetValues(typeof(Type1)).Cast<Type1>(),
+                        type1 => newProfile.ClusterDistribution[c].Item1[type1] = 
+                            (ncsj[c].Item1[type1] + a1[Enum.GetValues(typeof(Type1)).Cast<Type1>().ToList().IndexOf(type1)]) / (ncs[c][0] + a10));
+                    EnumerableExtensions.ForEach(Enum.GetValues(typeof(Type2)).Cast<Type2>(),
+                        type2 => newProfile.ClusterDistribution[c].Item2[type2] = 
+                            (ncsj[c].Item2[type2] + a2[Enum.GetValues(typeof(Type2)).Cast<Type2>().ToList().IndexOf(type2)]) / (ncs[c][1] + a20));
+                    EnumerableExtensions.ForEach(Enum.GetValues(typeof(Type3)).Cast<Type3>(),
+                        type3 => newProfile.ClusterDistribution[c].Item3[type3] = 
+                            (ncsj[c].Item3[type3]+ a3[Enum.GetValues(typeof(Type3)).Cast<Type3>().ToList().IndexOf(type3)]) / (ncs[c][2] + a30));
+                });
+
+                epsilon = (newProfile.LogLikelihood() - profile.LogLikelihood()) / Math.Abs(profile.LogLikelihood());
+                if (epsilon > 0)
+                    profile = newProfile;
+
+                Debug.WriteLine("{0}: LogLikelihood={1}\tepsilon={2}", ++index, profile.LogLikelihood(), epsilon);
+            } while (epsilon > ratePres && index < maxSteps);
 
             return profile;
         }
