@@ -39,8 +39,14 @@ namespace T4MVC
             public class _ViewNamesClass
             {
                 public readonly string _Layout = "_Layout";
+                public readonly string Footer = "Footer";
+                public readonly string Header = "Header";
+                public readonly string Scripts = "Scripts";
             }
             public readonly string _Layout = "~/Views/Shared/_Layout.cshtml";
+            public readonly string Footer = "~/Views/Shared/Footer.cshtml";
+            public readonly string Header = "~/Views/Shared/Header.cshtml";
+            public readonly string Scripts = "~/Views/Shared/Scripts.cshtml";
         }
     }
 

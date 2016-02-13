@@ -12,6 +12,19 @@ namespace WebClient
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            routes.LowercaseUrls = true;
+
+            routes.MapRoute(
+                name: "Cluster",
+                url: "cluster/{id}",
+                defaults: new { controller = MVC.Cluster.Name, action = MVC.Cluster.ActionNames.Index }
+                );
+
+            routes.MapRoute(
+                name: "User",
+                url: "user/{id}",
+                defaults: new { controller = MVC.User.Name, action = MVC.User.ActionNames.Index }
+                );
 
             routes.MapRoute(
                 name: "Default",

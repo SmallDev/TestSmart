@@ -1,13 +1,17 @@
 ﻿<!DOCTYPE html>
 
 <html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>@ViewBag.Title</title>
-</head>
-<body>
-    <div>
-        @RenderBody()
-    </div>
-</body>
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <title>@ViewBag.Title</title>
+    </head>
+    <body>
+        @Html.Partial(MVC.Shared.Views.Header)
+        <div>
+            @RenderBody()
+        </div>
+        @Html.Partial(MVC.Shared.Views.Footer)
+        @Html.Partial(MVC.Shared.Views.Scripts)
+        @RenderSection("Scripts", false)
+    </body>
 </html>

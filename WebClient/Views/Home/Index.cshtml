@@ -1,6 +1,57 @@
-﻿@{
+﻿@using Newtonsoft.Json
+@using WebClient.Models;
+@model HomeModel
+
+@{
     Layout = MVC.Shared.Views._Layout;
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Главная";
+}
+@section Scripts {  
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var options = {
+                clusterUrl: "/cluster/{0}",
+                userUrl: "/user/{0}"
+            };
+            var data = @Html.Raw(JsonConvert.SerializeObject(Model));
+            function model(data, options) {
+                var self = this;
+                self.clusters = data.Clusters;
+                self.users = data.Users;
+
+                self.clusterUrl = function(cluster) {
+                    return options.clusterUrl.replace("{0}", cluster.Id);
+                };
+
+                self.userUrl = function(user) {
+                    return options.userUrl.replace("{0}", user.Id);
+                };
+            }
+
+            ko.applyBindings(new model(data, options));
+        })
+</script>
 }
 
-<h2>Index</h2>
+<div>
+    <p>Кластеры</p>
+    <ul data-bind="foreach: clusters">
+        <li>
+            <div>
+                <span data-bind="text: $index() + 1"></span>
+                <a href="" data-bind="attr: {href: $root.clusterUrl($data)}, text: Name"></a>
+            </div>
+        </li>
+    </ul>
+</div>
+<div>
+    <p>Пользователи</p>
+    <ul data-bind="foreach: users">
+        <li>
+            <div>
+                <span data-bind="text: $index() + 1"></span>
+                <a href="" data-bind="attr: {href: $root.userUrl($data)}, text: Name"></a>
+            </div>
+        </li>
+    </ul>
+</div>

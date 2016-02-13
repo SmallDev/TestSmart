@@ -4,7 +4,7 @@ using Logic.Dal.Repositories;
 
 namespace Logic.Dal.Wcf
 {
-    class WcfDataManager : IDataManader
+    public class WcfDataManager : IDataManader
     {
         private readonly Lazy<IContainer> container;
         public WcfDataManager()

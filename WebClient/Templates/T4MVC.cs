@@ -27,7 +27,9 @@ using T4MVC;
 [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
 public static partial class MVC
 {
-    public static T4MVC.HomeController Home = new T4MVC.HomeController();
+    public static WebClient.Controllers.ClusterController Cluster = new WebClient.Controllers.T4MVC_ClusterController();
+    public static WebClient.Controllers.HomeController Home = new WebClient.Controllers.T4MVC_HomeController();
+    public static WebClient.Controllers.UserController User = new WebClient.Controllers.T4MVC_UserController();
     public static T4MVC.SharedController Shared = new T4MVC.SharedController();
 }
 
@@ -45,15 +47,49 @@ namespace T4MVC
     }
 }
 
+[GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+internal partial class T4MVC_System_Web_Mvc_ActionResult : System.Web.Mvc.ActionResult, IT4MVCActionResult
+{
+    public T4MVC_System_Web_Mvc_ActionResult(string area, string controller, string action, string protocol = null): base()
+    {
+        this.InitMVCT4Result(area, controller, action, protocol);
+    }
+     
+    public override void ExecuteResult(System.Web.Mvc.ControllerContext context) { }
+    
+    public string Controller { get; set; }
+    public string Action { get; set; }
+    public string Protocol { get; set; }
+    public RouteValueDictionary RouteValueDictionary { get; set; }
+}
 
 
 
 namespace Links
 {
+    [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+    public static class Scripts {
+        private const string URLPATH = "~/Scripts";
+        public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
+        public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
+        public static readonly string jquery_1_11_3_intellisense_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/jquery-1.11.3.intellisense.min.js") ? Url("jquery-1.11.3.intellisense.min.js") : Url("jquery-1.11.3.intellisense.js");
+        public static readonly string jquery_1_11_3_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/jquery-1.11.3.min.js") ? Url("jquery-1.11.3.min.js") : Url("jquery-1.11.3.js");
+        public static readonly string knockout_3_3_0_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/knockout-3.3.0.min.js") ? Url("knockout-3.3.0.min.js") : Url("knockout-3.3.0.js");
+    }
+
     
     [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
     public static partial class Bundles
     {
+        public static partial class Scripts 
+        {
+            public static class Assets
+            {
+                public const string jquery_1_11_3_intellisense_js = "~/Scripts/jquery-1.11.3.intellisense.js"; 
+                public const string jquery_1_11_3_js = "~/Scripts/jquery-1.11.3.js"; 
+                public const string knockout_3_3_0_js = "~/Scripts/knockout-3.3.0.js"; 
+            }
+        }
     }
 }
 
