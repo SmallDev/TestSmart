@@ -55,8 +55,10 @@
     <Compile Include="Dal\IDbConfig.cs" />
     <Compile Include="Dal\Repositories\IClusterRepository.cs" />
     <Compile Include="Dal\IDataManager.cs" />
+    <Compile Include="Dal\Repositories\IDataRepository.cs" />
     <Compile Include="Dal\Repositories\IRepository.cs" />
     <Compile Include="Dal\Repositories\IUserRepository.cs" />
+    <Compile Include="Dal\Sql\SqlDataRepository.cs" />
     <Compile Include="Dal\Sql\SqlClusterRepository.cs" />
     <Compile Include="Dal\Sql\SqlDataManagerFactory.cs" />
     <Compile Include="Dal\Sql\SqlRepositoryBase.cs" />
