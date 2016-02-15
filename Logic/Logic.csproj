@@ -51,13 +51,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Algorithms\StbModeling.cs" />
+    <Compile Include="Dal\IDataManagerFactrory.cs" />
+    <Compile Include="Dal\IDbConfig.cs" />
     <Compile Include="Dal\Repositories\IClusterRepository.cs" />
-    <Compile Include="Dal\IDataManader.cs" />
+    <Compile Include="Dal\IDataManager.cs" />
     <Compile Include="Dal\Repositories\IRepository.cs" />
     <Compile Include="Dal\Repositories\IUserRepository.cs" />
-    <Compile Include="Dal\Wcf\ClusterWcfRepository.cs" />
-    <Compile Include="Dal\Wcf\UserWcfRepository.cs" />
-    <Compile Include="Dal\Wcf\WcfDataManager.cs" />
+    <Compile Include="Dal\Sql\SqlClusterRepository.cs" />
+    <Compile Include="Dal\Sql\SqlDataManagerFactory.cs" />
+    <Compile Include="Dal\Sql\SqlRepositoryBase.cs" />
+    <Compile Include="Dal\Sql\SqlUserRepository.cs" />
+    <Compile Include="Dal\Sql\SqlDataManager.cs" />
     <Compile Include="Facades\Facade.cs" />
     <Compile Include="Model\Cluster.cs" />
     <Compile Include="Model\IEntity.cs" />

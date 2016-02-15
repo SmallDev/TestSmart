@@ -4,7 +4,7 @@ using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.Mvc;
 using Logic.Dal;
-using Logic.Dal.Wcf;
+using Logic.Dal.Sql;
 using Logic.Facades;
 
 namespace WebClient
@@ -24,7 +24,8 @@ namespace WebClient
         private void InitializeIoc()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterType<WcfDataManager>().As<IDataManader>().SingleInstance();
+            builder.RegisterType<SqlDataManagerFactory>().As<IDataManagerFactrory>().SingleInstance();
+            builder.RegisterType<ConfigService>().As<IDbConfig>().SingleInstance();
             builder.RegisterType<Facade>().SingleInstance();
 
             builder.RegisterControllers(typeof(MvcApplication).Assembly).InstancePerDependency();

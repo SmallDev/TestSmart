@@ -9,14 +9,20 @@ namespace Logic.Facades
 {
     public class Facade
     {
-        private readonly IDataManader dataManager;
-        public Facade(IDataManader dataManager)
+        private readonly IDataManagerFactrory dataFactory;
+        public Facade(IDataManagerFactrory dataFactory)
         {
-            this.dataManager = dataManager;
+            this.dataFactory = dataFactory;
         }
 
         public ICollection<User> GetUsers(Int32 page, Int32 size)
         {
+            using (var dataManager = dataFactory.GetDataManager())
+            {
+                var t = dataManager.GetRepository<IUserRepository>().GetUsers();
+                var t2 = dataManager.GetRepository<IClusterRepository>();
+            }
+
             //var users = dataManager.GetRepository<IUserRepository>().GetUsers();
             //return users;
             return Enumerable.Range(1, 10)
