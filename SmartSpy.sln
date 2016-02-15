@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic", "Logic\Logic.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebClient", "WebClient\WebClient.csproj", "{3E3D7F2C-1B73-46FB-9C4E-8344EFB2DDC4}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Database", "Database\Database.sqlproj", "{B7E5755B-ADA6-4C39-B9E8-6EC9D3FFBF76}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,12 @@ Global
 		{3E3D7F2C-1B73-46FB-9C4E-8344EFB2DDC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E3D7F2C-1B73-46FB-9C4E-8344EFB2DDC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E3D7F2C-1B73-46FB-9C4E-8344EFB2DDC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7E5755B-ADA6-4C39-B9E8-6EC9D3FFBF76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7E5755B-ADA6-4C39-B9E8-6EC9D3FFBF76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7E5755B-ADA6-4C39-B9E8-6EC9D3FFBF76}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{B7E5755B-ADA6-4C39-B9E8-6EC9D3FFBF76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7E5755B-ADA6-4C39-B9E8-6EC9D3FFBF76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7E5755B-ADA6-4C39-B9E8-6EC9D3FFBF76}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,4 @@
+﻿CREATE TABLE [dbo].[Cluster]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY
+)
