@@ -19,6 +19,7 @@ namespace Logic.Dal.Sql
         {
             var newScope = baseScope.BeginLifetimeScope();
             connection = newScope.Resolve<SqlConnection>();
+            connection.Open();
             transaction = connection.BeginTransaction();
 
             return newScope;
