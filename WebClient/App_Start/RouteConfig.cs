@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel.Activation;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using WebClient.Services;
 
 namespace WebClient
 {
@@ -13,6 +14,8 @@ namespace WebClient
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.LowercaseUrls = true;
+
+            routes.Add(new ServiceRoute("api/streaming", new DependencyHostFactory(), typeof(IStreamService)));
 
             routes.MapRoute(
                 name: "Cluster",

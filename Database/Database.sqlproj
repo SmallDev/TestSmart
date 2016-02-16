@@ -67,6 +67,7 @@
     <Build Include="Tables\User.sql" />
     <Build Include="Tables\Cluster.sql" />
     <Build Include="Tables\Properties.sql" />
+    <Build Include="Tables\Settings.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Script.PostDeployment.sql" />

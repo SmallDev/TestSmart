@@ -7,22 +7,19 @@ using Logic.Model;
 
 namespace Logic.Facades
 {
-    public class Facade
+    public class DataFacade
     {
-        private readonly IDataManagerFactrory dataFactory;
-        public Facade(IDataManagerFactrory dataFactory)
+        private readonly Lazy<IDataManagerFactrory> dataFactory;
+        public DataFacade(Func<IDataManagerFactrory> dataFactory)
         {
-            this.dataFactory = dataFactory;
+            this.dataFactory = new Lazy<IDataManagerFactrory>(dataFactory);
         }
 
         public ICollection<User> GetUsers(Int32 page, Int32 size)
         {
-            using (var dataManager = dataFactory.GetDataManager())
-            {
-                var t = dataManager.GetRepository<IUserRepository>().GetUsers();
-                var t2 = dataManager.GetRepository<IClusterRepository>();
-            }
-
+            //return dataFactory.Value.WithRepository<ICollection<User>, IUserRepository>(
+            //    repo => repo.GetUsers());
+            
             //var users = dataManager.GetRepository<IUserRepository>().GetUsers();
             //return users;
             return Enumerable.Range(1, 10)

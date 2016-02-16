@@ -4,8 +4,9 @@ using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.Mvc;
 using Logic.Dal;
-using Logic.Dal.Sql;
+using Logic.Dal.NHibernate;
 using Logic.Facades;
+using WebClient.Services;
 
 namespace WebClient
 {
@@ -24,11 +25,15 @@ namespace WebClient
         private void InitializeIoc()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterType<SqlDataManagerFactory>().As<IDataManagerFactrory>().SingleInstance();
+            builder.RegisterType<NHibernateDataManagerFactory>().As<IDataManagerFactrory>().SingleInstance();
             builder.RegisterType<ConfigService>().As<IDbConfig>().SingleInstance();
-            builder.RegisterType<Facade>().SingleInstance();
+            
+            builder.RegisterType<DataFacade>().SingleInstance();
+            builder.RegisterType<AlgorithmFacade>().SingleInstance();
+            builder.RegisterType<ConfigService>().As<IReaderConfig>().SingleInstance();
 
             builder.RegisterControllers(typeof(MvcApplication).Assembly).InstancePerDependency();
+            builder.RegisterType<StreamService>().As<IStreamService>().SingleInstance();
 
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));

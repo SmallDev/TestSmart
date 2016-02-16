@@ -1,16 +1,17 @@
 ﻿using System;
-using System.Data.SqlClient;
 using Autofac;
+using Logic.Dal.Repositories;
+using NHibernate;
 
-namespace Logic.Dal.Sql
+namespace Logic.Dal.NHibernate
 {
-    class SqlDataManager : IDataManager
+    class NHibernateDataManager : IDataManager
     {
         private readonly Lazy<ILifetimeScope> scope;
-        private SqlConnection connection;
-        private SqlTransaction transaction;
+        private ISession session;
+        private ITransaction transaction;
 
-        public SqlDataManager(ILifetimeScope baseScope)
+        public NHibernateDataManager(ILifetimeScope baseScope)
         {
             scope = new Lazy<ILifetimeScope>(() =>  InitScope(baseScope));
         }
@@ -18,9 +19,8 @@ namespace Logic.Dal.Sql
         private ILifetimeScope InitScope(ILifetimeScope baseScope)
         {
             var newScope = baseScope.BeginLifetimeScope();
-            connection = newScope.Resolve<SqlConnection>();
-            connection.Open();
-            transaction = connection.BeginTransaction();
+            session = newScope.Resolve<ISession>();
+            transaction = session.BeginTransaction();
 
             return newScope;
         }
@@ -32,13 +32,13 @@ namespace Logic.Dal.Sql
 
         public void Commit()
         {
-            if (connection != null && transaction != null)
+            if (transaction != null)
                 transaction.Commit();
         }
 
         public void Rollback()
         {
-            if (connection != null && transaction != null)
+            if (transaction != null)
                 transaction.Rollback();
         }
 
@@ -47,8 +47,8 @@ namespace Logic.Dal.Sql
             if (transaction != null)
                 transaction.Dispose();
 
-            if (connection != null)
-                connection.Dispose();
+            if (session != null)
+                session.Dispose();
 
             if (scope.IsValueCreated)
                 scope.Value.Dispose();

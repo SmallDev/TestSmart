@@ -1,4 +1,4 @@
-﻿namespace Logic.Dal
+﻿namespace Logic.Dal.Repositories
 {
     public interface IRepository
     {

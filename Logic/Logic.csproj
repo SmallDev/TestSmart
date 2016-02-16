@@ -33,12 +33,24 @@
     <Reference Include="Autofac">
       <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="FluentNHibernate, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentNHibernate.2.0.3.0\lib\net40\FluentNHibernate.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Iesi.Collections.4.0.0.4000\lib\net40\Iesi.Collections.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Infer.Compiler, Version=2.6.41114.1, Culture=neutral, PublicKeyToken=e4813102a62778da, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Research.InferNET.2.6.41114.1\lib\net45\Infer.Compiler.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Infer.Runtime, Version=2.6.41114.1, Culture=neutral, PublicKeyToken=e4813102a62778da, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Research.InferNET.2.6.41114.1\lib\net45\Infer.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NHibernate, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\NHibernate.4.0.4.4000\lib\net40\NHibernate.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -53,18 +65,24 @@
     <Compile Include="Algorithms\StbModeling.cs" />
     <Compile Include="Dal\IDataManagerFactrory.cs" />
     <Compile Include="Dal\IDbConfig.cs" />
+    <Compile Include="Dal\NHibernate\Mappings\SettingsMap.cs" />
+    <Compile Include="Dal\NHibernate\Models\SettingsDto.cs" />
+    <Compile Include="Dal\Repositories\ISettingsRepository.cs" />
     <Compile Include="Dal\Repositories\IClusterRepository.cs" />
     <Compile Include="Dal\IDataManager.cs" />
     <Compile Include="Dal\Repositories\IDataRepository.cs" />
     <Compile Include="Dal\Repositories\IRepository.cs" />
     <Compile Include="Dal\Repositories\IUserRepository.cs" />
-    <Compile Include="Dal\Sql\SqlDataRepository.cs" />
-    <Compile Include="Dal\Sql\SqlClusterRepository.cs" />
-    <Compile Include="Dal\Sql\SqlDataManagerFactory.cs" />
-    <Compile Include="Dal\Sql\SqlRepositoryBase.cs" />
-    <Compile Include="Dal\Sql\SqlUserRepository.cs" />
-    <Compile Include="Dal\Sql\SqlDataManager.cs" />
-    <Compile Include="Facades\Facade.cs" />
+    <Compile Include="Dal\NHibernate\Repositories\NHibernateDataRepository.cs" />
+    <Compile Include="Dal\NHibernate\Repositories\NHibernateClusterRepository.cs" />
+    <Compile Include="Dal\NHibernate\NHibernateDataManagerFactory.cs" />
+    <Compile Include="Dal\NHibernate\Repositories\NHibernateRepositoryBase.cs" />
+    <Compile Include="Dal\NHibernate\Repositories\NHibernateSettingsRepository.cs" />
+    <Compile Include="Dal\NHibernate\Repositories\NHibernateUserRepository.cs" />
+    <Compile Include="Dal\NHibernate\NHibernateDataManager.cs" />
+    <Compile Include="Facades\AlgorithmFacade.cs" />
+    <Compile Include="Facades\DataFacade.cs" />
+    <Compile Include="Facades\IReaderConfig.cs" />
     <Compile Include="Model\Cluster.cs" />
     <Compile Include="Model\IEntity.cs" />
     <Compile Include="Model\User.cs" />
