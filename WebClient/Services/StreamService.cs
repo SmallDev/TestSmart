@@ -9,12 +9,12 @@ namespace WebClient.Services
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class StreamService : IStreamService, IDisposable
     {
-        private readonly Lazy<AlgorithmFacade> algorithmFacade;
+        private readonly Lazy<EmulatorFacade> algorithmFacade;
         private CancellationTokenSource cancelSource;
         
-        public StreamService(Func<AlgorithmFacade> algorithmFacade)
+        public StreamService(Func<EmulatorFacade> algorithmFacade)
         {
-            this.algorithmFacade = new Lazy<AlgorithmFacade>(algorithmFacade);
+            this.algorithmFacade = new Lazy<EmulatorFacade>(algorithmFacade);
         }
 
         public void Start(Boolean fromBegin = false)

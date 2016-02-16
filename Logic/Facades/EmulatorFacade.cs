@@ -3,17 +3,18 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using CsvHelper.Configuration;
 using Logic.Dal;
 using Logic.Dal.Repositories;
 
 namespace Logic.Facades
 {
-    public class AlgorithmFacade
+    public class EmulatorFacade
     {
         private readonly Lazy<IDataManagerFactrory> dataFactory;
         private readonly Lazy<IReaderConfig> readerConfig;
 
-        public AlgorithmFacade(Func<IDataManagerFactrory> dataFactory, Func<IReaderConfig> readerConfig)
+        public EmulatorFacade(Func<IDataManagerFactrory> dataFactory, Func<IReaderConfig> readerConfig)
         {
             this.dataFactory = new Lazy<IDataManagerFactrory>(dataFactory);
             this.readerConfig = new Lazy<IReaderConfig>(readerConfig);
@@ -37,17 +38,18 @@ namespace Logic.Facades
         private void DataProducer(CancellationToken token, DateTime? timeStamp, BlockingCollection<String> data)
         {
             var count = 1;
-            using(var stream = File.OpenRead(readerConfig.Value.FileName))
+
+            using (var stream = File.OpenRead(readerConfig.Value.FileName))
             using (var reader = new StreamReader(stream))
+            using (var csv = new CsvHelper.CsvReader(reader, new CsvConfiguration {Delimiter = " "}))
             {
-                while (!reader.EndOfStream)
+                while (csv.Read())
                 {
-                    reader.ReadLine();
                     if (++count == 100)
                     {
                         data.CompleteAdding();
                         break;
-                    }                    
+                    }
                 }
             }
         }

@@ -29,7 +29,7 @@ namespace WebClient
             builder.RegisterType<ConfigService>().As<IDbConfig>().SingleInstance();
             
             builder.RegisterType<DataFacade>().SingleInstance();
-            builder.RegisterType<AlgorithmFacade>().SingleInstance();
+            builder.RegisterType<EmulatorFacade>().SingleInstance();
             builder.RegisterType<ConfigService>().As<IReaderConfig>().SingleInstance();
 
             builder.RegisterControllers(typeof(MvcApplication).Assembly).InstancePerDependency();

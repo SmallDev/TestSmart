@@ -10,12 +10,12 @@ namespace WebClient.Controllers
 {
     public partial class HomeController : Controller
     {
-        private readonly Lazy<AlgorithmFacade> tempFacade;
+        private readonly Lazy<EmulatorFacade> tempFacade;
         private readonly Lazy<DataFacade> facade;
 
-        public HomeController(Func<DataFacade> facade, Func<AlgorithmFacade> tempFacade)
+        public HomeController(Func<DataFacade> facade, Func<EmulatorFacade> tempFacade)
         {
-            this.tempFacade = new Lazy<AlgorithmFacade>(tempFacade);
+            this.tempFacade = new Lazy<EmulatorFacade>(tempFacade);
             this.facade = new Lazy<DataFacade>(facade);
         }
 
