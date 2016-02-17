@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Logic.Dal.NHibernate.Models;
 using Logic.Dal.Repositories;
 using NHibernate;
@@ -22,18 +23,13 @@ namespace Logic.Dal.NHibernate.Repositories
             Set(SettingsDto.SettingName.ReadTime, time, t => t.ToString(TimeFormat));
         }
 
-        public Double GetReadVelocity()
+        public Double? GetReadVelocity()
         {
-            var val = Get(SettingsDto.SettingName.ReadVelocity, Double.Parse);
-            if (val.HasValue) 
-                return val.Value;
-
-            SetReadVelocity(1.0);
-            return 1.0;
+            return Get(SettingsDto.SettingName.ReadVelocity, s => Convert.ToDouble(s, CultureInfo.InvariantCulture));
         }
-        public void SetReadVelocity(Double velocity)
+        public void SetReadVelocity(Double? velocity)
         {
-            Set(SettingsDto.SettingName.ReadVelocity, (Double?) velocity, Convert.ToString);
+            Set(SettingsDto.SettingName.ReadVelocity, velocity, Convert.ToString);
         }
 
         public TimeSpan? GetCalcTime()

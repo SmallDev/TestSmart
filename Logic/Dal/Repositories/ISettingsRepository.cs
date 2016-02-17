@@ -7,8 +7,8 @@ namespace Logic.Dal.Repositories
         TimeSpan? GetReadTime();
         void SetReadTime(TimeSpan? time);
 
-        Double GetReadVelocity();
-        void SetReadVelocity(Double velocity);
+        Double? GetReadVelocity();
+        void SetReadVelocity(Double? velocity);
 
         TimeSpan? GetCalcTime();
         void SetCalcTime(TimeSpan? time);

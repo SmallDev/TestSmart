@@ -30,13 +30,14 @@ namespace Logic.Facades
         }
         public TimeSpan TimeShift(DateTime dateTime)
         {
-            return TimeSpan.FromSeconds((dateTime - minDate).TotalSeconds);
+            return TimeSpan.FromSeconds((dateTime - minDate).TotalSeconds*Velocity);
         }
 
         public TimeSpan FutureTime(DateTime dateTime)
         {
             // увеличиваем время с запасом, чтобы накопились сообщения для обработки
-            return TimeShift(dateTime) - StopWatch() + TimeSpan.FromSeconds(5);
+            var delay = TimeSpan.FromSeconds(5/Velocity);
+            return TimeShift(dateTime) - StopWatch() + delay;
         }
         public Boolean InPast(DateTime dateTime)
         {
@@ -44,8 +45,9 @@ namespace Logic.Facades
         }
         public Boolean InFuture(DateTime dateTime)
         {
-            // Сокращаем накопление в 5 сек
-            return FutureTime(dateTime) > TimeSpan.Zero + TimeSpan.FromSeconds(5);
+            // Сокращаем накопление в delay сек
+            var delay = TimeSpan.FromSeconds(5/Velocity);
+            return FutureTime(dateTime) > TimeSpan.Zero + delay;
         }
 
         public Boolean Finish(DateTime dateTime)

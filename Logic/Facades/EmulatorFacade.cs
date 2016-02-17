@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -38,7 +39,7 @@ namespace Logic.Facades
             {
                 session.ReadTime = repo.GetReadTime() ?? -TimeSpan.FromSeconds(1);
                 session.AllTime = repo.GetAllTime();
-                session.Velocity = repo.GetReadVelocity();
+                session.Velocity = repo.GetReadVelocity() ?? 1.0;
             });
 
             try
@@ -71,7 +72,11 @@ namespace Logic.Facades
                     if (session.InPast(rawData.Timestamp))
                         continue;
                     if (session.InFuture(rawData.Timestamp))
+                    {
+                        Debug.WriteLine("Sleep: {0}\titem={1}\tstopwatch{2}", session.FutureTime(rawData.Timestamp),
+                            rawData.Timestamp, session.StopWatch());
                         Thread.Sleep(session.FutureTime(rawData.Timestamp));
+                    }
 
                     session.RawData.Add(rawData, token);
                 }
