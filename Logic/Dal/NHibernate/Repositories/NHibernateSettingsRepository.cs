@@ -12,21 +12,60 @@ namespace Logic.Dal.NHibernate.Repositories
         {
         }
 
-        public DateTime? GetReadTimestamp()
+        public TimeSpan? GetReadTime()
         {
-            var dto = Session.Get<SettingsDto>(SettingsDto.ReadTimeStamp);
+            return Get(SettingsDto.SettingName.ReadTime, TimeSpan.Parse);
+        }
+        public void SetReadTime(TimeSpan? time)
+        {
+            Set(SettingsDto.SettingName.ReadTime, time, t => t.ToString("g"));
+        }
+
+        public Double GetReadVelocity()
+        {
+            var val = Get(SettingsDto.SettingName.ReadVelocity, Double.Parse);
+            if (val.HasValue) 
+                return val.Value;
+
+            SetReadVelocity(1.0);
+            return 1.0;
+        }
+        public void SetReadVelocity(Double velocity)
+        {
+            Set(SettingsDto.SettingName.ReadVelocity, (Double?) velocity, Convert.ToString);
+        }
+
+        public TimeSpan? GetCalcTime()
+        {
+            return Get(SettingsDto.SettingName.CalcTime, TimeSpan.Parse);
+        }
+        public void SetCalcTime(TimeSpan? time)
+        {
+            Set(SettingsDto.SettingName.CalcTime, time, t => t.ToString("g"));
+        }
+
+        public TimeSpan? GetAllTime()
+        {
+            return Get(SettingsDto.SettingName.AllTime, TimeSpan.Parse);
+        }
+        public void SetAllTime(TimeSpan? time)
+        {
+            Set(SettingsDto.SettingName.AllTime, time, t => t.ToString("g"));
+        }
+
+        private T? Get<T>(SettingsDto.SettingName name, Func<String, T> parse) where T: struct
+        {
+            var dto = Session.Get<SettingsDto>(name.ToString());
             if (dto == null || String.IsNullOrEmpty(dto.Value))
                 return null;
 
-            return DateTime.Parse(dto.Value);
+            return parse(dto.Value);
         }
-
-        public void SetReadTimestamp(DateTime? dateTime)
+        private void Set<T>(SettingsDto.SettingName name, T? value, Func<T, String> serialize) where T : struct
         {
-            var dto = Session.Get<SettingsDto>(SettingsDto.ReadTimeStamp) ??
-                      new SettingsDto {Name = SettingsDto.ReadTimeStamp};
+            var dto = Session.Get<SettingsDto>(name.ToString()) ?? new SettingsDto {Name = name.ToString()};
 
-            dto.Value = dateTime.HasValue ? dateTime.Value.ToString("s") : null;
+            dto.Value = value.HasValue ? serialize(value.Value) : null;
             Session.Save(dto);
         }
     }

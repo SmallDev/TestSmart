@@ -21,7 +21,7 @@ namespace WebClient.Controllers
 
         public async virtual Task<ActionResult> Index()
         {
-            tempFacade.Value.StartRead(new CancellationToken(), true);
+            tempFacade.Value.StartRead(new CancellationToken());
 
             var model = new HomeModel();
             await Task.WhenAll(

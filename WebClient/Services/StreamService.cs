@@ -10,37 +10,37 @@ namespace WebClient.Services
     public class StreamService : IStreamService, IDisposable
     {
         private readonly Lazy<EmulatorFacade> algorithmFacade;
-        private CancellationTokenSource cancelSource;
+        private CancellationTokenSource readCancel;
         
         public StreamService(Func<EmulatorFacade> algorithmFacade)
         {
             this.algorithmFacade = new Lazy<EmulatorFacade>(algorithmFacade);
         }
 
-        public void Start(Boolean fromBegin = false)
+        public void StartRead()
         {
             lock (algorithmFacade)
             {
-                if (cancelSource != null)
-                    cancelSource.Cancel();
+                if (readCancel != null)
+                    readCancel.Cancel();
 
-                cancelSource = new CancellationTokenSource();
-                algorithmFacade.Value.StartRead(cancelSource.Token, fromBegin);
+                readCancel = new CancellationTokenSource();
+                Task.Run(() => algorithmFacade.Value.StartRead(readCancel.Token), readCancel.Token);
             }
         }
 
-        public void Stop()
+        public void StopRead()
         {
             lock (algorithmFacade)
             {
-                cancelSource.Cancel();
-                cancelSource = null;
+                readCancel.Cancel();
+                readCancel = null;
             }
         }
 
         public void Dispose()
         {
-            Stop();
+            StopRead();
         }
     }
 }

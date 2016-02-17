@@ -1,5 +1,4 @@
-﻿using System;
-using System.ServiceModel;
+﻿using System.ServiceModel;
 
 namespace WebClient.Services
 {
@@ -7,9 +6,9 @@ namespace WebClient.Services
     public interface IStreamService
     {
         [OperationContract]
-        void Start(Boolean fromBegin = false);
+        void StartRead();
 
         [OperationContract]
-        void Stop();        
+        void StopRead();        
     }
 }
