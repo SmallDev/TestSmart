@@ -25,7 +25,7 @@ namespace WebClient.Services
                     readCancel.Cancel();
 
                 readCancel = new CancellationTokenSource();
-                Task.Run(() => algorithmFacade.Value.StartRead(readCancel.Token), readCancel.Token);
+                Task.Run(() => algorithmFacade.Value.StartRead(readCancel), readCancel.Token);
             }
         }
 

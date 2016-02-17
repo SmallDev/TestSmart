@@ -69,7 +69,9 @@
     <Compile Include="Algorithms\StbModeling.cs" />
     <Compile Include="Dal\IDataManagerFactrory.cs" />
     <Compile Include="Dal\IDbConfig.cs" />
+    <Compile Include="Dal\NHibernate\Mappings\DataMap.cs" />
     <Compile Include="Dal\NHibernate\Mappings\SettingsMap.cs" />
+    <Compile Include="Dal\NHibernate\Models\DataDto.cs" />
     <Compile Include="Dal\NHibernate\Models\SettingsDto.cs" />
     <Compile Include="Dal\Repositories\ISettingsRepository.cs" />
     <Compile Include="Dal\Repositories\IClusterRepository.cs" />
@@ -87,7 +89,10 @@
     <Compile Include="Facades\EmulatorFacade.cs" />
     <Compile Include="Facades\DataFacade.cs" />
     <Compile Include="Facades\IReaderConfig.cs" />
+    <Compile Include="Facades\ReadSession.cs" />
+    <Compile Include="Facades\RawData.cs" />
     <Compile Include="Model\Cluster.cs" />
+    <Compile Include="Model\Data.cs" />
     <Compile Include="Model\IEntity.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

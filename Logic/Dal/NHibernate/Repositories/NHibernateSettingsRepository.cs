@@ -7,6 +7,7 @@ namespace Logic.Dal.NHibernate.Repositories
 {
     class NHibernateSettingsRepository :  NHibernateRepositoryBase, ISettingsRepository
     {
+        private const String TimeFormat = "g";
         public NHibernateSettingsRepository(ISession session)
             : base(session)
         {
@@ -18,7 +19,7 @@ namespace Logic.Dal.NHibernate.Repositories
         }
         public void SetReadTime(TimeSpan? time)
         {
-            Set(SettingsDto.SettingName.ReadTime, time, t => t.ToString("g"));
+            Set(SettingsDto.SettingName.ReadTime, time, t => t.ToString(TimeFormat));
         }
 
         public Double GetReadVelocity()
@@ -41,7 +42,7 @@ namespace Logic.Dal.NHibernate.Repositories
         }
         public void SetCalcTime(TimeSpan? time)
         {
-            Set(SettingsDto.SettingName.CalcTime, time, t => t.ToString("g"));
+            Set(SettingsDto.SettingName.CalcTime, time, t => t.ToString(TimeFormat));
         }
 
         public TimeSpan? GetAllTime()
@@ -50,7 +51,7 @@ namespace Logic.Dal.NHibernate.Repositories
         }
         public void SetAllTime(TimeSpan? time)
         {
-            Set(SettingsDto.SettingName.AllTime, time, t => t.ToString("g"));
+            Set(SettingsDto.SettingName.AllTime, time, t => t.ToString(TimeFormat));
         }
 
         private T? Get<T>(SettingsDto.SettingName name, Func<String, T> parse) where T: struct

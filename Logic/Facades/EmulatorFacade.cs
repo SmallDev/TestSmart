@@ -1,12 +1,14 @@
 using System;
-using System.Collections.Concurrent;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CsvHelper;
 using CsvHelper.Configuration;
 using Logic.Dal;
 using Logic.Dal.Repositories;
+using Logic.Model;
 
 namespace Logic.Facades
 {
@@ -14,7 +16,7 @@ namespace Logic.Facades
     {
         private readonly Lazy<IDataManagerFactrory> dataFactory;
         private readonly Lazy<IReaderConfig> readerConfig;
-
+        
         public EmulatorFacade(Func<IDataManagerFactrory> dataFactory, Func<IReaderConfig> readerConfig)
         {
             this.dataFactory = new Lazy<IDataManagerFactrory>(dataFactory);
@@ -23,112 +25,128 @@ namespace Logic.Facades
 
         public void Clear()
         {
-            dataFactory.Value.WithRepository<ISettingsRepository>(repo =>
+            dataFactory.Value.WithDataManager(dm =>
             {
-                repo.SetReadTime(TimeSpan.Zero);
-                repo.SetCalcTime(TimeSpan.Zero);
+                dm.WithRepository<ISettingsRepository>(repo => repo.SetReadTime(null));
+                dm.WithRepository<IDataRepository>(repo => repo.Clear());
             }, true);
         }
-        public void StartRead(CancellationToken token)
+        public void StartRead(CancellationTokenSource tokenSource)
         {
             var session = new ReadSession();
             dataFactory.Value.WithRepository<ISettingsRepository>(repo =>
             {
-                session.ReadTime = (repo.GetReadTime() ?? TimeSpan.Zero) - TimeSpan.FromSeconds(1);
+                session.ReadTime = repo.GetReadTime() ?? -TimeSpan.FromSeconds(1);
+                session.AllTime = repo.GetAllTime();
                 session.Velocity = repo.GetReadVelocity();
             });
-        
-            Task.WaitAll(
-                Task.Factory.StartNew(() => DataProducer(token, session), token),
-                Task.Factory.StartNew(() => DataConsumer(token, session), token));
+
+            try
+            {
+                Task.WaitAll(
+                    Task.Factory.StartNew(() => DataRead(tokenSource.Token, session), tokenSource.Token),
+                    Task.Factory.StartNew(() => DataChunk(tokenSource.Token, session), tokenSource.Token),
+                    Task.Factory.StartNew(() => DataSave(tokenSource.Token, session), tokenSource.Token));
+            }
+            catch
+            {
+                tokenSource.Cancel();
+                throw;
+            }
         }
 
-        private void DataProducer(CancellationToken token, ReadSession session)
+        private void DataRead(CancellationToken token, ReadSession session)
         {
-            var count = 1;
-
             using (var stream = File.OpenRead(readerConfig.Value.FileName))
             using (var reader = new StreamReader(stream))
-            using (var csv = new CsvHelper.CsvReader(reader, new CsvConfiguration {Delimiter = " "}))
+            using (var csv = new CsvReader(reader, new CsvConfiguration {Delimiter = " "}))
             {
-                var tempCollection = new Collection<RowData>();
-                var tempTime = session.ReadTime;
-
                 while (csv.Read())
                 {
                     token.ThrowIfCancellationRequested();
 
-                    var rowData = new RowData
-                    {
-                        Mac = csv[6],
-                        Date = csv[3],
-                        Time = csv[4]
-                    };
-
-                    var rowTime = (DateTime.Parse(rowData.Date) + TimeSpan.Parse(rowData.Time)) - session.MinDate;
-                    if (rowTime <= session.ReadTime)
-                        continue;
-
-                    //if (tempTime != session.ReadTime && rowTime != tempTime)
-                    //{
-                    //    session.ReadTime = tempTime;
-                    //    dataFactory.Value.WithRepository<ISettingsRepository>(repo => repo.SetReadTime(session.ReadTime), true);
-                        
-                    //    foreach (var data in tempCollection)
-                    //        session.Data.Add(data, token);
-                    //    tempCollection.Clear();
-                    //}
-
-                    //tempTime = rowTime;
-                    //tempCollection.Add(rowData);
-                    session.Data.Add(rowData, token);
-
-                    if (++count == 100)
-                    {
-                        session.Data.CompleteAdding();
+                    var rawData = GetRawData(csv);
+                    if (session.Finish(rawData.Timestamp))
                         break;
-                    }
+                    if (session.InPast(rawData.Timestamp))
+                        continue;
+                    if (session.InFuture(rawData.Timestamp))
+                        Thread.Sleep(session.FutureTime(rawData.Timestamp));
+
+                    session.RawData.Add(rawData, token);
                 }
             }
-        }     
-        private void DataConsumer(CancellationToken token, ReadSession session)
+
+            session.RawData.CompleteAdding();
+        }
+        private void DataChunk(CancellationToken token, ReadSession session)
         {
-            TimeSpan time = TimeSpan.Zero;
-            foreach (var item in session.Data.GetConsumingEnumerable(token))
+            var chunk = new List<Data>();
+            var currentSecond = -1;
+
+            foreach (var item in session.RawData.GetConsumingEnumerable(token))
             {
                 token.ThrowIfCancellationRequested();
 
-                var itemTime = TimeSpan.Parse(item.Time);
-                if (itemTime < time)
+                if (currentSecond != item.Timestamp.Second)
                 {
-                    var d = "";
+                    if (chunk.Any())
+                    {
+                        session.ChunkData.Add(chunk.ToList(), token);
+                        chunk.Clear();
+                    }
+
+                    currentSecond = item.Timestamp.Second;
                 }
 
-                time = itemTime;
+                var data = GetData(item);
+                chunk.Add(data);
+            }
+
+            if (chunk.Any())
+                session.ChunkData.Add(chunk, token);
+
+            session.ChunkData.CompleteAdding();
+        }
+        private void DataSave(CancellationToken token, ReadSession session)
+        {
+            foreach (var data in session.ChunkData.GetConsumingEnumerable(token))
+            {
+                var readTime = session.TimeShift(data.Last().Timestamp);
+                dataFactory.Value.WithDataManager(dm =>
+                {
+                    dm.WithRepository<IDataRepository>(repo => repo.Save(data));
+                    dm.WithRepository<ISettingsRepository>(repo => repo.SetReadTime(readTime));
+                }, true);
             }
         }
-    }
 
-    public class RowData
-    {
-        public String Mac { get; set; }
-        public String Date { get; set; }
-        public String Time { get; set; }
-    }
-
-    public class ReadSession
-    {
-        public DateTime MinDate = new DateTime(2014, 7, 1);
-
-        public BlockingCollection<RowData> Data { get; private set; }
-        public DateTime Start { get; private set; }
-        public TimeSpan ReadTime { get; set; }
-        public Double Velocity { get; set; }
-
-        public ReadSession()
+        private RawData GetRawData(ICsvReaderRow row)
         {
-            Data = new BlockingCollection<RowData>();
-            Start = DateTime.Now;
+            var rawData = new RawData
+            {
+                Mac = row[6],
+                Date = row[22],
+                Time = row[23],
+
+                MessageType = row[1],
+                StreamType = row[2],
+            };
+
+            rawData.Timestamp = DateTime.Parse(rawData.Date) + TimeSpan.Parse(rawData.Time);
+            return rawData;
+        }
+        private Data GetData(RawData rawData)
+        {
+            var data = new Data
+            {
+                Timestamp = rawData.Timestamp,
+                Mac = rawData.Mac,
+                MessageType = MessageType.S, //rawData.MessageType,
+                ContentType = ContentType.C, //rawData.ContentType
+            };
+
+            return data;
         }
     }
 }

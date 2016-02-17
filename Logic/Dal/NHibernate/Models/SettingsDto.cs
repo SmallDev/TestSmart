@@ -2,7 +2,7 @@
 
 namespace Logic.Dal.NHibernate.Models
 {
-    class SettingsDto
+    internal class SettingsDto
     {
         public enum SettingName
         {
