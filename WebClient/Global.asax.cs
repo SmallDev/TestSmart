@@ -3,6 +3,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.Mvc;
+using Common.Logging;
 using Logic.Dal;
 using Logic.Dal.NHibernate;
 using Logic.Facades;
@@ -33,9 +34,10 @@ namespace WebClient
             builder.RegisterType<StatisticsFacade>().SingleInstance();
             builder.RegisterType<ConfigService>().As<IEmulatorConfig>().SingleInstance();
 
+            builder.RegisterInstance(LogManager.Adapter).SingleInstance();
             builder.RegisterControllers(typeof(MvcApplication).Assembly).InstancePerDependency();
-            builder.RegisterType<StreamService>().As<IStreamService>().SingleInstance();
-
+            builder.RegisterType<EmulatorService>().As<IEmulatorService>().SingleInstance();
+            
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
         }

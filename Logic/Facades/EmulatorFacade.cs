@@ -18,6 +18,9 @@ namespace Logic.Facades
         private readonly Lazy<IDataManagerFactrory> dataFactory;
         private readonly Lazy<IEmulatorConfig> readerConfig;
 
+        private EmulatorState state;
+        private readonly Object critical = new Object();
+
         public EmulatorFacade(Func<IDataManagerFactrory> dataFactory, Func<IEmulatorConfig> readerConfig)
         {
             this.dataFactory = new Lazy<IDataManagerFactrory>(dataFactory);
@@ -33,32 +36,77 @@ namespace Logic.Facades
             }, true);
         }
 
-        public void StartRead(CancellationTokenSource tokenSource)
+        public async Task StartRead()
         {
-            var session = new ReadSession();
-            dataFactory.Value.WithRepository<ISettingsRepository>(repo =>
-            {
-                session.ReadTime = repo.GetReadTime() ?? -TimeSpan.FromSeconds(1);
-                session.AllTime = repo.GetAllTime();
-                session.Velocity = repo.GetReadVelocity() ?? 1.0;
-            });
-
             try
             {
-                Task.WaitAll(
-                    Task.Run(() => DataRead(tokenSource.Token, session), tokenSource.Token),
-                    Task.Run(() => DataChunk(tokenSource.Token, session), tokenSource.Token),
-                    Task.Run(() => DataSave(tokenSource.Token, session), tokenSource.Token),
-                    Task.Run(() => UpdateSession(session)));
+                await Task.Run(() => InitState());
+
+                await Task.WhenAll(
+                    Task.Run(() => DataRead(state.TokenSource.Token, state.Session), state.TokenSource.Token),
+                    Task.Run(() => DataChunk(state.TokenSource.Token, state.Session), state.TokenSource.Token),
+                    Task.Run(() => DataSave(state.TokenSource.Token, state.Session), state.TokenSource.Token),
+                    Task.Run(() => UpdateSession(state.TokenSource.Token, state.Session), state.TokenSource.Token));
             }
             catch
             {
-                tokenSource.Cancel();
+                state.TokenSource.Cancel();
                 throw;
             }
             finally
             {
-                session.IsComplete = true;
+                state.Session.IsComplete = true;                
+            }
+        }
+        public async Task StopRead()
+        {
+            await Task.Run(() => BreakCurrentState());
+        }
+
+        public Double GetVelocity()
+        {
+            return state != null
+                ? state.Session.Velocity
+                : dataFactory.Value.WithRepository<Double, ISettingsRepository>(repo => repo.GetReadVelocity() ?? 1.0);
+        }
+        public void SetVelocity(Double velocity)
+        {
+            if (state != null)
+                state.Session.Velocity = velocity;
+
+            dataFactory.Value.WithRepository<ISettingsRepository>(repo => repo.SetReadVelocity(velocity), true);
+        }
+
+        public TimeSpan? GetAllTime()
+        {
+            return state != null
+                ? state.Session.AllTime
+                : dataFactory.Value.WithRepository<TimeSpan?, ISettingsRepository>(repo => repo.GetAllTime());
+        }
+        public void SetAllTime(TimeSpan time)
+        {
+            if (state != null)
+                state.Session.AllTime = time;
+
+            dataFactory.Value.WithRepository<ISettingsRepository>(repo => repo.SetAllTime(time), true);
+        }
+
+        private void InitState()
+        {
+            lock (critical)
+            {
+                BreakCurrentState();
+
+                var newState = new EmulatorState();                
+
+                dataFactory.Value.WithRepository<ISettingsRepository>(repo =>
+                {
+                    newState.Session.ReadTime = repo.GetReadTime() ?? -TimeSpan.FromSeconds(1);
+                    newState.Session.AllTime = repo.GetAllTime();
+                    newState.Session.Velocity = repo.GetReadVelocity() ?? 1.0;
+                });
+
+                state = newState;
             }
         }
 
@@ -68,7 +116,7 @@ namespace Logic.Facades
             using (var reader = new StreamReader(stream))
             using (var csv = new CsvReader(reader, new CsvConfiguration {Delimiter = " "}))
             {
-                while (csv.Read())
+                while (csv.Read() && !session.IsComplete)
                 {
                     token.ThrowIfCancellationRequested();
 
@@ -132,9 +180,9 @@ namespace Logic.Facades
                 }, true);
             }
         }
-        private void UpdateSession(ReadSession session)
+        private void UpdateSession(CancellationToken token, ReadSession session)
         {
-            while (!session.IsComplete)
+            while (!session.IsComplete && !token.IsCancellationRequested)
             {
                 Thread.Sleep(TimeSpan.FromSeconds(30));
                 dataFactory.Value.WithRepository<ISettingsRepository>(repo =>
@@ -143,6 +191,18 @@ namespace Logic.Facades
                     session.Velocity = repo.GetReadVelocity() ?? 1.0;
                 });
             }
+        }
+        private void BreakCurrentState()
+        {            
+            lock (critical)
+            {
+                if (state == null)
+                    return;
+
+                state.Session.IsComplete = true;
+                state.TokenSource.Cancel();
+                state = null;
+            }            
         }
 
         private RawData GetRawData(ICsvReaderRow row)
@@ -173,6 +233,17 @@ namespace Logic.Facades
             return data;
         }
 
+        private class EmulatorState
+        {
+            public ReadSession Session { get; private set; }
+            public CancellationTokenSource TokenSource { get; private set; }
+
+            public EmulatorState()
+            {
+                Session = new ReadSession();
+                TokenSource = new CancellationTokenSource();
+            }
+        }
         private class ReadSession
         {
             private readonly DateTime minDate = new DateTime(2014, 11, 17, 0, 27, 0);

@@ -34,4 +34,9 @@ namespace Logic.Facades
                 .ToList();
         }
     }
+
+    public class LearningFacade
+    {
+        
+    }
 }
