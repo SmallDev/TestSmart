@@ -12,21 +12,48 @@ namespace Logic.Facades
         public BlockingCollection<RawData> RawData { get; private set; }
         public BlockingCollection<IList<Data>> ChunkData { get; private set; }
 
-        public DateTime Start { get; private set; }
         public TimeSpan ReadTime { get; set; }
         public TimeSpan? AllTime { get; set; }
-        public Double Velocity { get; set; }
+        
+        private TimeSpan elapsed;
+        private DateTime start;
+
+        private Double velocity;
+        private readonly Object velocityCritical = new Object();
+        public Double Velocity
+        {
+            get { return velocity; }
+            set
+            {
+                if (Math.Abs(velocity - value) < 1e-3)
+                    return;
+
+                lock (velocityCritical)
+                {
+                    elapsed = StopWatch();
+                    start = DateTime.Now;
+                    velocity = value;
+                }                             
+            }
+        }
+
+        public Boolean IsComplete { get; set; }
 
         public ReadSession()
         {
+            IsComplete = false;
             RawData = new BlockingCollection<RawData>();
             ChunkData = new BlockingCollection<IList<Data>>();
-            Start = DateTime.Now;
+            start = DateTime.Now;
+            elapsed = TimeSpan.Zero;            
         }
 
         public TimeSpan StopWatch()
         {
-            return TimeSpan.FromSeconds((DateTime.Now - Start).TotalSeconds*Velocity);
+            lock (velocityCritical)
+            {
+                return elapsed + TimeSpan.FromSeconds((DateTime.Now - start).TotalSeconds * Velocity);
+            }            
         }
         public TimeSpan TimeShift(DateTime dateTime)
         {

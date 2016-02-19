@@ -45,14 +45,19 @@ namespace Logic.Facades
             try
             {
                 Task.WaitAll(
-                    Task.Factory.StartNew(() => DataRead(tokenSource.Token, session), tokenSource.Token),
-                    Task.Factory.StartNew(() => DataChunk(tokenSource.Token, session), tokenSource.Token),
-                    Task.Factory.StartNew(() => DataSave(tokenSource.Token, session), tokenSource.Token));
+                    Task.Run(() => DataRead(tokenSource.Token, session), tokenSource.Token),
+                    Task.Run(() => DataChunk(tokenSource.Token, session), tokenSource.Token),
+                    Task.Run(() => DataSave(tokenSource.Token, session), tokenSource.Token),
+                    Task.Run(() => UpdateSession(session)));
             }
             catch
             {
                 tokenSource.Cancel();
                 throw;
+            }
+            finally
+            {
+                session.IsComplete = true;
             }
         }
 
@@ -124,6 +129,18 @@ namespace Logic.Facades
                     dm.WithRepository<IDataRepository>(repo => repo.Save(data));
                     dm.WithRepository<ISettingsRepository>(repo => repo.SetReadTime(readTime));
                 }, true);
+            }
+        }
+        private void UpdateSession(ReadSession session)
+        {
+            while (!session.IsComplete)
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(30));
+                dataFactory.Value.WithRepository<ISettingsRepository>(repo =>
+                {
+                    session.AllTime = repo.GetAllTime();
+                    session.Velocity = repo.GetReadVelocity() ?? 1.0;
+                });
             }
         }
 
