@@ -29,7 +29,7 @@ namespace Logic.Dal.NHibernate.Repositories
         }
         public void SetReadVelocity(Double? velocity)
         {
-            Set(SettingsDto.SettingName.ReadVelocity, velocity, Convert.ToString);
+            Set(SettingsDto.SettingName.ReadVelocity, velocity, v => Convert.ToString(v, CultureInfo.InvariantCulture));
         }
 
         public TimeSpan? GetCalcTime()
