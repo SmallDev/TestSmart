@@ -73,13 +73,15 @@
     <Compile Include="Dal\NHibernate\Mappings\SettingsMap.cs" />
     <Compile Include="Dal\NHibernate\Models\DataDto.cs" />
     <Compile Include="Dal\NHibernate\Models\SettingsDto.cs" />
+    <Compile Include="Dal\NHibernate\Repositories\SqlLearingRepository.cs" />
+    <Compile Include="Dal\Repositories\ILearningRepository.cs" />
     <Compile Include="Dal\Repositories\ISettingsRepository.cs" />
     <Compile Include="Dal\Repositories\IClusterRepository.cs" />
     <Compile Include="Dal\IDataManager.cs" />
     <Compile Include="Dal\Repositories\IDataRepository.cs" />
     <Compile Include="Dal\Repositories\IRepository.cs" />
     <Compile Include="Dal\Repositories\IUserRepository.cs" />
-    <Compile Include="Dal\NHibernate\Repositories\NHibernateDataRepository.cs" />
+    <Compile Include="Dal\NHibernate\Repositories\SqlDataRepository.cs" />
     <Compile Include="Dal\NHibernate\Repositories\NHibernateClusterRepository.cs" />
     <Compile Include="Dal\NHibernate\NHibernateDataManagerFactory.cs" />
     <Compile Include="Dal\NHibernate\Repositories\NHibernateRepositoryBase.cs" />

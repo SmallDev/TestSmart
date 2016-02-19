@@ -7,19 +7,18 @@ using Logic.Model;
 
 namespace Logic.Dal.NHibernate.Repositories
 {
-    internal class NHibernateDataRepository : NHibernateRepositoryBase, IDataRepository
+    internal class SqlDataRepository : IDataRepository
     {
-        private readonly SqlConnection connection;
+        private readonly Func<SqlConnection> connectionFunc;
 
-        public NHibernateDataRepository(SqlConnection connection)
-            : base(null)
+        public SqlDataRepository(Func<SqlConnection> connectionFunc)
         {
-            this.connection = connection;
+            this.connectionFunc = connectionFunc;
         }
 
         public void Save(IList<Data> data)
         {
-            using (connection)
+            using (var connection = connectionFunc())
             {
                 connection.Open();
                 using (var transation = connection.BeginTransaction())
@@ -80,9 +79,15 @@ namespace Logic.Dal.NHibernate.Repositories
 
         public void Clear()
         {
-            var query = Session.CreateSQLQuery("TRUNCATE TABLE Data");
-            query.SetTimeout(TimeSpan.FromMinutes(10).Seconds);
-            query.ExecuteUpdate();
+            using (var connection = connectionFunc())            
+            using(var command = connection.CreateCommand())
+            {
+                connection.Open();
+                command.CommandType = CommandType.Text;
+                command.CommandText = "TRUNCATE TABLE Data";
+                command.CommandTimeout = (Int32) TimeSpan.FromMinutes(1).TotalSeconds;
+                command.ExecuteNonQuery();
+            }
         }
     }
 }

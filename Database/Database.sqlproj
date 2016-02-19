@@ -68,6 +68,8 @@
     <Build Include="Tables\Cluster.sql" />
     <Build Include="Tables\Properties.sql" />
     <Build Include="Tables\Settings.sql" />
+    <Build Include="Tables\Learning.sql" />
+    <Build Include="Tables\Nominal.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Script.PostDeployment.sql" />
@@ -75,5 +77,8 @@
   <ItemGroup>
     <None Include="Scripts\FillProperties.sql" />
     <None Include="Database.publish.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="Database.refactorlog" />
   </ItemGroup>
 </Project>
