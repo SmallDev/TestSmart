@@ -72,11 +72,7 @@ namespace Logic.Facades
                     if (session.InPast(rawData.Timestamp))
                         continue;
                     if (session.InFuture(rawData.Timestamp))
-                    {
-                        Debug.WriteLine("Sleep: {0}\titem={1}\tstopwatch={2}", session.FutureTime(rawData.Timestamp),
-                            rawData.Timestamp, session.StopWatch());
-                        Thread.Sleep(session.FutureTime(rawData.Timestamp));
-                    }
+                        Thread.Sleep(session.FutureRealTime(rawData.Timestamp));
 
                     session.RawData.Add(rawData, token);
                 }
@@ -87,23 +83,28 @@ namespace Logic.Facades
         private void DataChunk(CancellationToken token, ReadSession session)
         {
             var chunk = new List<Data>();
-            var currentSecond = -1;
+            var readTime = session.StopWatch();
+            var realTime = DateTime.Now.TimeOfDay;
 
             foreach (var item in session.RawData.GetConsumingEnumerable(token))
             {
                 token.ThrowIfCancellationRequested();
 
-                if (currentSecond != item.Timestamp.Second)
+                if (session.TimeShift(item.Timestamp) != readTime)
                 {
-                    if (chunk.Any())
+                    if (!chunk.Any())
+                        realTime = DateTime.Now.TimeOfDay;
+
+                    if (DateTime.Now.TimeOfDay - realTime > TimeSpan.FromSeconds(1))
                     {
+                        realTime = DateTime.Now.TimeOfDay;
                         session.ChunkData.Add(chunk.ToList(), token);
                         chunk.Clear();
                     }
 
-                    currentSecond = item.Timestamp.Second;
+                    readTime = session.TimeShift(item.Timestamp);
                 }
-
+                
                 var data = GetData(item);
                 chunk.Add(data);
             }

@@ -26,18 +26,19 @@ namespace Logic.Facades
 
         public TimeSpan StopWatch()
         {
-            return TimeSpan.FromSeconds((DateTime.Now - Start).TotalSeconds);
+            return TimeSpan.FromSeconds((DateTime.Now - Start).TotalSeconds*Velocity);
         }
         public TimeSpan TimeShift(DateTime dateTime)
         {
             return TimeSpan.FromSeconds((dateTime - minDate).TotalSeconds);
         }
 
-        public TimeSpan FutureTime(DateTime dateTime)
+        public TimeSpan FutureRealTime(DateTime dateTime)
         {
             // увеличиваем время с запасом, чтобы накопились сообщения для обработки
-            var delay = TimeSpan.FromSeconds(5);
-            return TimeShift(dateTime) - StopWatch() + delay; 
+            var delay = TimeSpan.FromSeconds(5*Velocity);
+            var sessionTime = TimeShift(dateTime) - StopWatch();
+            return TimeSpan.FromSeconds(sessionTime.TotalSeconds/Velocity) + delay; //масштабирование к реальному времени
         }
         public Boolean InPast(DateTime dateTime)
         {
@@ -46,8 +47,8 @@ namespace Logic.Facades
         public Boolean InFuture(DateTime dateTime)
         {
             // Сокращаем накопление в delay сек
-            var delay = TimeSpan.FromSeconds(5);
-            return FutureTime(dateTime) > TimeSpan.Zero + delay;
+            var delay = TimeSpan.FromSeconds(5*Velocity);
+            return FutureRealTime(dateTime) > TimeSpan.Zero + delay;
         }
 
         public Boolean Finish(DateTime dateTime)
