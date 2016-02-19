@@ -10,6 +10,12 @@ using WebClient.Models;
 
 namespace WebClient.Controllers
 {
+    // 1. Отображение статистики, отобразить на "градуснике"
+    // StatisticsFacade.ReadStatistics
+
+    // 2. Управление эмулятором: скорость и общее время чтения
+    // EmulatorFacade.GetVelocity и EmulatorFacade.SetVelocity - работа со скоростью (1.0 - нормальная скорость, < 1 - замедление, > 1 - ускорение)
+    // 
     public partial class HomeController : Controller
     {
         private readonly Lazy<StatisticsFacade> tempFacade;
@@ -23,23 +29,23 @@ namespace WebClient.Controllers
 
         public async virtual Task<ActionResult> Index()
         {
-            tempFacade.Value.StartEmulate();
-            var stat = new Statistics();
-            while (stat.CalculatePersentage < 1)
-            {
-                Thread.Sleep(500);
-                stat = tempFacade.Value.ReadStatistics();
-                Debug.WriteLine("Read: {0}\tCalc: {1}", stat.ReadPercentage, stat.CalculatePersentage);
-            }
+            //tempFacade.Value.StartEmulate();
+            //var stat = new Statistics();
+            //while (stat.CalculatePersentage < 1)
+            //{
+            //    Thread.Sleep(500);
+            //    stat = tempFacade.Value.ReadStatistics();
+            //    Debug.WriteLine("Read: {0}\tCalc: {1}", stat.ReadPercentage, stat.CalculatePersentage);
+            //}
 
-            tempFacade.Value.StartEmulate();
-            stat = new Statistics();
-            while (stat.CalculatePersentage < 1)
-            {
-                Thread.Sleep(500);
-                stat = tempFacade.Value.ReadStatistics();
-                Debug.WriteLine("Read: {0}\tCalc: {1}", stat.ReadPercentage, stat.CalculatePersentage);
-            }
+            //tempFacade.Value.StartEmulate();
+            //stat = new Statistics();
+            //while (stat.CalculatePersentage < 1)
+            //{
+            //    Thread.Sleep(500);
+            //    stat = tempFacade.Value.ReadStatistics();
+            //    Debug.WriteLine("Read: {0}\tCalc: {1}", stat.ReadPercentage, stat.CalculatePersentage);
+            //}
 
             var model = new HomeModel();
             await Task.WhenAll(
