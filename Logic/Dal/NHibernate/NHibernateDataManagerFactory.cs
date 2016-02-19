@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Linq;
 using Autofac;
 using FluentNHibernate.Cfg;
@@ -15,17 +16,18 @@ namespace Logic.Dal.NHibernate
     {
         private readonly Lazy<IContainer> baseContainer;
         private readonly Lazy<ISessionFactory> sessionFactory;
-
+        private readonly Lazy<IDbConfig> config;
         public NHibernateDataManagerFactory(Func<IDbConfig> config)
         {
+            this.config = new Lazy<IDbConfig>(config);
             baseContainer = new Lazy<IContainer>(InitContainer);
-            sessionFactory = new Lazy<ISessionFactory>(() => InitSessionFactory(config));
+            sessionFactory = new Lazy<ISessionFactory>(InitSessionFactory);
         }
 
-        private ISessionFactory InitSessionFactory(Func<IDbConfig> config)
+        private ISessionFactory InitSessionFactory()
         {
             var configuration = Fluently.Configure()
-                .Database(MsSqlConfiguration.MsSql2008.ConnectionString(config().ConnectionString))
+                .Database(MsSqlConfiguration.MsSql2008.ConnectionString(config.Value.ConnectionString))
                 .Mappings(m => m.FluentMappings
                     .AddFromAssemblyOf<IEntity>()
                     .Conventions.Add(ForeignKey.EndsWith("Id")))
@@ -38,6 +40,7 @@ namespace Logic.Dal.NHibernate
             var builder = new ContainerBuilder();
 
             builder.Register(context => sessionFactory.Value.OpenSession()).InstancePerLifetimeScope();
+            builder.Register(context => new SqlConnection(config.Value.ConnectionString)).InstancePerLifetimeScope();
             GetType().Assembly.GetTypes().Where(type => type.IsClass && !type.IsAbstract && type
                 .IsAssignableTo<IRepository>()).ForEach(type => type.GetInterfaces()
                     .Where(i => i.IsAssignableTo<IRepository>())

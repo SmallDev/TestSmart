@@ -26,27 +26,27 @@ namespace Logic.Facades
 
         public TimeSpan StopWatch()
         {
-            return TimeSpan.FromSeconds((DateTime.Now - Start).TotalSeconds*Velocity);
+            return TimeSpan.FromSeconds((DateTime.Now - Start).TotalSeconds);
         }
         public TimeSpan TimeShift(DateTime dateTime)
         {
-            return TimeSpan.FromSeconds((dateTime - minDate).TotalSeconds*Velocity);
+            return TimeSpan.FromSeconds((dateTime - minDate).TotalSeconds);
         }
 
         public TimeSpan FutureTime(DateTime dateTime)
         {
             // увеличиваем время с запасом, чтобы накопились сообщения для обработки
-            var delay = TimeSpan.FromSeconds(5/Velocity);
-            return TimeShift(dateTime) - StopWatch() + delay;
+            var delay = TimeSpan.FromSeconds(5);
+            return TimeShift(dateTime) - StopWatch() + delay; 
         }
         public Boolean InPast(DateTime dateTime)
         {
-            return TimeShift(dateTime) < ReadTime;
+            return TimeShift(dateTime) <= ReadTime;
         }
         public Boolean InFuture(DateTime dateTime)
         {
             // Сокращаем накопление в delay сек
-            var delay = TimeSpan.FromSeconds(5/Velocity);
+            var delay = TimeSpan.FromSeconds(5);
             return FutureTime(dateTime) > TimeSpan.Zero + delay;
         }
 

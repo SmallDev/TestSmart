@@ -73,7 +73,7 @@ namespace Logic.Facades
                         continue;
                     if (session.InFuture(rawData.Timestamp))
                     {
-                        Debug.WriteLine("Sleep: {0}\titem={1}\tstopwatch{2}", session.FutureTime(rawData.Timestamp),
+                        Debug.WriteLine("Sleep: {0}\titem={1}\tstopwatch={2}", session.FutureTime(rawData.Timestamp),
                             rawData.Timestamp, session.StopWatch());
                         Thread.Sleep(session.FutureTime(rawData.Timestamp));
                     }
