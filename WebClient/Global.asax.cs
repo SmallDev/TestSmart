@@ -30,7 +30,8 @@ namespace WebClient
             
             builder.RegisterType<DataFacade>().SingleInstance();
             builder.RegisterType<EmulatorFacade>().SingleInstance();
-            builder.RegisterType<ConfigService>().As<IReaderConfig>().SingleInstance();
+            builder.RegisterType<StatisticsFacade>().SingleInstance();
+            builder.RegisterType<ConfigService>().As<IEmulatorConfig>().SingleInstance();
 
             builder.RegisterControllers(typeof(MvcApplication).Assembly).InstancePerDependency();
             builder.RegisterType<StreamService>().As<IStreamService>().SingleInstance();

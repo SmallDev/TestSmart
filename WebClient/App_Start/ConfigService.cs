@@ -6,7 +6,7 @@ using Logic.Facades;
 
 namespace WebClient
 {
-    class ConfigService : IDbConfig, IReaderConfig
+    class ConfigService : IDbConfig, IEmulatorConfig
     {
         private const String AppSettingsSection = "appSettings";
         private const String ConnectionStringsSection = "connectionStrings";
