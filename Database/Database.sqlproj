@@ -78,7 +78,4 @@
     <None Include="Scripts\FillProperties.sql" />
     <None Include="Database.publish.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <RefactorLog Include="Database.refactorlog" />
-  </ItemGroup>
 </Project>
