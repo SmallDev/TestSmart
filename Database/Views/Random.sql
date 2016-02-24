@@ -1,0 +1,1 @@
+﻿CREATE VIEW [dbo].[Random] AS SELECT RAND(CHECKSUM(NEWID())) as [Value]
