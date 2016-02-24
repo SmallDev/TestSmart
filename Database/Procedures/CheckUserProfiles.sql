@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[CheckUserProfile]
+﻿CREATE PROCEDURE [dbo].[CheckUserProfiles]
 AS
 	select u.Id, u.Mac, Sum(Probability) ProbSum from UserProfile up
 		join [User] u on up.UserId = u.Id

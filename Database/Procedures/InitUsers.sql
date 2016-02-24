@@ -7,10 +7,9 @@ BEGIN
 	begin tran
 		insert into [User](Mac)
 		output inserted.Id INTO @users
-		select distinct d.MAC from [User] u
-			right join Data d on u.Mac = d.MAC
-			join Learning l on l.Id = @learning
-		where d.Timestamp between l.[From] and l.[To] and u.Id is null
+		select distinct l.MAC from [User] u
+			right join LearningData(@learning) l on l.MAC = u.Mac
+		where u.Id is null
 
 		insert into UserProfile(UserId, ClusterId, Probability)
 		select u.Id, c.Id, RAND(CHECKSUM(NEWID()))
