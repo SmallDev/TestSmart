@@ -59,8 +59,6 @@
     <Folder Include="Properties" />
     <Folder Include="Tables" />
     <Folder Include="Scripts" />
-    <Folder Include="Views" />
-    <Folder Include="Functions" />
     <Folder Include="Procedures" />
   </ItemGroup>
   <ItemGroup>
@@ -73,8 +71,6 @@
     <Build Include="Tables\Settings.sql" />
     <Build Include="Tables\Learning.sql" />
     <Build Include="Tables\Nominal.sql" />
-    <Build Include="Views\Random.sql" />
-    <Build Include="Functions\ClusterDistribution.sql" />
     <Build Include="Procedures\InitUsers.sql" />
     <Build Include="Procedures\CheckUserProfile.sql" />
     <Build Include="Procedures\Clear.sql" />
