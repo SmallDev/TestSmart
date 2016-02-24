@@ -5,8 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Logging;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Logic.Common;
 using Logic.Dal;
 using Logic.Dal.Repositories;
 using Logic.Model;
@@ -17,14 +19,18 @@ namespace Logic.Facades
     {
         private readonly Lazy<IDataManagerFactrory> dataFactory;
         private readonly Lazy<IEmulatorConfig> readerConfig;
-
+        private readonly Lazy<ILog> logger;
+ 
         private EmulatorState state;
         private readonly Object critical = new Object();
 
-        public EmulatorFacade(Func<IDataManagerFactrory> dataFactory, Func<IEmulatorConfig> readerConfig)
+        public EmulatorFacade(Func<IDataManagerFactrory> dataFactory, 
+            Func<IEmulatorConfig> readerConfig,
+            Func<ILoggerFactoryAdapter> loggerAdapter)
         {
             this.dataFactory = new Lazy<IDataManagerFactrory>(dataFactory);
             this.readerConfig = new Lazy<IEmulatorConfig>(readerConfig);
+            logger = new Lazy<ILog>(() => loggerAdapter().GetLogger(GetType()));
         }
 
         public void Clear()
@@ -48,9 +54,10 @@ namespace Logic.Facades
                     Task.Run(() => DataSave(state.TokenSource.Token, state.Session), state.TokenSource.Token),
                     Task.Run(() => UpdateSession(state.TokenSource.Token, state.Session), state.TokenSource.Token));
             }
-            catch
+            catch(Exception ex)
             {
                 state.TokenSource.Cancel();
+                logger.Value.Error(ex.Message, ex);
                 throw;
             }
             finally
@@ -61,6 +68,13 @@ namespace Logic.Facades
         public async Task StopRead()
         {
             await Task.Run(() => BreakCurrentState());
+        }
+
+        public TimeSpan? GetReadTime()
+        {
+            return state != null
+                ? state.Session.ReadTime
+                : dataFactory.Value.WithRepository<TimeSpan?, ISettingsRepository>(repo => repo.GetReadTime());
         }
 
         public Double GetVelocity()
@@ -128,11 +142,11 @@ namespace Logic.Facades
                     if (session.InFuture(rawData.Timestamp))
                         Thread.Sleep(session.FutureRealTime(rawData.Timestamp));
 
-                    session.RawData.Add(rawData, token);
+                    session.RawDataCollection.Add(rawData, token);
                 }
             }
 
-            session.RawData.CompleteAdding();
+            session.RawDataCollection.CompleteAdding();
         }
         private void DataChunk(CancellationToken token, ReadSession session)
         {
@@ -140,7 +154,7 @@ namespace Logic.Facades
             var readTime = session.StopWatch();
             var realTime = DateTime.Now.TimeOfDay;
 
-            foreach (var item in session.RawData.GetConsumingEnumerable(token))
+            foreach (var item in session.RawDataCollection.GetConsumingEnumerable(token))
             {
                 token.ThrowIfCancellationRequested();
 
@@ -152,7 +166,7 @@ namespace Logic.Facades
                     if (DateTime.Now.TimeOfDay - realTime > TimeSpan.FromSeconds(1))
                     {
                         realTime = DateTime.Now.TimeOfDay;
-                        session.ChunkData.Add(chunk.ToList(), token);
+                        session.ChunkDataCollection.Add(chunk.ToList(), token);
                         chunk.Clear();
                     }
 
@@ -164,13 +178,13 @@ namespace Logic.Facades
             }
 
             if (chunk.Any())
-                session.ChunkData.Add(chunk, token);
+                session.ChunkDataCollection.Add(chunk, token);
 
-            session.ChunkData.CompleteAdding();
+            session.ChunkDataCollection.CompleteAdding();
         }
         private void DataSave(CancellationToken token, ReadSession session)
         {
-            foreach (var data in session.ChunkData.GetConsumingEnumerable(token))
+            foreach (var data in session.ChunkDataCollection.GetConsumingEnumerable(token))
             {
                 var readTime = session.TimeShift(data.Last().Timestamp);
                 dataFactory.Value.WithDataManager(dm =>
@@ -178,6 +192,7 @@ namespace Logic.Facades
                     dm.WithRepository<IDataRepository>(repo => repo.Save(data));
                     dm.WithRepository<ISettingsRepository>(repo => repo.SetReadTime(readTime));
                 }, true);
+                session.ReadTime = readTime;
             }
         }
         private void UpdateSession(CancellationToken token, ReadSession session)
@@ -226,9 +241,15 @@ namespace Logic.Facades
             {
                 Timestamp = rawData.Timestamp,
                 Mac = rawData.Mac,
-                MessageType = MessageType.S, //rawData.MessageType,
-                ContentType = ContentType.C, //rawData.ContentType
+                MessageType = rawData.MessageType.GetNullableElementByCode<MessageType>(),
+                ContentType = rawData.StreamType.GetNullableElementByCode<ContentType>(),
             };
+
+            if (data.MessageType == null && !String.IsNullOrEmpty(rawData.MessageType))
+                logger.Value.WarnFormat("Message type {0} is unknown", rawData.MessageType);
+
+            if (data.ContentType == null && !String.IsNullOrEmpty(rawData.StreamType))
+                logger.Value.WarnFormat("Content type {0} is unknown", rawData.StreamType);
 
             return data;
         }
@@ -248,8 +269,8 @@ namespace Logic.Facades
         {
             private readonly DateTime minDate = new DateTime(2014, 11, 17, 0, 27, 0);
 
-            public BlockingCollection<RawData> RawData { get; private set; }
-            public BlockingCollection<IList<Data>> ChunkData { get; private set; }
+            public BlockingCollection<RawData> RawDataCollection { get; private set; }
+            public BlockingCollection<IList<Data>> ChunkDataCollection { get; private set; }
 
             public TimeSpan ReadTime { get; set; }
             public TimeSpan? AllTime { get; set; }
@@ -282,8 +303,8 @@ namespace Logic.Facades
             public ReadSession()
             {
                 IsComplete = false;
-                RawData = new BlockingCollection<RawData>();
-                ChunkData = new BlockingCollection<IList<Data>>();
+                RawDataCollection = new BlockingCollection<RawData>();
+                ChunkDataCollection = new BlockingCollection<IList<Data>>();
                 start = DateTime.Now;
                 elapsed = TimeSpan.Zero;
             }

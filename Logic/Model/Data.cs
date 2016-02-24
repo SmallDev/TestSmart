@@ -10,14 +10,4 @@ namespace Logic.Model
         public MessageType? MessageType { get; set; }
         public ContentType? ContentType { get; set; }
     }
-
-    public enum MessageType
-    {
-        S
-    }
-
-    public enum ContentType
-    {
-        C
-    }
 }
