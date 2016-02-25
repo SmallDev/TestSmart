@@ -4,7 +4,7 @@
 )
 RETURNS TABLE AS RETURN
 (
-	SELECT d.* FROM Data d
-	   join Learning l ON l.Id = @learning
+	SELECT d.* FROM Learning l
+	   inner join Data d with(nolock) on l.Id = @learning
     WHERE d.[Timestamp] between l.[From] and l.[To]
 )

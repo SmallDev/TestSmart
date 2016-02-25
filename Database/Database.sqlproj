@@ -61,6 +61,7 @@
     <Folder Include="Scripts" />
     <Folder Include="Procedures" />
     <Folder Include="Functions" />
+    <Folder Include="Views" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Data.sql" />
@@ -77,12 +78,11 @@
     <Build Include="Procedures\Clear.sql" />
     <Build Include="Procedures\InitClusters.sql" />
     <Build Include="Procedures\CheckClusterProfiles.sql" />
-    <Build Include="Tables\TempProfile.sql" />
     <Build Include="Functions\LearningData.sql" />
     <Build Include="Functions\CalcLogLikelihood.sql" />
     <Build Include="Functions\UnpivotData.sql" />
-    <Build Include="Functions\SumProfiles.sql" />
     <Build Include="Procedures\LearnIterate.sql" />
+    <Build Include="Views\Profiles_View.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Script.PostDeployment.sql" />
