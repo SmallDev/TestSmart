@@ -74,9 +74,9 @@
     <Compile Include="Common\CodeAttribute.cs" />
     <Compile Include="Dal\IDataManagerFactrory.cs" />
     <Compile Include="Dal\IDbConfig.cs" />
-    <Compile Include="Dal\NHibernate\Mappings\DataMap.cs" />
+    <Compile Include="Dal\NHibernate\Mappings\ClusterMap.cs" />
     <Compile Include="Dal\NHibernate\Mappings\SettingsMap.cs" />
-    <Compile Include="Dal\NHibernate\Models\DataDto.cs" />
+    <Compile Include="Dal\NHibernate\Models\ClusterDto.cs" />
     <Compile Include="Dal\NHibernate\Models\SettingsDto.cs" />
     <Compile Include="Dal\NHibernate\Repositories\SqlLearingRepository.cs" />
     <Compile Include="Dal\Repositories\ILearningRepository.cs" />
@@ -96,6 +96,7 @@
     <Compile Include="Facades\EmulatorFacade.cs" />
     <Compile Include="Facades\DataFacade.cs" />
     <Compile Include="Facades\IEmulatorConfig.cs" />
+    <Compile Include="Facades\LearningFacade.cs" />
     <Compile Include="Facades\StatisticsFacade.cs" />
     <Compile Include="Model\ContentType.cs" />
     <Compile Include="Model\MessageType.cs" />

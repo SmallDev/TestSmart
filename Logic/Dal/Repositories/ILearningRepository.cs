@@ -4,19 +4,21 @@ namespace Logic.Dal.Repositories
 {
     public interface ILearningRepository : IRepository
     {
-        // Вычисление временных таблиц n и H
-        Int32 StartLearning(DateTime from, DateTime to);
+        // Создание кластеров и их профилей
+        void InitClusters(Int32 clusterCount);
 
-        // Удаление временных таблиц
-        void CompleteLearning(Int32 learningId);
+        // Создание записи обучения
+        Int32 CreateLearning(DateTime from, DateTime to);
+
+        /// <summary> Обновление информации обучения </summary>
+        void UpdateLearning(Int32 learningId, Double likelihood, Int32 iterationCount);
+
+        // Создание пользоватей и их профилей по данным обучения
+        void InitUsers(Int32 learningId);
 
         // Значение логарифма правдоподобия
-        Double UpdateLogLikelihood(Int32 learningId);
+        Double LogLikelihood(Int32 learningId);
 
-        // Обновить профили пользователей и кластеров
-        void UpdateProfiles(Int32 learningId);
-
-        // Обновить таблицы скрытых переменных
-        void UpdateLatent(Int32 learningId);
+        void LearnIteration(Int32 learningId);
     }
 }
