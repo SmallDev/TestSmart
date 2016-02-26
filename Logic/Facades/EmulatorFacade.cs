@@ -65,17 +65,15 @@ namespace Logic.Facades
                     Task.Run(() => UpdateSession(state.TokenSource.Token, state.Session), state.TokenSource.Token));
 
                 await state.ReadTask;
-
                 logger.Value.Info("Read is completed");
             }
             catch (OperationCanceledException)
             {
                 logger.Value.Info("Read is cancelled");
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 BreakCurrentState().Wait();
-                logger.Value.Error(ex.Message, ex);
                 throw;
             }
         }
@@ -155,7 +153,7 @@ namespace Logic.Facades
                 sw.Start();
                 logger.Value.Trace("DataRead started");
 
-                while (csv.Read() && !session.IsComplete)
+                while (csv.Read() && !session.Completed)
                 {
                     token.ThrowIfCancellationRequested();
 
@@ -171,7 +169,7 @@ namespace Logic.Facades
                         if (!session.ChunkDataCollection.Any() && !session.RawDataCollection.Any())                        
                             SetReadTime(session, session.StopWatch());
 
-                        if (token.WaitHandle.WaitOne(ReadSession.Min(TimeSpan.FromSeconds(1), session.FutureRealTime(rawData.Timestamp))))
+                        if (token.WaitHandle.WaitOne(MathExtension.Min(TimeSpan.FromSeconds(1), session.FutureRealTime(rawData.Timestamp))))
                             break;
                     }
 
@@ -244,7 +242,7 @@ namespace Logic.Facades
 
             token.ThrowIfCancellationRequested();
 
-            session.IsComplete = true;
+            session.Completed = true;
             if (session.AllTime.HasValue && session.ReadTime != session.AllTime)
                 SetReadTime(session, session.AllTime.Value);
 
@@ -255,7 +253,7 @@ namespace Logic.Facades
         {
             logger.Value.Trace("UpdateSession started");
 
-            while (!session.IsComplete)
+            while (!session.Completed)
             {
                 token.ThrowIfCancellationRequested();
 
@@ -287,7 +285,7 @@ namespace Logic.Facades
                 if (state == null)
                     return;
 
-                state.Session.IsComplete = true;
+                state.Session.Completed = true;
                 state.TokenSource.Cancel();
 
                 task = state.ReadTask;
@@ -384,11 +382,11 @@ namespace Logic.Facades
                 }
             }
 
-            public Boolean IsComplete { get; set; }
+            public Boolean Completed { get; set; }
 
             public ReadSession()
             {
-                IsComplete = false;
+                Completed = false;
                 RawDataCollection = new BlockingCollection<RawData>();
                 ChunkDataCollection = new BlockingCollection<IList<Data>>();
                 start = DateTime.Now;
@@ -437,11 +435,6 @@ namespace Logic.Facades
                     return false;
 
                 return dateTime > AllTime.Value || ReadTime == AllTime;
-            }
-
-            public static TimeSpan Min(TimeSpan t1, TimeSpan t2)
-            {
-                return t1 <= t2 ? t1 : t2;
             }
         }
         private class RawData

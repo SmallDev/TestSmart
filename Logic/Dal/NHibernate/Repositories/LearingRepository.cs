@@ -60,7 +60,7 @@ namespace Logic.Dal.NHibernate.Repositories
                 command.CommandText = "select dbo.CalcLogLikelihood(@learning)";
                 command.Parameters.AddWithValue("learning", learningId);
                 command.CommandTimeout = (Int32)TimeSpan.FromMinutes(1).TotalSeconds;
-                return (Double) command.ExecuteScalar();
+                return (Double)command.ExecuteScalar();
             });
         }
 

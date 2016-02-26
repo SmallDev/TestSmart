@@ -6,5 +6,5 @@
     [StartLikelihood] FLOAT NULL, 
     [EndLikelihood] FLOAT NULL, 
     [Iterations] INT NOT NULL DEFAULT 0,
-	[Timestamp] DATETIME NOT NULL DEFAULT GETDATE(), 
+	[CreatedOn] DATETIME NOT NULL DEFAULT GETDATE(), 
 )

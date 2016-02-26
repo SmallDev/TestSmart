@@ -96,6 +96,7 @@
     <Compile Include="Dal\NHibernate\Repositories\NHibernateSettingsRepository.cs" />
     <Compile Include="Dal\NHibernate\Repositories\NHibernateUserRepository.cs" />
     <Compile Include="Dal\NHibernate\NHibernateDataManager.cs" />
+    <Compile Include="Facades\MathExtension.cs" />
     <Compile Include="Model\Learning.cs" />
     <Compile Include="Facades\EmulatorFacade.cs" />
     <Compile Include="Facades\DataFacade.cs" />

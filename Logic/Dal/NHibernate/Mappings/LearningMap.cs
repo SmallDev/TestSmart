@@ -16,6 +16,8 @@ namespace Logic.Dal.NHibernate.Mappings
             Map(l => l.StartLikelihood);
             Map(l => l.EndLikelihood);
             Map(l => l.Iterations);
+
+            Map(l => l.CreatedOn);
         }
     }
 }

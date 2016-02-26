@@ -10,5 +10,7 @@ namespace Logic.Model
         public Double? StartLikelihood { get; set; }
         public Double? EndLikelihood { get; set; }
         public Int32 Iterations { get; set; }
+
+        public DateTime CreatedOn { get; set; }
     }
 }
