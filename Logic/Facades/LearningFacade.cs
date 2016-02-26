@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Common.Logging;
 using Logic.Dal;
 using Logic.Dal.Repositories;
+using Logic.Model;
 
 namespace Logic.Facades
 {
@@ -12,7 +13,10 @@ namespace Logic.Facades
     {
         private readonly Lazy<IDataManagerFactrory> dataFactory;
         private readonly Lazy<ILog> logger;
- 
+
+        private LearningState state;
+        private readonly Object critical = new Object();
+
         public LearningFacade(Func<IDataManagerFactrory> dataFactory, Func<ILoggerFactoryAdapter> loggerAdapter)
         {
             this.dataFactory = new Lazy<IDataManagerFactrory>(dataFactory);
@@ -21,93 +25,143 @@ namespace Logic.Facades
 
         public async Task StartLearn()
         {
-            var session = await Task.Run(() => InitSession());
-
             try
             {
-                await Task.WhenAll(Task.Run(() => IterationStart(session)),
-                    Task.Run(() => LearnIteration(session)));
+                await Task.Run(() => InitState());
+
+                await Task.Run(() => Learning(state.Session, state.TokenSource.Token));
+            }
+            catch (Exception ex)
+            {
+                state.TokenSource.Cancel();
+                logger.Value.Error(ex.Message, ex);
+                throw;
             }
             finally
             {
-                session.Completed = true;
+                state.Session.Completed = true;
+            }
+        }
+        public async Task StopLearn()
+        {
+            await Task.Run(() => BreakCurrentState());
+        }
+
+        private void InitState()
+        {
+            lock (critical)
+            {
+                BreakCurrentState();
+
+                var newState = new LearningState();
+
+                dataFactory.Value.WithRepository<ISettingsRepository>(repo =>
+                {
+                    newState.Session.CalcTime = repo.GetCalcTime() ?? TimeSpan.Zero;
+                    newState.Session.AllTime = repo.GetAllTime() ?? TimeSpan.Zero;
+                });
+
+                state = newState;
             }
         }
 
-        public async Task StopLearn()
+        private void Learning(LearningSession session, CancellationToken token)
         {
-            
-        }
-
-        private LearningSession InitSession()
-        {
-            var calcTime = dataFactory.Value.WithRepository<TimeSpan?, ISettingsRepository>(repo => repo.GetCalcTime());
-            return new LearningSession {CalcTime = calcTime ?? TimeSpan.Zero};
-        }
-
-        private void IterationStart(LearningSession session, CancellationToken token)
-        {
+            CancellationTokenSource currentLearning = null;
+            Learning learning;
             // создаем лернинг и отдаем на обработку
-            while (!session.Completed)
+            while (!session.Completed && !token.IsCancellationRequested)
             {
-                token.ThrowIfCancellationRequested();
-
                 var readTime = dataFactory.Value.WithRepository<TimeSpan?, ISettingsRepository>(
                     repo => repo.GetReadTime()) ?? TimeSpan.Zero;
 
-                if (session.AllDone(readTime))
+                //if (session.AllDone(readTime))
+                //{
+                //    session.Completed = true;
+                //    continue;
+                //}
+
+                //if (!session.NeedCalculate(readTime))
+                //{
+                //    Thread.Sleep(TimeSpan.FromSeconds(30));
+                //    continue;
+                //}
+
+                if (currentLearning != null)
                 {
-                    session.Completed = true;
-                    continue;
+                    currentLearning.Cancel();
                 }
 
-                if (!session.NeedCalculate(readTime))
+                currentLearning = new CancellationTokenSource();
+                var currentToken = currentLearning.Token;
+
+                learning = new Learning
                 {
-                    Thread.Sleep(TimeSpan.FromSeconds(30));
-                    continue;
-                }
-
-                var learningId = dataFactory.Value.WithRepository<Int32, ILearningRepository>(
-                    repo => repo.CreateLearning(session.DateFrom(), session.DateTo(readTime)));
-
-                session.StartLearningCollection.Add(learningId, token);
+                    TimeFrom = session.CalcTime,
+                    TimeTo = session.CalcTime + session.CalcTimeNow(readTime),
+                    Iterations = 0
+                };
+                
+               // Task.Run(() => Start(learning, session, currentToken), currentToken);
+                Start(learning, session, currentToken);
             }
 
-            session.StartLearningCollection.CompleteAdding();
+            if (currentLearning != null)
+                currentLearning.Cancel();
         }
-
-        private void LearnIteration(LearningSession session, CancellationToken token)
+        private void Start(Learning learning, LearningSession session, CancellationToken token)
         {
-            foreach (var learningId in session.StartLearningCollection.GetConsumingEnumerable(token))
+            dataFactory.Value.WithRepository<ILearningRepository>(repo => learning = repo.Save(learning), true);
+            token.ThrowIfCancellationRequested();
+
+            dataFactory.Value.WithRepository<ILearningRepository>(repo => repo.InitUsers(learning.Id));
+            token.ThrowIfCancellationRequested();
+
+            dataFactory.Value.WithRepository<ILearningRepository>(repo =>
             {
-                token.ThrowIfCancellationRequested();
+                learning.StartLikelihood = repo.LogLikelihood(learning.Id);
+                learning.Iterations = 0;
+                learning = repo.Save(learning);
+            }, true);
 
-                var id = learningId;
-                dataFactory.Value.WithRepository<ILearningRepository>(repo => repo.LearnIteration(id));
-                session.FinishLearningCollection.Add(id, token);
-            }
-
-            session.FinishLearningCollection.CompleteAdding();
-        }
-
-        private void CompleteIteration(LearningSession session, CancellationToken token)
-        {
-            foreach (var learningId in session.FinishLearningCollection.GetConsumingEnumerable(token))
+            while (!token.IsCancellationRequested)
             {
-                token.ThrowIfCancellationRequested();
-
-                var id = learningId;
-                dataFactory.Value.WithRepository<Double, ILearningRepository>(repo =>
+                dataFactory.Value.WithRepository<ILearningRepository>(repo => repo.LearnIteration(learning.Id));
+                dataFactory.Value.WithRepository<ILearningRepository>(repo =>
                 {
-                    var likelihood = repo.LogLikelihood(id);
-                }
-                     );
+                    learning.EndLikelihood = repo.LogLikelihood(learning.Id);
+                    learning.Iterations ++;
+                    learning = repo.Save(learning);
+                }, true);
             }
         }
 
+        private void BreakCurrentState()
+        {
+            lock (critical)
+            {
+                if (state == null)
+                    return;
+
+                state.Session.Completed = true;
+                state.TokenSource.Cancel();
+                state = null;
+            }
+        }
+
+        private class LearningState
+        {
+            public LearningSession Session { get; private set; }
+            public CancellationTokenSource TokenSource { get; private set; }
+
+            public LearningState()
+            {
+                Session = new LearningSession();
+                TokenSource = new CancellationTokenSource();
+            }
+        }
         private class LearningSession
         {
-            private readonly DateTime minDate = new DateTime(2014, 11, 17, 0, 27, 0);
             private readonly TimeSpan window = TimeSpan.FromMinutes(10);
             public BlockingCollection<Int32> StartLearningCollection { get; private set; } 
             public BlockingCollection<Int32> FinishLearningCollection { get; private set; } 
@@ -117,15 +171,6 @@ namespace Logic.Facades
             public Boolean Completed { get; set; }
             public TimeSpan CalcTime { get; set; }
             public TimeSpan AllTime { get; set; }
-
-            public DateTime DateFrom()
-            {
-                return minDate + CalcTime;
-            }
-            public DateTime DateTo(TimeSpan readTime)
-            {
-                return DateFrom() + CalcTimeNow(readTime);
-            }
 
             public LearningSession()
             {

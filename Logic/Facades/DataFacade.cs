@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Logic.Dal;
-using Logic.Dal.Repositories;
 using Logic.Model;
 
 namespace Logic.Facades

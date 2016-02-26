@@ -1,4 +1,5 @@
 ﻿using System;
+using Logic.Model;
 
 namespace Logic.Dal.Repositories
 {
@@ -7,11 +8,8 @@ namespace Logic.Dal.Repositories
         // Создание кластеров и их профилей
         void InitClusters(Int32 clusterCount);
 
-        // Создание записи обучения
-        Int32 CreateLearning(DateTime from, DateTime to);
-
-        /// <summary> Обновление информации обучения </summary>
-        void UpdateLearning(Int32 learningId, Double likelihood, Int32 iterationCount);
+        Learning Get(Int32 learningId);
+        Learning Save(Learning learning);
 
         // Создание пользоватей и их профилей по данным обучения
         void InitUsers(Int32 learningId);

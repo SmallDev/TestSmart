@@ -18,19 +18,16 @@ namespace Logic.Dal.NHibernate.Repositories
 
         public void Save(IList<Data> data)
         {
-            using (var connection = connectionFunc())
+            connectionFunc().WithTransaction((connection, transaction) =>
             {
-                connection.Open();
-                using (var transation = connection.BeginTransaction())
-                using (var bulk = new SqlBulkCopy(connection, SqlBulkCopyOptions.Default, transation))
+                using (var bulk = new SqlBulkCopy(connection, SqlBulkCopyOptions.Default, transaction))
                 {
 
                     bulk.BatchSize = 100;
                     bulk.DestinationTableName = "dbo.Data";
                     bulk.WriteToServer(AsDataTable(data));
-                    transation.Commit();
                 }
-            }
+            });
         }
 
         private DataTable AsDataTable(IEnumerable<Data> data)
@@ -46,7 +43,7 @@ namespace Logic.Dal.NHibernate.Repositories
                 new DataColumn
                 {
                     ColumnName = "Timestamp",
-                    DataType = typeof (DateTime)
+                    DataType = typeof (TimeSpan)
                 },
                 new DataColumn
                 {
@@ -79,15 +76,15 @@ namespace Logic.Dal.NHibernate.Repositories
 
         public void Clear()
         {
-            using (var connection = connectionFunc())            
-            using(var command = connection.CreateCommand())
+            connectionFunc().WithCommand(command =>
             {
-                connection.Open();
-                command.CommandType = CommandType.Text;
-                command.CommandText = "TRUNCATE TABLE Data";
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandText = "dbo.Clear";
+                command.Parameters.AddWithValue("users", true);
+                command.Parameters.AddWithValue("data", true);
                 command.CommandTimeout = (Int32) TimeSpan.FromMinutes(1).TotalSeconds;
                 command.ExecuteNonQuery();
-            }
+            });
         }
     }
 }

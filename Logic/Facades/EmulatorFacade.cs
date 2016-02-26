@@ -17,6 +17,8 @@ namespace Logic.Facades
 {
     public class EmulatorFacade
     {
+        readonly DateTime minDate = new DateTime(2014, 11, 17, 0, 27, 0);
+
         private readonly Lazy<IDataManagerFactrory> dataFactory;
         private readonly Lazy<IEmulatorConfig> readerConfig;
         private readonly Lazy<ILog> logger;
@@ -62,7 +64,7 @@ namespace Logic.Facades
             }
             finally
             {
-                state.Session.IsComplete = true;                
+                state.Session.IsComplete = true;
             }
         }
         public async Task StopRead()
@@ -232,7 +234,7 @@ namespace Logic.Facades
                 StreamType = row[2],
             };
 
-            rawData.Timestamp = DateTime.Parse(rawData.Date) + TimeSpan.Parse(rawData.Time);
+            rawData.Timestamp = DateTime.Parse(rawData.Date) + TimeSpan.Parse(rawData.Time) - minDate;
             return rawData;
         }
         private Data GetData(RawData rawData)
@@ -267,8 +269,6 @@ namespace Logic.Facades
         }
         private class ReadSession
         {
-            private readonly DateTime minDate = new DateTime(2014, 11, 17, 0, 27, 0);
-
             public BlockingCollection<RawData> RawDataCollection { get; private set; }
             public BlockingCollection<IList<Data>> ChunkDataCollection { get; private set; }
 
@@ -317,12 +317,12 @@ namespace Logic.Facades
                 }
             }
 
-            public TimeSpan TimeShift(DateTime dateTime)
+            public TimeSpan TimeShift(TimeSpan dateTime)
             {
-                return TimeSpan.FromSeconds((dateTime - minDate).TotalSeconds);
+                return TimeSpan.FromSeconds(dateTime.TotalSeconds);
             }
 
-            public TimeSpan FutureRealTime(DateTime dateTime)
+            public TimeSpan FutureRealTime(TimeSpan dateTime)
             {
                 // увеличиваем время с запасом, чтобы накопились сообщения для обработки
                 var delay = TimeSpan.FromSeconds(5*Velocity);
@@ -331,19 +331,19 @@ namespace Logic.Facades
                     //масштабирование к реальному времени
             }
 
-            public Boolean InPast(DateTime dateTime)
+            public Boolean InPast(TimeSpan dateTime)
             {
                 return TimeShift(dateTime) <= ReadTime;
             }
 
-            public Boolean InFuture(DateTime dateTime)
+            public Boolean InFuture(TimeSpan dateTime)
             {
                 // Сокращаем накопление в delay сек
                 var delay = TimeSpan.FromSeconds(5*Velocity);
                 return FutureRealTime(dateTime) > TimeSpan.Zero + delay;
             }
 
-            public Boolean Finish(DateTime dateTime)
+            public Boolean Finish(TimeSpan dateTime)
             {
                 if (!AllTime.HasValue)
                     return false;
@@ -353,7 +353,7 @@ namespace Logic.Facades
         }
         private class RawData
         {
-            public DateTime Timestamp { get; set; }
+            public TimeSpan Timestamp { get; set; }
 
             public String Mac { get; set; }
             public String Date { get; set; }

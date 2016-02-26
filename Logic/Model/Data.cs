@@ -4,7 +4,7 @@ namespace Logic.Model
 {
     public class Data
     {
-        public DateTime Timestamp { get; set; }
+        public TimeSpan Timestamp { get; set; }
         public String Mac { get; set; }
 
         public MessageType? MessageType { get; set; }
