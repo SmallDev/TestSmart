@@ -90,5 +90,6 @@
   <ItemGroup>
     <None Include="Scripts\FillProperties.sql" />
     <None Include="Database.publish.xml" />
+    <None Include="Scripts\FillNominal.sql" />
   </ItemGroup>
 </Project>
