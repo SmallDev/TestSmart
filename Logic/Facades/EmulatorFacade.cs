@@ -47,16 +47,24 @@ namespace Logic.Facades
 
         public async Task StartRead()
         {
+            if (state != null)
+            {
+                logger.Value.Info("Read is already run");
+                return;
+            }
+
             logger.Value.Info("Read is started");
             try
             {
-                await Task.Run(() => InitState());
+                state = await Task.Run(() => InitState());
 
-                await Task.WhenAll(
+                state.ReadTask = Task.WhenAll(
                     Task.Run(() => DataRead(state.TokenSource.Token, state.Session), state.TokenSource.Token),
                     Task.Run(() => DataChunk(state.TokenSource.Token, state.Session), state.TokenSource.Token),
                     Task.Run(() => DataSave(state.TokenSource.Token, state.Session), state.TokenSource.Token),
                     Task.Run(() => UpdateSession(state.TokenSource.Token, state.Session), state.TokenSource.Token));
+
+                await state.ReadTask;
 
                 logger.Value.Info("Read is completed");
             }
@@ -66,14 +74,14 @@ namespace Logic.Facades
             }
             catch(Exception ex)
             {
-                BreakCurrentState();
+                BreakCurrentState().Wait();
                 logger.Value.Error(ex.Message, ex);
                 throw;
             }
         }
         public async Task StopRead()
         {
-            await Task.Run(() => BreakCurrentState());
+            await BreakCurrentState();
             logger.Value.Info("Read has been stopped");
         }
 
@@ -114,12 +122,10 @@ namespace Logic.Facades
             logger.Value.TraceFormat("AllTime has been changed to {0}", time);
         }
 
-        private void InitState()
+        private EmulatorState InitState()
         {
             lock (critical)
             {
-                BreakCurrentState();
-
                 var newState = new EmulatorState();                
 
                 dataFactory.Value.WithRepository<ISettingsRepository>(repo =>
@@ -131,9 +137,10 @@ namespace Logic.Facades
                     newState.Session.Velocity = repo.GetReadVelocity() ?? 1.0;
                 });
 
-                state = newState;
                 logger.Value.InfoFormat("Init read session: AllTime: {0}\tReadTime: {1}\tReadVelocity:{2}",
                     newState.Session.AllTime, newState.Session.ReadTime, newState.Session.Velocity);
+
+                return newState;
             }
         }
 
@@ -238,7 +245,7 @@ namespace Logic.Facades
             token.ThrowIfCancellationRequested();
 
             session.IsComplete = true;
-            if (session.AllTime.HasValue)
+            if (session.AllTime.HasValue && session.ReadTime != session.AllTime)
                 SetReadTime(session, session.AllTime.Value);
 
             sw.Stop();
@@ -272,8 +279,9 @@ namespace Logic.Facades
             token.ThrowIfCancellationRequested();
             logger.Value.Trace("UpdateSession completed");
         }
-        private void BreakCurrentState()
-        {            
+        private async Task BreakCurrentState()
+        {
+            Task task;
             lock (critical)
             {
                 if (state == null)
@@ -281,8 +289,16 @@ namespace Logic.Facades
 
                 state.Session.IsComplete = true;
                 state.TokenSource.Cancel();
+
+                task = state.ReadTask;
                 state = null;
-            }            
+            }
+
+            try
+            {
+                await task;
+            }
+            catch (OperationCanceledException) { }
         }
 
         private void SetReadTime(ReadSession session, TimeSpan readTime)
@@ -329,6 +345,7 @@ namespace Logic.Facades
         {
             public ReadSession Session { get; private set; }
             public CancellationTokenSource TokenSource { get; private set; }
+            public Task ReadTask { get; set; }
 
             public EmulatorState()
             {
@@ -419,7 +436,7 @@ namespace Logic.Facades
                 if (!AllTime.HasValue)
                     return false;
 
-                return dateTime > AllTime.Value;
+                return dateTime > AllTime.Value || ReadTime == AllTime;
             }
 
             public static TimeSpan Min(TimeSpan t1, TimeSpan t2)
