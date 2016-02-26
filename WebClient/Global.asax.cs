@@ -31,6 +31,7 @@ namespace WebClient
             
             builder.RegisterType<DataFacade>().SingleInstance();
             builder.RegisterType<EmulatorFacade>().SingleInstance();
+            builder.RegisterType<LearningFacade>().SingleInstance();
             builder.RegisterType<StatisticsFacade>().SingleInstance();
             builder.RegisterType<ConfigService>().As<IEmulatorConfig>().SingleInstance();
 
