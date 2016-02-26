@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -46,6 +47,7 @@ namespace Logic.Facades
 
         public async Task StartRead()
         {
+            logger.Value.Info("Read is started");
             try
             {
                 await Task.Run(() => InitState());
@@ -55,21 +57,24 @@ namespace Logic.Facades
                     Task.Run(() => DataChunk(state.TokenSource.Token, state.Session), state.TokenSource.Token),
                     Task.Run(() => DataSave(state.TokenSource.Token, state.Session), state.TokenSource.Token),
                     Task.Run(() => UpdateSession(state.TokenSource.Token, state.Session), state.TokenSource.Token));
+
+                logger.Value.Info("Read is completed");
+            }
+            catch (OperationCanceledException)
+            {
+                logger.Value.Info("Read is cancelled");
             }
             catch(Exception ex)
             {
-                state.TokenSource.Cancel();
+                BreakCurrentState();
                 logger.Value.Error(ex.Message, ex);
                 throw;
-            }
-            finally
-            {
-                state.Session.IsComplete = true;
             }
         }
         public async Task StopRead()
         {
             await Task.Run(() => BreakCurrentState());
+            logger.Value.Info("Read has been stopped");
         }
 
         public TimeSpan? GetReadTime()
@@ -91,6 +96,7 @@ namespace Logic.Facades
                 state.Session.Velocity = velocity;
 
             dataFactory.Value.WithRepository<ISettingsRepository>(repo => repo.SetReadVelocity(velocity), true);
+            logger.Value.TraceFormat("ReadVelocity has been changed to {0}", velocity);
         }
 
         public TimeSpan? GetAllTime()
@@ -105,6 +111,7 @@ namespace Logic.Facades
                 state.Session.AllTime = time;
 
             dataFactory.Value.WithRepository<ISettingsRepository>(repo => repo.SetAllTime(time), true);
+            logger.Value.TraceFormat("AllTime has been changed to {0}", time);
         }
 
         private void InitState()
@@ -118,20 +125,29 @@ namespace Logic.Facades
                 dataFactory.Value.WithRepository<ISettingsRepository>(repo =>
                 {
                     newState.Session.ReadTime = repo.GetReadTime() ?? -TimeSpan.FromSeconds(1);
+                    newState.Session.UpdateStopWatch(newState.Session.ReadTime);
+
                     newState.Session.AllTime = repo.GetAllTime();
                     newState.Session.Velocity = repo.GetReadVelocity() ?? 1.0;
                 });
 
                 state = newState;
+                logger.Value.InfoFormat("Init read session: AllTime: {0}\tReadTime: {1}\tReadVelocity:{2}",
+                    newState.Session.AllTime, newState.Session.ReadTime, newState.Session.Velocity);
             }
         }
 
         private void DataRead(CancellationToken token, ReadSession session)
         {
+            var sw = new Stopwatch();
+
             using (var stream = File.OpenRead(readerConfig.Value.FileName))
             using (var reader = new StreamReader(stream))
             using (var csv = new CsvReader(reader, new CsvConfiguration {Delimiter = " "}))
             {
+                sw.Start();
+                logger.Value.Trace("DataRead started");
+
                 while (csv.Read() && !session.IsComplete)
                 {
                     token.ThrowIfCancellationRequested();
@@ -139,28 +155,43 @@ namespace Logic.Facades
                     var rawData = GetRawData(csv);
                     if (session.Finish(rawData.Timestamp))
                         break;
+
                     if (session.InPast(rawData.Timestamp))
                         continue;
-                    if (session.InFuture(rawData.Timestamp))
-                        Thread.Sleep(session.FutureRealTime(rawData.Timestamp));
+
+                    while (session.InFuture(rawData.Timestamp))
+                    {
+                        if (!session.ChunkDataCollection.Any() && !session.RawDataCollection.Any())                        
+                            SetReadTime(session, session.StopWatch());
+
+                        if (token.WaitHandle.WaitOne(ReadSession.Min(TimeSpan.FromSeconds(1), session.FutureRealTime(rawData.Timestamp))))
+                            break;
+                    }
 
                     session.RawDataCollection.Add(rawData, token);
                 }
             }
 
+            token.ThrowIfCancellationRequested();
             session.RawDataCollection.CompleteAdding();
+
+            sw.Stop();
+            logger.Value.TraceFormat("DataRead completed. Elapsed {0}", sw.Elapsed);
         }
         private void DataChunk(CancellationToken token, ReadSession session)
         {
+            var sw = new Stopwatch();
+            logger.Value.Trace("DataChunk started");
+
             var chunk = new List<Data>();
             var readTime = session.StopWatch();
             var realTime = DateTime.Now.TimeOfDay;
 
             foreach (var item in session.RawDataCollection.GetConsumingEnumerable(token))
             {
-                token.ThrowIfCancellationRequested();
+                sw.Start();
 
-                if (session.TimeShift(item.Timestamp) != readTime)
+                if (item.Timestamp != readTime)
                 {
                     if (!chunk.Any())
                         realTime = DateTime.Now.TimeOfDay;
@@ -172,42 +203,74 @@ namespace Logic.Facades
                         chunk.Clear();
                     }
 
-                    readTime = session.TimeShift(item.Timestamp);
+                    readTime = item.Timestamp;
                 }
 
                 var data = GetData(item);
                 chunk.Add(data);
             }
 
+            token.ThrowIfCancellationRequested();
+
             if (chunk.Any())
                 session.ChunkDataCollection.Add(chunk, token);
 
             session.ChunkDataCollection.CompleteAdding();
+
+            sw.Stop();
+            logger.Value.TraceFormat("DataChunk completed. Elapsed {0}", sw.Elapsed);
         }
         private void DataSave(CancellationToken token, ReadSession session)
         {
+            var sw = new Stopwatch();
+            logger.Value.Trace("DataSave started");
+
             foreach (var data in session.ChunkDataCollection.GetConsumingEnumerable(token))
             {
-                var readTime = session.TimeShift(data.Last().Timestamp);
-                dataFactory.Value.WithDataManager(dm =>
-                {
-                    dm.WithRepository<IDataRepository>(repo => repo.Save(data));
-                    dm.WithRepository<ISettingsRepository>(repo => repo.SetReadTime(readTime));
-                }, true);
-                session.ReadTime = readTime;
+                sw.Start();
+
+                dataFactory.Value.WithRepository<IDataRepository>(repo => repo.Save(data));
+                logger.Value.TraceFormat("DataSave: {0} items saved", data.Count);
+
+                SetReadTime(session, data.Last().Timestamp);
             }
+
+            token.ThrowIfCancellationRequested();
+
+            session.IsComplete = true;
+            if (session.AllTime.HasValue)
+                SetReadTime(session, session.AllTime.Value);
+
+            sw.Stop();
+            logger.Value.TraceFormat("DataSave completed. Elapsed {0}", sw.Elapsed);
         }
         private void UpdateSession(CancellationToken token, ReadSession session)
         {
-            while (!session.IsComplete && !token.IsCancellationRequested)
+            logger.Value.Trace("UpdateSession started");
+
+            while (!session.IsComplete)
             {
-                Thread.Sleep(TimeSpan.FromSeconds(30));
+                token.ThrowIfCancellationRequested();
+
+                if (token.WaitHandle.WaitOne(TimeSpan.FromSeconds(30)))
+                    break;
+
+                logger.Value.Trace("Update session");
+
+                var prev = new {session.AllTime, session.Velocity};
                 dataFactory.Value.WithRepository<ISettingsRepository>(repo =>
                 {
                     session.AllTime = repo.GetAllTime();
                     session.Velocity = repo.GetReadVelocity() ?? 1.0;
                 });
+
+                if (prev.AllTime != session.AllTime || Math.Abs(prev.Velocity - session.Velocity) > 1e-10)
+                    logger.Value.InfoFormat("Read settings has been changed: AllTime={0}\tVelocity={1}", session.AllTime,
+                        session.Velocity);
             }
+
+            token.ThrowIfCancellationRequested();
+            logger.Value.Trace("UpdateSession completed");
         }
         private void BreakCurrentState()
         {            
@@ -222,6 +285,12 @@ namespace Logic.Facades
             }            
         }
 
+        private void SetReadTime(ReadSession session, TimeSpan readTime)
+        {
+            dataFactory.Value.WithRepository<ISettingsRepository>(repo => repo.SetReadTime(readTime), true);
+            session.ReadTime = readTime;
+            logger.Value.TraceFormat("ReadTime: moved to {0}\tstopWatch: {1}", readTime, session.StopWatch());
+        }
         private RawData GetRawData(ICsvReaderRow row)
         {
             var rawData = new RawData
@@ -279,7 +348,7 @@ namespace Logic.Facades
             private DateTime start;
 
             private Double velocity;
-            private readonly Object velocityCritical = new Object();
+            private readonly Object stopWatchCritical = new Object();
 
             public Double Velocity
             {
@@ -289,7 +358,7 @@ namespace Logic.Facades
                     if (Math.Abs(velocity - value) < 1e-3)
                         return;
 
-                    lock (velocityCritical)
+                    lock (stopWatchCritical)
                     {
                         elapsed = StopWatch();
                         start = DateTime.Now;
@@ -311,44 +380,51 @@ namespace Logic.Facades
 
             public TimeSpan StopWatch()
             {
-                lock (velocityCritical)
+                lock (stopWatchCritical)
                 {
                     return elapsed + TimeSpan.FromSeconds((DateTime.Now - start).TotalSeconds*Velocity);
                 }
             }
-
-            public TimeSpan TimeShift(TimeSpan dateTime)
+            public void UpdateStopWatch(TimeSpan elapsedTime)
             {
-                return TimeSpan.FromSeconds(dateTime.TotalSeconds);
+                lock (stopWatchCritical)
+                {
+                    elapsed = elapsedTime;
+                    start = DateTime.Now;
+                }
             }
 
             public TimeSpan FutureRealTime(TimeSpan dateTime)
             {
                 // увеличиваем время с запасом, чтобы накопились сообщения для обработки
                 var delay = TimeSpan.FromSeconds(5*Velocity);
-                var sessionTime = TimeShift(dateTime) - StopWatch();
+                var sessionTime = dateTime - StopWatch();
+
+                //масштабирование к реальному времени
                 return TimeSpan.FromSeconds(sessionTime.TotalSeconds/Velocity) + delay;
-                    //масштабирование к реальному времени
             }
 
             public Boolean InPast(TimeSpan dateTime)
             {
-                return TimeShift(dateTime) <= ReadTime;
+                return dateTime <= ReadTime;
             }
-
             public Boolean InFuture(TimeSpan dateTime)
             {
                 // Сокращаем накопление в delay сек
                 var delay = TimeSpan.FromSeconds(5*Velocity);
                 return FutureRealTime(dateTime) > TimeSpan.Zero + delay;
             }
-
             public Boolean Finish(TimeSpan dateTime)
             {
                 if (!AllTime.HasValue)
                     return false;
 
-                return TimeShift(dateTime) > AllTime.Value;
+                return dateTime > AllTime.Value;
+            }
+
+            public static TimeSpan Min(TimeSpan t1, TimeSpan t2)
+            {
+                return t1 <= t2 ? t1 : t2;
             }
         }
         private class RawData
