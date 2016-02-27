@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[User]
 (
 	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
-    [Mac] NCHAR(20) NOT NULL
+    [Mac] CHAR(17) NOT NULL
 )
 
 GO

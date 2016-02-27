@@ -2,8 +2,9 @@
 (
 	[Id] BIGINT NOT NULL IDENTITY,
 	[Timestamp] TIME NOT NULL , 
-    [MAC] CHAR(17) NOT NULL, 
+    [Mac] CHAR(17) NOT NULL, 
     [MessageType] CHAR(1) NULL, 
-    [ContentType] CHAR NULL, 
+    [StreamType] CHAR NULL, 
+    [ReceivedRate] FLOAT NULL, 
     PRIMARY KEY ([Id])
 )

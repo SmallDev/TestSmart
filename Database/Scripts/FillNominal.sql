@@ -10,7 +10,7 @@ USING (VALUES
  ,(4,1,'Z')
  ,(5,1,'N')
  ,(6,1,'L')
- ,(7,2,'C')
+ ,(7,1,'Y')
  ,(8,2,'M')
  ,(9,2,'U')
 ) AS Source ([Id],[PropertyId],[Value])
