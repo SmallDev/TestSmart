@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -315,6 +316,8 @@ namespace Logic.Facades
 
                 MessageType = row[1],
                 StreamType = row[2],
+                Interval = row[5],
+                Received = row[8],
             };
 
             rawData.Timestamp = DateTime.Parse(rawData.Date) + TimeSpan.Parse(rawData.Time) - minDate;
@@ -327,14 +330,26 @@ namespace Logic.Facades
                 Timestamp = rawData.Timestamp,
                 Mac = rawData.Mac,
                 MessageType = rawData.MessageType.GetNullableElementByCode<MessageType>(),
-                StreamType = rawData.StreamType.GetNullableElementByCode<StreamType>(),
+                StreamType = rawData.StreamType.GetNullableElementByCode<StreamType>(),                
             };
 
             if (data.MessageType == null && !String.IsNullOrEmpty(rawData.MessageType))
                 logger.Value.WarnFormat("Message type {0} is unknown", rawData.MessageType);
 
             if (data.StreamType == null && !String.IsNullOrEmpty(rawData.StreamType))
-                logger.Value.WarnFormat("Content type {0} is unknown", rawData.StreamType);
+                logger.Value.WarnFormat("Stream type {0} is unknown", rawData.StreamType);
+
+            TimeSpan interval;          
+            if (!TimeSpan.TryParseExact("05:00.188", "mm\\:ss\\.fff", CultureInfo.InvariantCulture, out interval))
+                logger.Value.WarnFormat("Interval '{0}' parsing fail", rawData.Interval);
+            else
+            {
+                Int32 received;
+                if (!Int32.TryParse(rawData.Received, out received))
+                    logger.Value.WarnFormat("Received '{0}' parsing fail", rawData.Received);
+                else
+                    data.ReceivedRate = received/interval.TotalSeconds;
+            }
 
             return data;
         }
@@ -447,6 +462,8 @@ namespace Logic.Facades
 
             public String MessageType { get; set; }
             public String StreamType { get; set; }
+            public String Interval { get; set; }
+            public String Received { get; set; }
         }
     }
 }

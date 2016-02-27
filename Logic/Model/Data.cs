@@ -9,5 +9,6 @@ namespace Logic.Model
 
         public MessageType? MessageType { get; set; }
         public StreamType? StreamType { get; set; }
+        public Double? ReceivedRate { get; set; }
     }
 }

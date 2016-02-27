@@ -60,6 +60,11 @@ namespace Logic.Dal.NHibernate.Repositories
                 {
                     ColumnName = "StreamType",
                     DataType = typeof (String)
+                },
+                new DataColumn
+                {
+                    ColumnName = "ReceivedRate",
+                    DataType = typeof (Double)
                 }
             });
 
@@ -68,7 +73,8 @@ namespace Logic.Dal.NHibernate.Repositories
                 table.Rows.Add(null,
                     item.Timestamp, item.Mac,
                     item.MessageType.HasValue ? item.MessageType : (Object) DBNull.Value,
-                    item.StreamType.HasValue ? item.StreamType : (Object) DBNull.Value);
+                    item.StreamType.HasValue ? item.StreamType : (Object) DBNull.Value,
+                    item.ReceivedRate.HasValue ? item.ReceivedRate : (Object) DBNull.Value);
             }
 
             return table;
