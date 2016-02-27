@@ -83,6 +83,7 @@
     <Build Include="Functions\UnpivotData.sql" />
     <Build Include="Procedures\LearnIterate.sql" />
     <Build Include="Views\Profiles_View.sql" />
+    <Build Include="Procedures\ClustersSize.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Script.PostDeployment.sql" />

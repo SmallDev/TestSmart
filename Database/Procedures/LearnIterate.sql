@@ -2,8 +2,8 @@
 	@learning int
 AS
 BEGIN
-	declare @H table(UserId int, ClusterId int, PropertyId int, NominalId int, Propability float)
-	insert into @H(UserId, ClusterId, PropertyId, NominalId, Propability)
+	declare @H table(UserId int, ClusterId int, PropertyId int, NominalId int, Probability float)
+	insert into @H(UserId, ClusterId, PropertyId, NominalId, Probability)
 	select up.UserId, cp.ClusterId, cp.PropertyId, cp.NominalId, up.Probability * cp.Probability / ll.Probability
 	from
 		dbo.UnpivotData(@learning) unp
@@ -16,19 +16,19 @@ BEGIN
 	begin tran
 		ALTER INDEX [PK_Profiles_View] ON [dbo].[Profiles_View] DISABLE
 
-		update up set Probability = np.Propability
+		update up set Probability = np.Probability
 		from UserProfile up
-			inner hash join (select h1.UserId, h1.ClusterId, SUM(h1.Propability) / h2.Propability as Propability from @H h1    
-							inner join (select UserId, SUM(Propability) Propability from @H group by UserId) h2 on h1.UserId = h2.UserId
-						group by h1.UserId, h1.ClusterId, h2.Propability) np 
+			inner hash join (select h1.UserId, h1.ClusterId, SUM(h1.Probability) / h2.Probability as Probability from @H h1    
+							inner join (select UserId, SUM(Probability) Probability from @H group by UserId) h2 on h1.UserId = h2.UserId
+						group by h1.UserId, h1.ClusterId, h2.Probability) np 
 				on np.UserId = up.UserId and np.ClusterId = up.ClusterId
 
 		update cp set Probability = np.Probability
 		from ClusterProfile cp
-			inner hash join (select h1.ClusterId, h1.PropertyId, h1.NominalId, SUM(h1.Propability)/h2.Propability as Probability from @H h1    
-							inner join (select ClusterId, PropertyId, SUM(Propability) Propability from @H group by ClusterId, PropertyId) h2 
+			inner hash join (select h1.ClusterId, h1.PropertyId, h1.NominalId, SUM(h1.Probability)/h2.Probability as Probability from @H h1    
+							inner join (select ClusterId, PropertyId, SUM(Probability) Probability from @H group by ClusterId, PropertyId) h2 
 							on h1.ClusterId = h2.ClusterId and h1.PropertyId = h2.PropertyId
-						group by h1.ClusterId, h1.PropertyId, h1.NominalId, h2.Propability) np
+						group by h1.ClusterId, h1.PropertyId, h1.NominalId, h2.Probability) np
 				on np.ClusterId = cp.ClusterId and np.PropertyId = cp.PropertyId and np.NominalId = cp.NominalId
 
 		ALTER INDEX [PK_Profiles_View] ON [dbo].[Profiles_View] REBUILD

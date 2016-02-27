@@ -82,6 +82,7 @@
     <Compile Include="Dal\NHibernate\Models\SettingsDto.cs" />
     <Compile Include="Dal\NHibernate\Repositories\LearingRepository.cs" />
     <Compile Include="Dal\NHibernate\Repositories\SqlExtensions.cs" />
+    <Compile Include="Dal\Repositories\ClusterWith.cs" />
     <Compile Include="Dal\Repositories\ILearningRepository.cs" />
     <Compile Include="Dal\Repositories\ISettingsRepository.cs" />
     <Compile Include="Dal\Repositories\IClusterRepository.cs" />
@@ -90,11 +91,11 @@
     <Compile Include="Dal\Repositories\IRepository.cs" />
     <Compile Include="Dal\Repositories\IUserRepository.cs" />
     <Compile Include="Dal\NHibernate\Repositories\SqlDataRepository.cs" />
-    <Compile Include="Dal\NHibernate\Repositories\NHibernateClusterRepository.cs" />
+    <Compile Include="Dal\NHibernate\Repositories\ClusterRepository.cs" />
     <Compile Include="Dal\NHibernate\NHibernateDataManagerFactory.cs" />
     <Compile Include="Dal\NHibernate\Repositories\NHibernateRepositoryBase.cs" />
     <Compile Include="Dal\NHibernate\Repositories\NHibernateSettingsRepository.cs" />
-    <Compile Include="Dal\NHibernate\Repositories\NHibernateUserRepository.cs" />
+    <Compile Include="Dal\NHibernate\Repositories\UserRepository.cs" />
     <Compile Include="Dal\NHibernate\NHibernateDataManager.cs" />
     <Compile Include="Facades\MathExtension.cs" />
     <Compile Include="Model\Learning.cs" />

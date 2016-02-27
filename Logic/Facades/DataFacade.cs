@@ -29,7 +29,7 @@ namespace Logic.Facades
         public ICollection<Cluster> GetClusters(Int32 page, Int32 size)
         {
             return Enumerable.Range(1, 5)
-                .Select(i => new Cluster {Id = i, Name = "Кластер " + i, UsersCount = 5})
+                .Select(i => new Cluster {Id = i, Name = "Кластер " + i, Size = 5})
                 .ToList();
         }
     }

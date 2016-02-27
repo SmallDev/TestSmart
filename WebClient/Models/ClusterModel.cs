@@ -7,13 +7,13 @@ namespace WebClient.Models
     {
         public Int32 Id { get; set; }
         public String Name { get; set; }
-        public Int32 UsersCount { get; set; }
+        public Double UsersCount { get; set; }
 
         public ClusterModel(Cluster cluster)
         {
             Id = cluster.Id;
             Name = cluster.Name;
-            UsersCount = cluster.UsersCount;
+            UsersCount = cluster.Size;
         }
     }
 }
