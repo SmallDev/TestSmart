@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
+using Logic.Dal.NHibernate.Models;
 using Logic.Dal.Repositories;
 using Logic.Model;
 using NHibernate;
+using NHibernate.Linq;
 
 namespace Logic.Dal.NHibernate.Repositories
 {
@@ -16,9 +19,18 @@ namespace Logic.Dal.NHibernate.Repositories
             this.connectionFunc = connectionFunc;
         }
 
-        public IList<User> GetUsers()
+        public User GetUser(UserFilter filter)
         {
-            throw new NotImplementedException();
+            return Session.Get<UserDto>(filter.Id);
+        }
+
+        public IList<User> GetUsers(UserFilter filter)
+        {
+            var query = Session.Query<UserDto>().Where(u => u.Mac.StartsWith(filter.Mac));
+            if (filter.PageSize != 0)
+                query = query.Skip((filter.PageNumber - 1)*filter.PageSize).Take(filter.PageSize);
+            
+            return query.ToList().Select(u => (User) u).ToList();
         }
     }
 }

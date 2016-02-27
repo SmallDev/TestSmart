@@ -20,41 +20,27 @@ namespace WebClient.Controllers
     {
         private readonly Lazy<EmulatorFacade> emulatorFacade;
         private readonly Lazy<LearningFacade> learningFacade;
-        private readonly Lazy<StatisticsFacade> tempFacade;
+        private readonly Lazy<StatisticsFacade> statisticsFacade;
         private readonly Lazy<DataFacade> facade;
 
-        public HomeController(Func<DataFacade> facade, Func<StatisticsFacade> tempFacade, 
+        public HomeController(Func<DataFacade> facade, Func<StatisticsFacade> statisticsFacade, 
             Func<EmulatorFacade> emulatorFacade, Func<LearningFacade> learningFacade)
         {
             this.emulatorFacade = new Lazy<EmulatorFacade>(emulatorFacade);
             this.learningFacade = new Lazy<LearningFacade>(learningFacade);
-            this.tempFacade = new Lazy<StatisticsFacade>(tempFacade);
+            this.statisticsFacade = new Lazy<StatisticsFacade>(statisticsFacade);
             this.facade = new Lazy<DataFacade>(facade);
         }
 
         public async virtual Task<ActionResult> Index()
         {
-            var cl = tempFacade.Value.GetClusters();
-            var ccc = tempFacade.Value.GetCluster(1);
+            var cls = statisticsFacade.Value.GetClusters();
+            var cl = statisticsFacade.Value.GetCluster(1);
 
-            //tempFacade.Value.StartEmulate();
-            //var stat = new Statistics();
-            //while (stat.CalculatePersentage < 1)
-            //{
-            //    Thread.Sleep(500);
-            //    stat = tempFacade.Value.ReadStatistics();
-            //    Debug.WriteLine("Read: {0}\tCalc: {1}", stat.ReadPercentage, stat.CalculatePersentage);
-            //}
-
-            //tempFacade.Value.StartEmulate();
-            //stat = new Statistics();
-            //while (stat.CalculatePersentage < 1)
-            //{
-            //    Thread.Sleep(500);
-            //    stat = tempFacade.Value.ReadStatistics();
-            //    Debug.WriteLine("Read: {0}\tCalc: {1}", stat.ReadPercentage, stat.CalculatePersentage);
-            //}
-
+            var uu = statisticsFacade.Value.GetUsers("00", 1, 10);
+            var u1 = statisticsFacade.Value.GetUser(1);
+            var allu = statisticsFacade.Value.GetUsers("00");
+            
             var model = new HomeModel();
             await Task.WhenAll(
                 Task.Run(() => model.Clusters = facade.Value.GetClusters(1, 0).Select(c => new ClusterModel(c)).ToList()),

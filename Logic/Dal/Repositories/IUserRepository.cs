@@ -5,6 +5,7 @@ namespace Logic.Dal.Repositories
 {
     public interface IUserRepository : IRepository
     {
-        IList<User> GetUsers();
+        User GetUser(UserFilter filter);
+        IList<User> GetUsers(UserFilter filter);
     }
 }

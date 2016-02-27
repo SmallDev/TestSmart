@@ -30,18 +30,23 @@ namespace Logic.Facades
         public IList<Cluster> GetClusters()
         {
             return dataFactory.Value.WithRepository<IList<Cluster>, IClusterRepository>(
-                repo => repo.GetList(new ClusterWith().WithSize()));
+                repo => repo.GetList(new ClusterFilter().WithSize()));
         }
         public Cluster GetCluster(Int32 id)
         {
             return dataFactory.Value.WithRepository<Cluster, IClusterRepository>(
-                repo => repo.Get(id, new ClusterWith().WithSize()));
+                repo => repo.Get(new ClusterFilter().Id(id).WithSize()));
         }
 
-        public IList<User> GetUsers(String macFilter, Int32 page, Int32 size)
+        public User GetUser(Int32 id)
+        {
+            return dataFactory.Value.WithRepository<User, IUserRepository>(
+                repo => repo.GetUser(new UserFilter().Id(id)));
+        }
+        public IList<User> GetUsers(String macFilter, Int32 page = 1, Int32 size = 0)
         {
             return dataFactory.Value.WithRepository<IList<User>, IUserRepository>(
-                repo => repo.GetUsers());
+                repo => repo.GetUsers(new UserFilter().Mac(macFilter).PageNumber(page).PageSize(size)));
         }
     }
 }

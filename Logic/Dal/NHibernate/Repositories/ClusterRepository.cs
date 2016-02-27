@@ -21,12 +21,12 @@ namespace Logic.Dal.NHibernate.Repositories
             this.connectionFunc = connectionFunc;
         }
 
-        public IList<Cluster> GetList(ClusterWith with)
+        public IList<Cluster> GetList(ClusterFilter filter)
         {
             var clusters = Session.Query<ClusterDto>().ToList()
                 .Select(dto => (Cluster) dto).ToDictionary(c => c.Id, c => c);
 
-            if (with.WithSize)
+            if (filter.WithSize)
                 connectionFunc().WithCommand(command =>
                 {
                     command.CommandType = CommandType.StoredProcedure;
@@ -36,16 +36,16 @@ namespace Logic.Dal.NHibernate.Repositories
 
             return clusters.Values.ToList();
         }
-        public Cluster Get(Int32 id, ClusterWith with)
+        public Cluster Get(ClusterFilter filter)
         {
-            Cluster cluster = Session.Get<ClusterDto>(id);
+            Cluster cluster = Session.Get<ClusterDto>(filter.Id);
 
-            if (with.WithSize)
+            if (filter.WithSize)
                 cluster.Size = connectionFunc().WithCommand(command =>
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.CommandText = "dbo.ClustersSize";
-                    command.Parameters.AddWithValue("id", id);
+                    command.Parameters.AddWithValue("id", filter.Id);
                     return SizeReader(command.ExecuteReader()).First().Item2;
                 });
 
