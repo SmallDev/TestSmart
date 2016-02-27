@@ -1,17 +1,22 @@
 ﻿<!DOCTYPE html>
-
 <html>
     <head>
         <meta name="viewport" content="width=device-width" />
         <title>@ViewBag.Title</title>
+        @Styles.Render("~/bundles/css")
     </head>
     <body>
         @Html.Partial(MVC.Shared.Views.Header)
         <div>
             @RenderBody()
         </div>
-        @Html.Partial(MVC.Shared.Views.Footer)
-        @Html.Partial(MVC.Shared.Views.Scripts)
-        @RenderSection("Scripts", false)
+        <footer class="footer">
+            <div class="container">
+                <p class="text-muted">@DateTime.Now.Year - Smart Spy</p>
+            </div>
+        </footer>
     </body>
+    @Scripts.Render("~/bundles/lib")
+    @RenderSection("Scripts", false)
+
 </html>

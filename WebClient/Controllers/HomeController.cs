@@ -18,17 +18,25 @@ namespace WebClient.Controllers
     // 
     public partial class HomeController : Controller
     {
+        private readonly Lazy<EmulatorFacade> emulatorFacade;
+        private readonly Lazy<LearningFacade> learningFacade;
         private readonly Lazy<StatisticsFacade> tempFacade;
         private readonly Lazy<DataFacade> facade;
 
-        public HomeController(Func<DataFacade> facade, Func<StatisticsFacade> tempFacade)
+        public HomeController(Func<DataFacade> facade, Func<StatisticsFacade> tempFacade, 
+            Func<EmulatorFacade> emulatorFacade, Func<LearningFacade> learningFacade)
         {
+            this.emulatorFacade = new Lazy<EmulatorFacade>(emulatorFacade);
+            this.learningFacade = new Lazy<LearningFacade>(learningFacade);
             this.tempFacade = new Lazy<StatisticsFacade>(tempFacade);
             this.facade = new Lazy<DataFacade>(facade);
         }
 
         public async virtual Task<ActionResult> Index()
         {
+            var cl = tempFacade.Value.GetClusters();
+            var ccc = tempFacade.Value.GetCluster(1);
+
             //tempFacade.Value.StartEmulate();
             //var stat = new Statistics();
             //while (stat.CalculatePersentage < 1)
