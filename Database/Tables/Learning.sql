@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[Learning]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [From] DATETIME NOT NULL, 
+    [To] DATETIME NOT NULL, 
+    [Loglikelihood] FLOAT NULL, 
+    [Timestamp] DATETIME NOT NULL DEFAULT GETDATE()
+)
