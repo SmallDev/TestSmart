@@ -4,7 +4,8 @@ namespace Logic.Model
 {
     public class Statistics
     {
-        public Double? ReadPercentage { get; set; }
-        public Double? CalculatePersentage { get; set; }
+        public TimeSpan ReadTime { get; set; }
+        public TimeSpan CalcTime { get; set; }
+        public TimeSpan AllTime { get; set; }
     }
 }

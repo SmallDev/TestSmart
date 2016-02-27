@@ -19,12 +19,9 @@ namespace Logic.Facades
             var result = new Statistics();
             dataFactory.Value.WithRepository<ISettingsRepository>(repo =>
             {
-                var allTime = repo.GetAllTime();
-                if (allTime == null)
-                    return;
-
-                result.ReadPercentage = (repo.GetReadTime() ?? TimeSpan.Zero).TotalSeconds/allTime.Value.TotalSeconds;
-                result.ReadPercentage = (repo.GetCalcTime() ?? TimeSpan.Zero).TotalSeconds/allTime.Value.TotalSeconds;
+                result.AllTime = repo.GetAllTime() ?? TimeSpan.Zero;
+                result.ReadTime = repo.GetReadTime() ?? TimeSpan.Zero;
+                result.CalcTime = repo.GetCalcTime() ?? TimeSpan.Zero;
             });
 
             return result;         
