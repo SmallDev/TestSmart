@@ -48,5 +48,10 @@ namespace WebClient.Controllers
 
             return View(MVC.Home.Views.Index, model);
         }
+
+        public ActionResult GetControlPanel()
+        {
+            return View("ControlPanel");
+        }
     }
 }

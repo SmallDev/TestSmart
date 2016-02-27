@@ -21,6 +21,7 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -180,6 +181,20 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Content Include="assets\bootstrap\bootstrap-theme.css" />
     <Content Include="assets\bootstrap\bootstrap.css" />
+    <Content Include="assets\flipclock.css" />
+    <Content Include="assets\kendo\content\gauge\gauge-container-partial-small.png" />
+    <Content Include="assets\kendo\content\gauge\gauge-container-partial.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\kendo\content\gauge\gauge-container.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\kendo\content\gauge\linear-gauge-container-h.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\kendo\content\gauge\linear-gauge-container.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="assets\kendo\kendo.bootstrap.min.css" />
     <Content Include="assets\kendo\kendo.common-bootstrap.min.css" />
     <Content Include="assets\Site.css" />
@@ -189,6 +204,8 @@
     <Content Include="Config\nlog.config" />
     <None Include="Templates\T4MVC.tt.settings.xml" />
     <None Include="Scripts\jquery-1.11.3.intellisense.js" />
+    <Content Include="Scripts\app\ControlPanelViewModel.js" />
+    <Content Include="Scripts\flipclock.min.js" />
     <Content Include="Scripts\jquery-1.11.3.js" />
     <Content Include="Scripts\knockout-3.3.0.js" />
     <Content Include="Web.config" />
@@ -196,6 +213,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="Views\Web.config" />
+    <Content Include="Views\Shared\ControlPanel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Logic\Logic.csproj">

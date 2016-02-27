@@ -1,0 +1,33 @@
+﻿<div id="control-painel-block" class="container-fluid control-panel">
+    <div class="col-lg-7 col-md-7 l-settings-block">
+        <div class="col-lg-4 col-md-4">
+            
+            <h4 class="velocity-header">Velocity</h4>
+            
+            <div class="speed-gauge-container">
+                <span data-role="radialgauge"
+                      data-scale="{ min: 0, max: 5 }"
+                      data-bind="visible: isVisible,
+                          value: selectedNumber"
+                      class="speed-gauge"></span>
+            </div>
+
+        </div>
+        
+        <div class="col-lg-1 col-md-1 speed-control-block">
+            <h4>Speed</h4> 
+            <h4>control</h4>
+            <input class="speed-gauge-value" data-role="slider"  data-orientation= "vertical"  data-min="0" data-max="5" data-small-step="0.5" data-large-step="1" data-show-buttons="false" data-bind="value: selectedNumber">
+        </div>
+    
+        <div class="col-lg-7 col-md-7">
+            
+            <h1 class="all-time-header"> All Time Counter</h1>
+            <div class="col-lg-12 col-md-12">
+                <div id="all-time-clock"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5 col-md-5 r-settings-block"></div>
+</div>

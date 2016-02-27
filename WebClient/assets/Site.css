@@ -9,3 +9,70 @@
 .footer p {
     margin-top: 10px;
 }
+
+.control-panel{
+    border-color: gray;
+    border:solid;
+    border-width:2px;
+    border-radius:15px;
+    height:280px;
+    padding: 10px;
+}
+
+.l-settings-block
+{
+    border-color: gray;
+    border-right:solid;
+    border-width:1px;
+    height:100%;
+    text-align: center;
+}
+
+.r-settings-block
+{
+    border-color: gray;
+    border-left:solid;
+    border-width:1px;
+    height:100%;
+}
+
+.speed-gauge-container{
+    background: transparent url("/assets/kendo/content/gauge/gauge-container-partial-small.png") no-repeat 50% 50%;
+    width: 225px;
+    height: 225px;
+    text-align: center;
+    margin: 0 auto 30px auto;
+    margin-top: 5px;
+}
+
+.speed-gauge {
+    display: inline-block;
+    width: 180px;
+    height: 180px;
+    margin: 0 auto;
+}
+
+.velocity-header {
+    margin:3px;
+}
+
+ .speed-gauge-container .k-slider {
+    margin-top: -40px;
+    width: 120px;
+}
+
+ .speed-gauge-value{
+     height:180px;
+     margin-top:10px;
+ }
+
+ .speed-control-block h4{
+     margin:1px;
+ }
+
+ .all-time-header {
+     margin-bottom: 50px;
+     margin-top: 30px;
+ }
+
+

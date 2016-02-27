@@ -8,7 +8,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{b7e5755b-ada6-4c39-b9e8-6ec9d3ffbf76}</ProjectGuid>
-    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql100DatabaseSchemaProvider</DSP>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql120DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
@@ -92,8 +92,5 @@
     <None Include="Scripts\FillProperties.sql" />
     <None Include="Database.publish.xml" />
     <None Include="Scripts\FillNominal.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <RefactorLog Include="Database.refactorlog" />
   </ItemGroup>
 </Project>

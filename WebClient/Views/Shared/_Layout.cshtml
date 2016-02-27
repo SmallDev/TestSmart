@@ -7,7 +7,9 @@
     </head>
     <body>
         @Html.Partial(MVC.Shared.Views.Header)
-        <div>
+        <div class="container-fluid">
+            @Html.Partial("ControlPanel")
+
             @RenderBody()
         </div>
         <footer class="footer">
@@ -15,8 +17,21 @@
                 <p class="text-muted">@DateTime.Now.Year - Smart Spy</p>
             </div>
         </footer>
-    </body>
+
     @Scripts.Render("~/bundles/lib")
+    @Scripts.Render("~/bundles/app")
     @RenderSection("Scripts", false)
 
+    <script type="text/javascript">
+        $(document).ready(function createGauge() {
+            
+
+            var allTimeClock = $('#all-time-clock').FlipClock({});
+
+            var viewModel = kendo.observable(new ControlPanelViewModel(allTimeClock));
+            kendo.bind($("#control-painel-block"), viewModel);
+        });
+
+    </script>
+    </body>
 </html>
