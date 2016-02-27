@@ -10,11 +10,11 @@ BEGIN
 		inner join [User] u on u.Mac = unp.Mac
 		inner join [Nominal] n on unp.PropertyId = n.PropertyId and unp.Value = n.Value
 		inner join UserProfile up on u.Id = up.UserId
-		inner join ClusterProfile cp on cp.ClusterId = up.ClusterId and cp.PropertyId = n.PropertyId and cp.NominalId = n.Id
-		inner hash join Profiles_View ll WITH (NOEXPAND) on ll.UserId = up.UserId and cp.PropertyId = ll.PropertyId and cp.NominalId = ll.NominalId
+		inner join ClusterNProfile cp on cp.ClusterId = up.ClusterId and cp.PropertyId = n.PropertyId and cp.NominalId = n.Id
+		inner hash join Profiles_NView ll WITH (NOEXPAND) on ll.UserId = up.UserId and cp.PropertyId = ll.PropertyId and cp.NominalId = ll.NominalId
 
 	begin tran
-		ALTER INDEX [PK_Profiles_View] ON [dbo].[Profiles_View] DISABLE
+		ALTER INDEX [PK_Profiles_NView] ON [dbo].[Profiles_NView] DISABLE
 
 		update up set Probability = np.Probability
 		from UserProfile up
@@ -24,13 +24,13 @@ BEGIN
 				on np.UserId = up.UserId and np.ClusterId = up.ClusterId
 
 		update cp set Probability = np.Probability
-		from ClusterProfile cp
+		from ClusterNProfile cp
 			inner hash join (select h1.ClusterId, h1.PropertyId, h1.NominalId, SUM(h1.Probability)/h2.Probability as Probability from @H h1    
 							inner join (select ClusterId, PropertyId, SUM(Probability) Probability from @H group by ClusterId, PropertyId) h2 
 							on h1.ClusterId = h2.ClusterId and h1.PropertyId = h2.PropertyId
 						group by h1.ClusterId, h1.PropertyId, h1.NominalId, h2.Probability) np
 				on np.ClusterId = cp.ClusterId and np.PropertyId = cp.PropertyId and np.NominalId = cp.NominalId
 
-		ALTER INDEX [PK_Profiles_View] ON [dbo].[Profiles_View] REBUILD
+		ALTER INDEX [PK_Profiles_NView] ON [dbo].[Profiles_NView] REBUILD
 	commit
 END

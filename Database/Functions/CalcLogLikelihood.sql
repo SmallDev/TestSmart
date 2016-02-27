@@ -10,6 +10,6 @@ BEGIN
 		UnpivotData(@learning) unp
 		inner join [User] u with(nolock) on u.Mac = unp.Mac
 		inner join [Nominal] n on unp.PropertyId = n.PropertyId and unp.Value = n.Value
-		inner merge join Profiles_View ll WITH (NOEXPAND)
+		inner merge join Profiles_NView ll WITH (NOEXPAND)
 	on ll.UserId = u.Id and ll.PropertyId = n.PropertyId and ll.NominalId = n.Id)
 END
