@@ -7,8 +7,8 @@ BEGIN
 	begin tran
 		insert into [User](Mac)
 		output inserted.Id INTO @users
-		select distinct l.MAC from [User] u
-			right join LearningData(@learning) l on l.MAC = u.Mac
+		select distinct l.Mac from [User] u
+			right join LearningData(@learning) l on l.Mac = u.Mac
 		where u.Id is null
 
 		ALTER INDEX [PK_Profiles_View] ON [dbo].[Profiles_View] DISABLE

@@ -7,7 +7,7 @@ BEGIN
 	select up.UserId, cp.ClusterId, cp.PropertyId, cp.NominalId, up.Probability * cp.Probability / ll.Probability
 	from
 		dbo.UnpivotData(@learning) unp
-		inner join [User] u on u.Mac = unp.MAC
+		inner join [User] u on u.Mac = unp.Mac
 		inner join [Nominal] n on unp.PropertyId = n.PropertyId and unp.Value = n.Value
 		inner join UserProfile up on u.Id = up.UserId
 		inner join ClusterProfile cp on cp.ClusterId = up.ClusterId and cp.PropertyId = n.PropertyId and cp.NominalId = n.Id

@@ -47,7 +47,7 @@ namespace Logic.Dal.NHibernate.Repositories
                 },
                 new DataColumn
                 {
-                    ColumnName = "MAC",
+                    ColumnName = "Mac",
                     DataType = typeof (String),
                     MaxLength = 17
                 },
@@ -58,7 +58,7 @@ namespace Logic.Dal.NHibernate.Repositories
                 },
                 new DataColumn
                 {
-                    ColumnName = "ContentType",
+                    ColumnName = "StreamType",
                     DataType = typeof (String)
                 }
             });
@@ -68,7 +68,7 @@ namespace Logic.Dal.NHibernate.Repositories
                 table.Rows.Add(null,
                     item.Timestamp, item.Mac,
                     item.MessageType.HasValue ? item.MessageType : (Object) DBNull.Value,
-                    item.ContentType.HasValue ? item.ContentType : (Object) DBNull.Value);
+                    item.StreamType.HasValue ? item.StreamType : (Object) DBNull.Value);
             }
 
             return table;

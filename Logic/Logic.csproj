@@ -107,7 +107,7 @@
     <Compile Include="Facades\IEmulatorConfig.cs" />
     <Compile Include="Facades\LearningFacade.cs" />
     <Compile Include="Facades\StatisticsFacade.cs" />
-    <Compile Include="Model\ContentType.cs" />
+    <Compile Include="Model\StreamType.cs" />
     <Compile Include="Model\MessageType.cs" />
     <Compile Include="Model\Statistics.cs" />
     <Compile Include="Model\Cluster.cs" />

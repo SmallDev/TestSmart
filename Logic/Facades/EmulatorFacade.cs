@@ -327,13 +327,13 @@ namespace Logic.Facades
                 Timestamp = rawData.Timestamp,
                 Mac = rawData.Mac,
                 MessageType = rawData.MessageType.GetNullableElementByCode<MessageType>(),
-                ContentType = rawData.StreamType.GetNullableElementByCode<ContentType>(),
+                StreamType = rawData.StreamType.GetNullableElementByCode<StreamType>(),
             };
 
             if (data.MessageType == null && !String.IsNullOrEmpty(rawData.MessageType))
                 logger.Value.WarnFormat("Message type {0} is unknown", rawData.MessageType);
 
-            if (data.ContentType == null && !String.IsNullOrEmpty(rawData.StreamType))
+            if (data.StreamType == null && !String.IsNullOrEmpty(rawData.StreamType))
                 logger.Value.WarnFormat("Content type {0} is unknown", rawData.StreamType);
 
             return data;
