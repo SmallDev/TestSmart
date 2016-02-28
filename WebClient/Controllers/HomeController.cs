@@ -51,7 +51,12 @@ namespace WebClient.Controllers
 
         public ActionResult GetControlPanel()
         {
-            return View("ControlPanel");
+            return View("ControlPanel", GetControlData());
+        }
+
+        public JsonResult GetControlData()
+        {
+            return Json(new { velocity = 2, allTime = "00:10:00", calcTime = "00:01:00", readTime= "00:08:00" });
         }
     }
 }
