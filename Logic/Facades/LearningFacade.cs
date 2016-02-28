@@ -60,6 +60,12 @@ namespace Logic.Facades
             await BreakCurrentState();
             logger.Value.Info("Learning has been stopped");
         }
+        public TimeSpan? GetCalcTime()
+        {
+            return state != null
+                ? state.Session.CalcTime
+                : dataFactory.Value.WithRepository<TimeSpan?, ISettingsRepository>(repo => repo.GetCalcTime());
+        }
 
         private LearningState InitState()
         {

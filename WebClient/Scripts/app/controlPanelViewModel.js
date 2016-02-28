@@ -20,12 +20,12 @@
     };
 
     function setControlData(that, data) {
-        that.set("velocity", data.velocity);
-        that.set("allTime", data.allTime);
+        that.set("velocity", data.Velocity);
+        that.set("allTime", data.AllTime);
 
         var gauge = $("#ctr-linear-progress").data("kendoLinearGauge");
-        gauge.pointers[0].value(Number(data.calcTime.substring(3, 5)));
-        gauge.pointers[1].value(Number(data.readTime.substring(3, 5)));
+        gauge.pointers[0].value(Number(data.CalcTime.substring(3, 5)));
+        gauge.pointers[1].value(Number(data.ReadTime.substring(3, 5)));
     }
 
     function getControlDataWorker(that) {
@@ -36,7 +36,7 @@
                 if (!that.updateIsWorking)
                     return;
 
-                setControlData(that, data);
+                setControlData(that, data.Result);
                 setTimeout(function () { getControlDataWorker(that); }, 1000);
             },
             cache: false

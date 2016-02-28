@@ -73,12 +73,20 @@ namespace WebClient.Controllers
         public class ActionNamesClass
         {
             public readonly string Index = "Index";
+            public readonly string Start = "Start";
+            public readonly string Stop = "Stop";
+            public readonly string GetControlPanel = "GetControlPanel";
+            public readonly string GetControlData = "GetControlData";
         }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionNameConstants
         {
             public const string Index = "Index";
+            public const string Start = "Start";
+            public const string Stop = "Stop";
+            public const string GetControlPanel = "GetControlPanel";
+            public const string GetControlData = "GetControlData";
         }
 
 
@@ -107,11 +115,55 @@ namespace WebClient.Controllers
         partial void IndexOverride(T4MVC_System_Web_Mvc_ActionResult callInfo);
 
         [NonAction]
-        public override System.Threading.Tasks.Task<System.Web.Mvc.ActionResult> Index()
+        public override System.Web.Mvc.ActionResult Index()
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Index);
             IndexOverride(callInfo);
-            return System.Threading.Tasks.Task.FromResult(callInfo as System.Web.Mvc.ActionResult);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void StartOverride(T4MVC_System_Web_Mvc_JsonResult callInfo);
+
+        [NonAction]
+        public override System.Web.Mvc.JsonResult Start()
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_JsonResult(Area, Name, ActionNames.Start);
+            StartOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void StopOverride(T4MVC_System_Web_Mvc_JsonResult callInfo);
+
+        [NonAction]
+        public override System.Web.Mvc.JsonResult Stop()
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_JsonResult(Area, Name, ActionNames.Stop);
+            StopOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void GetControlPanelOverride(T4MVC_System_Web_Mvc_ActionResult callInfo);
+
+        [NonAction]
+        public override System.Web.Mvc.ActionResult GetControlPanel()
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.GetControlPanel);
+            GetControlPanelOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void GetControlDataOverride(T4MVC_System_Web_Mvc_JsonResult callInfo);
+
+        [NonAction]
+        public override System.Web.Mvc.JsonResult GetControlData()
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_JsonResult(Area, Name, ActionNames.GetControlData);
+            GetControlDataOverride(callInfo);
+            return callInfo;
         }
 
     }
