@@ -36,7 +36,7 @@
                 if (!that.updateIsWorking)
                     return;
 
-                setControlData(that, data.Result);
+                setControlData(that, data);
                 setTimeout(function () { getControlDataWorker(that); }, 1000);
             },
             cache: false

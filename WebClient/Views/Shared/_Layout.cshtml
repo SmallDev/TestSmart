@@ -9,7 +9,7 @@
     <body>
         @Html.Partial(MVC.Shared.Views.Header)
         <div class="container-fluid main">
-            <div class="ctr-scroll-block">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-right right-cp-block">
                 @Html.Action(MVC.Home.GetControlPanel())
             </div>
             @RenderBody()
