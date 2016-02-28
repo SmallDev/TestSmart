@@ -17,7 +17,7 @@
     border-radius:15px;
     height:280px;
     padding: 10px;
-    width:1500px;
+    width:1350px;
 }
 
 
@@ -66,6 +66,7 @@
  .speed-gauge-value{
      height:180px;
      margin-top:10px;
+     margin-left: 30px;
  }
 
  .speed-control-block h4{
@@ -101,6 +102,9 @@
 .start-button {
     margin-top: 10px;
     width: 300px;
+}
+.all-time-label{
+    margin-bottom: 30px;
 }
 
 
