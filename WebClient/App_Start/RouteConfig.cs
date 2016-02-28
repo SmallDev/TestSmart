@@ -1,4 +1,6 @@
-﻿using System.ServiceModel.Activation;
+﻿using System;
+using System.ServiceModel.Activation;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using WebClient.Services;
@@ -13,19 +15,42 @@ namespace WebClient
             routes.LowercaseUrls = true;
 
             routes.MapRoute("Clusters", "cluster", MVC.Cluster.GetList());
-            routes.MapRoute("Cluster", "cluster/{id}", MVC.Cluster.Get());
+            routes.MapRoute("Cluster", "cluster/{id}", MVC.Cluster.Get(),
+                constraints: new {id = @"\d+"});
 
             routes.MapRoute("Users", "user", MVC.User.GetList());
-            routes.MapRoute("User", "user/{id}", MVC.User.Get());
+            routes.MapRoute("User", "user/{id}", MVC.User.Get(),
+                constraints: new {id = @"\d+"});
 
-            routes.MapRoute(
-                name: "Default",
-                url: "{controller}/{action}/{id}",
-                defaults: new { controller = MVC.Home.Name, action = MVC.Home.ActionNames.Index, id = UrlParameter.Optional }
-            );
+            routes.MapRoute("Default", "{controller}/{action}/{id}",
+                new
+                {
+                    area = String.Empty,
+                    controller = MVC.Home.Name,
+                    action = MVC.Home.ActionNames.Index,
+                    id = UrlParameter.Optional
+                },
+                new {controller = new NotEqual("api")});
 
             routes.Add("emulator", new ServiceRoute("api/emulator",
                 new DependencyHostFactory(), typeof(IEmulatorService)));
+        }
+    }
+
+    public class NotEqual : IRouteConstraint
+    {
+        private readonly String match = String.Empty;
+
+        public NotEqual(String match)
+        {
+            this.match = match;
+        }
+
+        public Boolean Match(HttpContextBase httpContext, Route route, String parameterName,
+            RouteValueDictionary values, RouteDirection routeDirection)
+        {
+            return String.Compare(values[parameterName].ToString(), match,
+                StringComparison.InvariantCultureIgnoreCase) != 0;
         }
     }
 }
