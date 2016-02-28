@@ -10,8 +10,7 @@ namespace WebClient
             bundles.Add(new ScriptBundle("~/bundles/lib").Include(
                       "~/Scripts/jquery.min.js",
                       "~/Scripts/kendo/kendo.all.min.js",
-                      "~/Scripts/knockout-3.3.0.js",
-                      "~/Scripts/customClocks.js"));
+                      "~/Scripts/knockout-3.3.0.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
                       "~/Scripts/app/ControlPanelViewModel.js"));
@@ -21,8 +20,6 @@ namespace WebClient
                       "~/assets/bootstrap/bootstrap-theme.css",
                       "~/assets/kendo/kendo.bootstrap.min.css",
                       "~/assets/kendo/kendo.common-bootstrap.min.css",
-                      "~/assets/flipclock.css",
-                      "~/assets/customClock.css",
                       "~/assets/site.css"));
         }
     }

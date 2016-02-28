@@ -8,8 +8,7 @@
                 <div class="speed-gauge-container">
                     <span data-role="radialgauge"
                             data-scale="{ min: 0, max: 5 }"
-                            data-bind="visible: isVisible,
-                                    value: selectedNumber"
+                            data-bind="value: velocity"
                             class="speed-gauge"></span>
                 </div>
 
@@ -18,23 +17,15 @@
             <div class="col-lg-2 col-md-2 col-xs-2 speed-control-block">
                 <h4>Speed</h4>
                 <h4>control</h4>
-                <input class="speed-gauge-value" data-role="slider" data-orientation="vertical" data-min="0" data-max="5" data-small-step="0.5" data-large-step="1" data-show-buttons="false" data-bind="value: selectedNumber">
+                <input class="speed-gauge-value" data-role="slider" data-orientation="vertical" data-min="0" data-max="5" data-small-step="0.5" data-large-step="1" data-show-buttons="false" data-bind="value: velocity">
             </div>
 
             <div class="col-lg6 col-md-6 col-sm-6 col-xs-6">
                 <h3 class="all-time-label"> All Time Counter</h3>
-                <div class="custom-clokc-block">
-                    <div class="clock">
-                        <ul>
-                            <li id="hours"></li>
-                            <li id="point">:</li>
-                            <li id="min"></li>
-                            <li id="point">:</li>
-                            <li id="sec"></li>
-                        </ul>
-                    </div>
-                </div>
-
+                <input data-role="maskedtextbox"
+                       data-mask="00:00:00"
+                       data-bind="value: allTime"
+                       class="all-time-input">
             </div>
         </div>
 
@@ -44,9 +35,9 @@
                 <div class="k-content ctr-linear-progress-container">    
                     <span id="ctr-linear-progress" data-role="lineargauge" data-gauge-area="{width:300}"
                             data-scale="{ min:0, max: 100, minorUnit: 2, majorUnit: 10, vertical: false}"
-                        data-pointer="[ {value: 20, color: 'green'}, {value:70, color: 'blue', margin:10}]"></span>
+                        data-pointer="[ {value: 0, color: 'green'}, {value:0, color: 'blue', margin:10}]"></span>
                 </div>
-                <button class="btn btn-primary btn-lg start-button">Start</button>
+                <button class="btn btn-primary btn-lg start-button" data-bind="click:toogleUpdateProgress"><span data-bind="text:statusText"></span></button>
             </div>
         </div>
 

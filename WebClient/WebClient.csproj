@@ -179,6 +179,7 @@
   <ItemGroup>
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Content Include=".gitignore" />
     <Content Include="assets\bootstrap\bootstrap-theme.css" />
     <Content Include="assets\bootstrap\bootstrap.css" />
     <Content Include="assets\kendo\Bootstrap\editor.png">
@@ -237,7 +238,6 @@
     <Content Include="assets\kendo\content\gauge\linear-gauge-container.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\customClock.css" />
     <Content Include="assets\kendo\kendo.bootstrap.min.css" />
     <Content Include="assets\kendo\kendo.common-bootstrap.min.css" />
     <Content Include="assets\Site.css" />
@@ -245,30 +245,23 @@
     <Content Include="Config\appSettings.config" />
     <Content Include="Config\connectionStrings.config" />
     <Content Include="Config\nlog.config" />
-    <Content Include="assets\fonts\BebasNeue-webfont.eot">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\fonts\BebasNeue-webfont.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\fonts\BebasNeue-webfont.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\fonts\BebasNeue-webfont.woff">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="Templates\T4MVC.tt.settings.xml" />
     <None Include="Scripts\jquery-1.11.3.intellisense.js" />
     <Content Include="Scripts\app\ControlPanelViewModel.js" />
-    <Content Include="Scripts\customClocks.js" />
-    <Content Include="Scripts\flipclock.min.js" />
+    <Content Include="Scripts\boostrap\bootstrap.js" />
     <Content Include="Scripts\jquery-1.11.3.js" />
+    <Content Include="Scripts\jquery.min.js" />
+    <Content Include="Scripts\kendo\kendo.all.min.js" />
     <Content Include="Scripts\knockout-3.3.0.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Views\Web.config" />
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\Shared\ControlPanel.cshtml" />
   </ItemGroup>
   <ItemGroup>

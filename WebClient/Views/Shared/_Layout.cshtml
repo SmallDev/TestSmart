@@ -25,12 +25,8 @@
 
     <script type="text/javascript">
         $(document).ready(function createGauge() {
-            
-            var castomClocks = new CustomClocks({ sec: $("#sec"), minutes: $("#min"), hours: $("#hours")})
 
-            //var allTimeClock = $('#all-time-clock').FlipClock({});
-
-            var viewModel = kendo.observable(new ControlPanelViewModel(castomClocks));
+            var viewModel = kendo.observable(new ControlPanelViewModel);
             kendo.bind($("#control-painel-block"), viewModel);
         });
 

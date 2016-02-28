@@ -56,7 +56,7 @@ namespace WebClient.Controllers
 
         public JsonResult GetControlData()
         {
-            return Json(new { velocity = 2, allTime = "00:10:00", calcTime = "00:01:00", readTime= "00:08:00" });
+            return Json(new { velocity = 2, allTime = "00:10:00", calcTime = "00:10:00", readTime= "00:50:00" },JsonRequestBehavior.AllowGet);
         }
     }
 }
