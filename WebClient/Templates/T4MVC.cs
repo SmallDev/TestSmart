@@ -93,10 +93,25 @@ namespace Links
             public static readonly string ControlPanelViewModel_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/ControlPanelViewModel.min.js") ? Url("ControlPanelViewModel.min.js") : Url("ControlPanelViewModel.js");
         }
     
-        public static readonly string customClocks_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/customClocks.min.js") ? Url("customClocks.min.js") : Url("customClocks.js");
-        public static readonly string flipclock_min_js = Url("flipclock.min.js");
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public static class boostrap {
+            private const string URLPATH = "~/Scripts/boostrap";
+            public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
+            public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
+            public static readonly string bootstrap_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/bootstrap.min.js") ? Url("bootstrap.min.js") : Url("bootstrap.js");
+        }
+    
         public static readonly string jquery_1_11_3_intellisense_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/jquery-1.11.3.intellisense.min.js") ? Url("jquery-1.11.3.intellisense.min.js") : Url("jquery-1.11.3.intellisense.js");
         public static readonly string jquery_1_11_3_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/jquery-1.11.3.min.js") ? Url("jquery-1.11.3.min.js") : Url("jquery-1.11.3.js");
+        public static readonly string jquery_min_js = Url("jquery.min.js");
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public static class kendo {
+            private const string URLPATH = "~/Scripts/kendo";
+            public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
+            public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
+            public static readonly string kendo_all_min_js = Url("kendo.all.min.js");
+        }
+    
         public static readonly string knockout_3_3_0_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/knockout-3.3.0.min.js") ? Url("knockout-3.3.0.min.js") : Url("knockout-3.3.0.js");
     }
 
@@ -113,12 +128,25 @@ namespace Links
                     public const string ControlPanelViewModel_js = "~/Scripts/app/ControlPanelViewModel.js"; 
                 }
             }
+            public static partial class boostrap 
+            {
+                public static class Assets
+                {
+                    public const string bootstrap_js = "~/Scripts/boostrap/bootstrap.js"; 
+                }
+            }
+            public static partial class kendo 
+            {
+                public static class Assets
+                {
+                    public const string kendo_all_min_js = "~/Scripts/kendo/kendo.all.min.js"; 
+                }
+            }
             public static class Assets
             {
-                public const string customClocks_js = "~/Scripts/customClocks.js"; 
-                public const string flipclock_min_js = "~/Scripts/flipclock.min.js"; 
                 public const string jquery_1_11_3_intellisense_js = "~/Scripts/jquery-1.11.3.intellisense.js"; 
                 public const string jquery_1_11_3_js = "~/Scripts/jquery-1.11.3.js"; 
+                public const string jquery_min_js = "~/Scripts/jquery.min.js"; 
                 public const string knockout_3_3_0_js = "~/Scripts/knockout-3.3.0.js"; 
             }
         }

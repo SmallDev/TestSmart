@@ -159,11 +159,11 @@ namespace WebClient.Controllers
         partial void GetControlDataOverride(T4MVC_System_Web_Mvc_JsonResult callInfo);
 
         [NonAction]
-        public override System.Web.Mvc.JsonResult GetControlData()
+        public override System.Threading.Tasks.Task<System.Web.Mvc.JsonResult> GetControlData()
         {
             var callInfo = new T4MVC_System_Web_Mvc_JsonResult(Area, Name, ActionNames.GetControlData);
             GetControlDataOverride(callInfo);
-            return callInfo;
+            return System.Threading.Tasks.Task.FromResult(callInfo as System.Web.Mvc.JsonResult);
         }
 
     }

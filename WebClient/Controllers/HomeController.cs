@@ -34,11 +34,11 @@ namespace WebClient.Controllers
         [ChildActionOnly]
         public virtual ActionResult GetControlPanel()
         {
-            return View(MVC.Shared.Views.ControlPanel, GetControlModel().Result);
+            return View(MVC.Shared.Views.ControlPanel, GetControlModel().GetAwaiter().GetResult());
         }
-        public virtual JsonResult GetControlData()
+        public virtual async Task<JsonResult> GetControlData()
         {
-            return Json(GetControlModel(), JsonRequestBehavior.AllowGet);
+            return Json(await GetControlModel(), JsonRequestBehavior.AllowGet);
         }
 
         private async Task<ControlModel> GetControlModel()
