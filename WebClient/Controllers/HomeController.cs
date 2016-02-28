@@ -1,62 +1,57 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Logic.Facades;
-using Logic.Model;
 using WebClient.Models;
 
 namespace WebClient.Controllers
 {
-    // 1. Отображение статистики, отобразить на "градуснике"
-    // StatisticsFacade.ReadStatistics
-
-    // 2. Управление эмулятором: скорость и общее время чтения
-    // EmulatorFacade.GetVelocity и EmulatorFacade.SetVelocity - работа со скоростью (1.0 - нормальная скорость, < 1 - замедление, > 1 - ускорение)
-    // 
     public partial class HomeController : Controller
     {
         private readonly Lazy<EmulatorFacade> emulatorFacade;
         private readonly Lazy<LearningFacade> learningFacade;
-        private readonly Lazy<StatisticsFacade> statisticsFacade;
-        private readonly Lazy<DataFacade> facade;
 
-        public HomeController(Func<DataFacade> facade, Func<StatisticsFacade> statisticsFacade, 
-            Func<EmulatorFacade> emulatorFacade, Func<LearningFacade> learningFacade)
+        public HomeController(Func<EmulatorFacade> emulatorFacade, Func<LearningFacade> learningFacade)
         {
             this.emulatorFacade = new Lazy<EmulatorFacade>(emulatorFacade);
             this.learningFacade = new Lazy<LearningFacade>(learningFacade);
-            this.statisticsFacade = new Lazy<StatisticsFacade>(statisticsFacade);
-            this.facade = new Lazy<DataFacade>(facade);
         }
 
-        public async virtual Task<ActionResult> Index()
+        public virtual ActionResult Index()
         {
-            var cls = statisticsFacade.Value.GetClusters();
-            var cl = statisticsFacade.Value.GetCluster(1);
-
-            var uu = statisticsFacade.Value.GetUsers("00", 1, 10);
-            var u1 = statisticsFacade.Value.GetUser(1);
-            var allu = statisticsFacade.Value.GetUsers("00");
-            
-            var model = new HomeModel();
-            await Task.WhenAll(
-                Task.Run(() => model.Clusters = facade.Value.GetClusters(1, 0).Select(c => new ClusterModel(c)).ToList()),
-                Task.Run(() => model.Users = facade.Value.GetUsers(1, 0).Select(u => new UserModel(u)).ToList()));
-
-            return View(MVC.Home.Views.Index, model);
+            return View(MVC.Home.Views.Index);
         }
 
-        public ActionResult GetControlPanel()
+        public virtual JsonResult Start()
         {
-            return View("ControlPanel", GetControlData());
+            return Json(new Object());
+        }
+        public virtual JsonResult Stop()
+        {
+            return Json(new Object());
         }
 
-        public JsonResult GetControlData()
+        [ChildActionOnly]
+        public virtual ActionResult GetControlPanel()
         {
-            return Json(new { velocity = 2, allTime = "00:10:00", calcTime = "00:01:00", readTime= "00:08:00" });
+            return View(MVC.Shared.Views.ControlPanel, GetControlModel());
+        }
+        public virtual JsonResult GetControlData()
+        {
+            return Json(GetControlModel());
+        }
+
+        private ControlModel GetControlModel()
+        {
+            var model = new ControlModel();
+
+            Task.WaitAll(
+                Task.Run(() => model.Velocity = emulatorFacade.Value.GetVelocity()),
+                Task.Run(() => model.SetAllTime(emulatorFacade.Value.GetAllTime())),
+                Task.Run(() => model.SetReadTime(emulatorFacade.Value.GetReadTime())),
+                Task.Run(() => model.SetCalcTime(learningFacade.Value.GetCalcTime())));
+
+            return model;
         }
     }
 }
