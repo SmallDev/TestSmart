@@ -58,9 +58,15 @@ namespace WebClient.Controllers
 
         [NonAction]
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public virtual System.Web.Mvc.ActionResult Index()
+        public virtual System.Web.Mvc.ActionResult GetList()
         {
-            return new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Index);
+            return new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.GetList);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public virtual System.Web.Mvc.ActionResult Get()
+        {
+            return new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Get);
         }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -78,21 +84,33 @@ namespace WebClient.Controllers
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionNamesClass
         {
-            public readonly string Index = "Index";
+            public readonly string GetList = "GetList";
+            public readonly string Get = "Get";
         }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionNameConstants
         {
-            public const string Index = "Index";
+            public const string GetList = "GetList";
+            public const string Get = "Get";
         }
 
 
-        static readonly ActionParamsClass_Index s_params_Index = new ActionParamsClass_Index();
+        static readonly ActionParamsClass_GetList s_params_GetList = new ActionParamsClass_GetList();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public ActionParamsClass_Index IndexParams { get { return s_params_Index; } }
+        public ActionParamsClass_GetList GetListParams { get { return s_params_GetList; } }
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public class ActionParamsClass_Index
+        public class ActionParamsClass_GetList
+        {
+            public readonly string macFilter = "macFilter";
+            public readonly string page = "page";
+            public readonly string size = "size";
+        }
+        static readonly ActionParamsClass_Get s_params_Get = new ActionParamsClass_Get();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_Get GetParams { get { return s_params_Get; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_Get
         {
             public readonly string id = "id";
         }
@@ -118,14 +136,28 @@ namespace WebClient.Controllers
         public T4MVC_UserController() : base(Dummy.Instance) { }
 
         [NonAction]
-        partial void IndexOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, int id);
+        partial void GetListOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string macFilter, int page, int size);
 
         [NonAction]
-        public override System.Web.Mvc.ActionResult Index(int id)
+        public override System.Web.Mvc.ActionResult GetList(string macFilter, int page, int size)
         {
-            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Index);
+            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.GetList);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "macFilter", macFilter);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "page", page);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "size", size);
+            GetListOverride(callInfo, macFilter, page, size);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void GetOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, int id);
+
+        [NonAction]
+        public override System.Web.Mvc.ActionResult Get(int id)
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Get);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
-            IndexOverride(callInfo, id);
+            GetOverride(callInfo, id);
             return callInfo;
         }
 

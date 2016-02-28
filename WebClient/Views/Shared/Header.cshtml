@@ -1,12 +1,12 @@
 ﻿<nav class="navbar navbar-inverse">
     <div class="container">
         <div class="navbar-header">
-            <a href="#" class="navbar-brand">Smart Spy</a>
+            @Html.ActionLink("Smart Spy", MVC.Home.Index(), new{@class="navbar-brand"})
         </div>
         <div>
             <ul class="nav navbar-nav">
-                <li><a href="#">Clusters</a></li>
-                <li><a href="#">Users</a></li>
+                <li>@Html.ActionLink("Кластеры", MVC.Cluster.GetList())</li>
+                <li>@Html.ActionLink("Пользователи", MVC.User.GetList())</li>
             </ul>
         </div>
     </div>

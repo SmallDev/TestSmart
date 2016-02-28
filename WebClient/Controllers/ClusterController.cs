@@ -12,12 +12,12 @@ namespace WebClient.Controllers
             this.statisticsFacade = new Lazy<StatisticsFacade>(statisticsFacade);
         }
 
-        public virtual ActionResult Index()
+        public virtual ActionResult GetList()
         {
             var clusters = statisticsFacade.Value.GetClusters();
             return View(MVC.Cluster.Views.Index, clusters);
         }
-        public virtual ActionResult Index(Int32 id)
+        public virtual ActionResult Get(Int32 id)
         {
             var cluster = statisticsFacade.Value.GetCluster(id);
             return View(MVC.Cluster.Views.Index, cluster);

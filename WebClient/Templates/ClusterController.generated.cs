@@ -56,6 +56,12 @@ namespace WebClient.Controllers
             return RedirectToActionPermanent(taskResult.Result);
         }
 
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public virtual System.Web.Mvc.ActionResult Get()
+        {
+            return new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Get);
+        }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public ClusterController Actions { get { return MVC.Cluster; } }
@@ -72,21 +78,23 @@ namespace WebClient.Controllers
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionNamesClass
         {
-            public readonly string Index = "Index";
+            public readonly string GetList = "GetList";
+            public readonly string Get = "Get";
         }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionNameConstants
         {
-            public const string Index = "Index";
+            public const string GetList = "GetList";
+            public const string Get = "Get";
         }
 
 
-        static readonly ActionParamsClass_Index s_params_Index = new ActionParamsClass_Index();
+        static readonly ActionParamsClass_Get s_params_Get = new ActionParamsClass_Get();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public ActionParamsClass_Index IndexParams { get { return s_params_Index; } }
+        public ActionParamsClass_Get GetParams { get { return s_params_Get; } }
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public class ActionParamsClass_Index
+        public class ActionParamsClass_Get
         {
             public readonly string id = "id";
         }
@@ -112,25 +120,25 @@ namespace WebClient.Controllers
         public T4MVC_ClusterController() : base(Dummy.Instance) { }
 
         [NonAction]
-        partial void IndexOverride(T4MVC_System_Web_Mvc_ActionResult callInfo);
+        partial void GetListOverride(T4MVC_System_Web_Mvc_ActionResult callInfo);
 
         [NonAction]
-        public override System.Web.Mvc.ActionResult Index()
+        public override System.Web.Mvc.ActionResult GetList()
         {
-            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Index);
-            IndexOverride(callInfo);
+            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.GetList);
+            GetListOverride(callInfo);
             return callInfo;
         }
 
         [NonAction]
-        partial void IndexOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, int id);
+        partial void GetOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, int id);
 
         [NonAction]
-        public override System.Web.Mvc.ActionResult Index(int id)
+        public override System.Web.Mvc.ActionResult Get(int id)
         {
-            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Index);
+            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Get);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
-            IndexOverride(callInfo, id);
+            GetOverride(callInfo, id);
             return callInfo;
         }
 
