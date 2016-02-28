@@ -1,6 +1,7 @@
 [B,b]in
 [O,o]bj
 /packages
+.vs
 *.user
 *.suo
 /Data
