@@ -34,22 +34,23 @@ namespace WebClient.Controllers
         [ChildActionOnly]
         public virtual ActionResult GetControlPanel()
         {
-            return View(MVC.Shared.Views.ControlPanel, GetControlModel());
+            return View(MVC.Shared.Views.ControlPanel, GetControlModel().Result);
         }
         public virtual JsonResult GetControlData()
         {
             return Json(GetControlModel());
         }
 
-        private ControlModel GetControlModel()
+        private async Task<ControlModel> GetControlModel()
         {
             var model = new ControlModel();
 
-            Task.WaitAll(
+            await Task.WhenAll(
                 Task.Run(() => model.Velocity = emulatorFacade.Value.GetVelocity()),
                 Task.Run(() => model.SetAllTime(emulatorFacade.Value.GetAllTime())),
                 Task.Run(() => model.SetReadTime(emulatorFacade.Value.GetReadTime())),
-                Task.Run(() => model.SetCalcTime(learningFacade.Value.GetCalcTime())));
+                Task.Run(() => model.SetCalcTime(learningFacade.Value.GetCalcTime())))
+                .ConfigureAwait(false);
 
             return model;
         }
