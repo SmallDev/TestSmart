@@ -7,9 +7,10 @@
     </head>
     <body>
         @Html.Partial(MVC.Shared.Views.Header)
-        <div class="container-fluid">
-            @Html.Partial("ControlPanel")
-
+        <div class="container-fluid main">
+            <div class="ctr-scroll-block">
+                @Html.Partial("ControlPanel")
+            </div>
             @RenderBody()
         </div>
         <footer class="footer">

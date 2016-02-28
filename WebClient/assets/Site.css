@@ -17,7 +17,9 @@
     border-radius:15px;
     height:280px;
     padding: 10px;
+    width:1500px;
 }
+
 
 .l-settings-block
 {
@@ -74,5 +76,31 @@
      margin-bottom: 50px;
      margin-top: 30px;
  }
+ .ctr-scroll-block {
+    overflow-x:auto; 
+    overflow-y:hidden;
+ }
+
+.ctr-linear-progress-container{
+    display: inline-block;
+    margin-top: 10px;
+    text-align: center;
+    background: transparent url("/assets/kendo/content/gauge/linear-gauge-container-h.png") no-repeat 50% 50%;
+    padding: 35px;
+    height: 130px;
+}
+
+.r-settings-block h2 {
+    margin-top:10px !important;
+}
+
+.crl-progress-block{
+    text-align:center;
+}
+
+.start-button {
+    margin-top: 10px;
+    width: 300px;
+}
 
 

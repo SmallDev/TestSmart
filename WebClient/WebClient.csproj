@@ -182,6 +182,48 @@
     <Content Include="assets\bootstrap\bootstrap-theme.css" />
     <Content Include="assets\bootstrap\bootstrap.css" />
     <Content Include="assets\flipclock.css" />
+    <Content Include="assets\kendo\Bootstrap\editor.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\kendo\Bootstrap\imagebrowser.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\kendo\Bootstrap\indeterminate.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\kendo\Bootstrap\loading-image.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\kendo\Bootstrap\loading.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\kendo\Bootstrap\loading_2x.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\kendo\Bootstrap\markers.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\kendo\Bootstrap\markers_2x.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\kendo\Bootstrap\slider-h.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\kendo\Bootstrap\slider-v.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\kendo\Bootstrap\sprite.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\kendo\Bootstrap\sprite_2x.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\kendo\Bootstrap\sprite_kpi.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\kendo\Bootstrap\sprite_kpi_2x.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="assets\kendo\content\gauge\gauge-container-partial-small.png" />
     <Content Include="assets\kendo\content\gauge\gauge-container-partial.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -189,6 +231,7 @@
     <Content Include="assets\kendo\content\gauge\gauge-container.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="assets\kendo\content\gauge\linear-gauge-container-h-long.png" />
     <Content Include="assets\kendo\content\gauge\linear-gauge-container-h.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
