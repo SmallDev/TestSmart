@@ -6,36 +6,12 @@
 }
 
 
-
-@*<div>
-    <p>Кластеры</p>
-    <ul data-bind="foreach: clusters">
-        <li>
-            <div>
-                <span data-bind="text: $index() + 1"></span>
-                <a href="" data-bind="attr: {href: $root.clusterUrl($data)}, text: Name"></a>
-            </div>
-        </li>
-    </ul>
-</div>
-<div>
-    <p>Пользователи</p>
-    <ul data-bind="foreach: users">
-        <li>
-            <div>
-                <span data-bind="text: $index() + 1"></span>
-                <a href="" data-bind="attr: {href: $root.userUrl($data)}, text: Name"></a>
-            </div>
-        </li>
-    </ul>
-</div>*@
-
 <h1>Clusters</h1>
 
 <div id="all-clusters-chart">
     <div data-role="chart"
-         data-series-defaults="{ type: 'pie', labels: { template: 'Cluster: #= category # ', position: 'outsideEnd',visible: true, background: 'transparent' }}"
-         data-tooltip="{ visible: true, template: 'Cluster: #= category # - #= value #' }"
+         data-series-defaults="{ type: 'pie', labels: { template: 'Cluster: #= category # - #= roundClusterSize(value) #', position: 'outsideEnd',visible: true, background: 'transparent' }}"
+         data-tooltip="{ visible: true, template: 'Cluster: #= category # - #= roundClusterSize(value) #' }"
          data-series="[{field: 'Size', categoryField: 'Id'}]"
          data-legend="{visible: false}"
          data-bind="source: clusters, events: { seriesClick: onClusterClick}" class="main-clusters-chart"></div>
@@ -43,30 +19,18 @@
 
 @section Scripts {
     <script type="text/javascript">
-        @*$(document).ready(function() {
-            var options = {
-                clusterUrl: "/cluster/{0}",
-                userUrl: "/user/{0}"
-            };
-            var data = @Html.Raw(JsonConvert.SerializeObject(Model));
-            function model(data, options) {
-                var self = this;
-                self.clusters = data.Clusters;
-                self.users = data.Users;
-
-                self.clusterUrl = function(cluster) {
-                    return options.clusterUrl.replace("{0}", cluster.Id);
-                };
-
-                self.userUrl = function(user) {
-                    return options.userUrl.replace("{0}", user.Id);
-                };
-            }
-
-            ko.applyBindings(new model(data, options));
-        })*@
 
         $(document).ready(function() {
+            window.algSpeed = function (label) {
+                if (label == 0)
+                    return label;
+                return label + "x";
+            };
+
+            window.roundClusterSize = function(size){
+                return (size).toFixed(2) + "%";
+            }
+
             var viewModel = kendo.observable(new ClustersChartViewModel);
             kendo.bind($("#all-clusters-chart"), viewModel);
         })

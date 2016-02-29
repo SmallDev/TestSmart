@@ -7,7 +7,7 @@
 
                 <div class="speed-gauge-container">
                     <span data-role="radialgauge"
-                          data-scale="{ min: 0, max: 6 }"
+                          data-scale="{ min: 0, max: 6, ranges: [{from: 0, to: 1, color: 'blue'}, {from: 1, to: 4, color: '#FF8C00'}, {from: 4, to: 6, color: 'red'}], labels: {template: '#=algSpeed(value)#'}}"
                           data-bind="value: velocity"
                           class="speed-gauge"></span>
                 </div>
