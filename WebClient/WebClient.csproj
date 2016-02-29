@@ -247,6 +247,7 @@
     <Content Include="Config\nlog.config" />
     <None Include="Templates\T4MVC.tt.settings.xml" />
     <None Include="Scripts\jquery-1.11.3.intellisense.js" />
+    <Content Include="Scripts\app\ClustersChartViewModel.js" />
     <Content Include="Scripts\app\ControlPanelViewModel.js" />
     <Content Include="Scripts\boostrap\bootstrap.js" />
     <Content Include="Scripts\jquery-1.11.3.js" />

@@ -1,11 +1,47 @@
 ﻿@using Newtonsoft.Json
 @using WebClient.Models;
-
 @{
     Layout = MVC.Shared.Views._Layout;
     ViewBag.Title = "Главная";
 }
-@section Scripts {  
+
+
+
+@*<div>
+    <p>Кластеры</p>
+    <ul data-bind="foreach: clusters">
+        <li>
+            <div>
+                <span data-bind="text: $index() + 1"></span>
+                <a href="" data-bind="attr: {href: $root.clusterUrl($data)}, text: Name"></a>
+            </div>
+        </li>
+    </ul>
+</div>
+<div>
+    <p>Пользователи</p>
+    <ul data-bind="foreach: users">
+        <li>
+            <div>
+                <span data-bind="text: $index() + 1"></span>
+                <a href="" data-bind="attr: {href: $root.userUrl($data)}, text: Name"></a>
+            </div>
+        </li>
+    </ul>
+</div>*@
+
+<h1>Clusters</h1>
+
+<div id="all-clusters-chart">
+    <div data-role="chart"
+         data-series-defaults="{ type: 'pie', labels: { template: 'Cluster: #= category # ', position: 'outsideEnd',visible: true, background: 'transparent' }}"
+         data-tooltip="{ visible: true, template: 'Cluster: #= category # - #= value #' }"
+         data-series="[{field: 'Size', categoryField: 'Id'}]"
+         data-legend="{visible: false}"
+         data-bind="source: clusters, events: { seriesClick: onClusterClick}" class="main-clusters-chart"></div>
+</div>
+
+@section Scripts {
     <script type="text/javascript">
         @*$(document).ready(function() {
             var options = {
@@ -29,28 +65,10 @@
 
             ko.applyBindings(new model(data, options));
         })*@
-</script>
-}
 
-<div>
-    <p>Кластеры</p>
-    <ul data-bind="foreach: clusters">
-        <li>
-            <div>
-                <span data-bind="text: $index() + 1"></span>
-                <a href="" data-bind="attr: {href: $root.clusterUrl($data)}, text: Name"></a>
-            </div>
-        </li>
-    </ul>
-</div>
-<div>
-    <p>Пользователи</p>
-    <ul data-bind="foreach: users">
-        <li>
-            <div>
-                <span data-bind="text: $index() + 1"></span>
-                <a href="" data-bind="attr: {href: $root.userUrl($data)}, text: Name"></a>
-            </div>
-        </li>
-    </ul>
-</div>
+        $(document).ready(function() {
+            var viewModel = kendo.observable(new ClustersChartViewModel);
+            kendo.bind($("#all-clusters-chart"), viewModel);
+        })
+    </script>
+    }

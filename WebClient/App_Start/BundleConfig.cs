@@ -13,7 +13,8 @@ namespace WebClient
                       "~/Scripts/knockout-3.3.0.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
-                      "~/Scripts/app/ControlPanelViewModel.js"));
+                      "~/Scripts/app/ControlPanelViewModel.js",
+                      "~/Scripts/app/ClustersChartViewModel.js"));
 
             bundles.Add(new StyleBundle("~/bundles/css").Include(
                       "~/assets/bootstrap/bootstrap.css",

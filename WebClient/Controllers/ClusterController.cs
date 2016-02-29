@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 using Logic.Facades;
+using Logic.Model;
+using System.Linq;
 
 namespace WebClient.Controllers
 {
@@ -17,6 +20,13 @@ namespace WebClient.Controllers
             var clusters = statisticsFacade.Value.GetClusters();
             return View(MVC.Cluster.Views.Index, clusters);
         }
+
+        public virtual JsonResult GetJsonList()
+        {
+            var clusters = statisticsFacade.Value.GetClusters();
+            return Json(clusters, JsonRequestBehavior.AllowGet);
+        }
+
         public virtual ActionResult Get(Int32 id)
         {
             var cluster = statisticsFacade.Value.GetCluster(id);

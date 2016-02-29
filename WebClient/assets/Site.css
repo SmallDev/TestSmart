@@ -177,5 +177,48 @@
     color:#B73333!important;
 }
 
+.main-block {
+    border: solid;
+    border-width: 2px;
+    border-color: black;
+    border-radius: 10px;
+    height:795px;
+    margin-left:100px;
+    text-align:center;
+}
+
+.main-clusters-chart{
+    height:600px;
+}
+
+.cluster-short-info-block{
+    border: solid;
+    border-width: 1px;
+    border-color: black;
+    border-radius: 10px;
+
+    width:400px;
+    height:250px;
+
+    text-align:left;
+}
+
+.cluster-short-info-block li{
+    display:block;
+    list-style: none;
+    margin-top: 20px;
+}
+
+.cluster-short-info-block ul{
+     padding-left: 10px;
+     padding-top: 5px;
+}
+
+.cluster-short-info-block label{
+     display:inline-block;
+     width:110px;
+          
+}
+
 
 
