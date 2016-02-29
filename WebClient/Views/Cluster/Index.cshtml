@@ -1,4 +1,5 @@
-﻿@{
+﻿@using Newtonsoft.Json
+@{
     Layout = MVC.Shared.Views._Layout;
     ViewBag.Title = "Кластер";
 }
@@ -6,24 +7,31 @@
 <h2>Кластер</h2>
 
 
-<div class="row">
-    
+<div id="cluster-info-block" class="row ">
     <div class="col-lg-2 col-lg-offset-1 cluster-short-info-block">
         <ul>
             <li>
                 <label>Id</label>
-                <span>123</span>
+                <span data-bind="text:id"></span>
             </li>
             <li>
                 <label>Имя</label>
-                <span>Нуливой кластер</span>
+                <span data-bind="text:name"></span>
             </li>
             <li>
-                <label>Пользователи</label>
-                <span>1237</span>
+                <label>Размер</label>
+                <span data-bind="text:size"></span>
             </li>
         </ul>
-        <button class="btn btn-primary">Назад</button>
-    </div>
-     
+        <button data-bind="click: navigateBack" class="btn btn-primary">Назад</button>
+    </div>  
 </div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var viewModel = kendo.observable(new ClusterViewModel(@Html.Raw(JsonConvert.SerializeObject(Model))));
+            kendo.bind($("#cluster-info-block"), viewModel);
+        })
+    </script>
+}

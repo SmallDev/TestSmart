@@ -14,7 +14,8 @@ namespace WebClient
 
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
                       "~/Scripts/app/ControlPanelViewModel.js",
-                      "~/Scripts/app/ClustersChartViewModel.js"));
+                      "~/Scripts/app/ClustersChartViewModel.js",
+                      "~/Scripts/app/ClusterViewModel.js"));
 
             bundles.Add(new StyleBundle("~/bundles/css").Include(
                       "~/assets/bootstrap/bootstrap.css",

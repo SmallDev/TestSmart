@@ -198,7 +198,7 @@
     border-radius: 10px;
 
     width:400px;
-    height:250px;
+    height:220px;
 
     text-align:left;
 }
@@ -206,7 +206,7 @@
 .cluster-short-info-block li{
     display:block;
     list-style: none;
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
 .cluster-short-info-block ul{
@@ -215,9 +215,29 @@
 }
 
 .cluster-short-info-block label{
-     display:inline-block;
-     width:110px;
-          
+    display:inline-block;
+    width:110px;
+    font-size:12pt;
+}
+
+.cluster-short-info-block span{
+    display:inline-block;
+    width:200px;
+    height:25px;
+    font-size:10pt;
+    margin-left:10px;
+    border:solid;
+    border-width:1px;
+    border-radius:6px;
+    vertical-align:central;
+    padding-top:3px;
+    padding-left:5px;
+}
+
+.cluster-short-info-block .btn{
+    margin-right: 30px;
+    margin-top:10px;
+    float:right;
 }
 
 
