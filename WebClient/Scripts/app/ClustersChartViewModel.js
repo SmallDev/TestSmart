@@ -1,18 +1,8 @@
-﻿function ClustersChartViewModel() {
+﻿function ClustersChartViewModel(data) {
+    var clusterData = data;
+
     this.clusters = new kendo.data.DataSource({
-        transport: {
-            read: function (options) {
-                jQuery.ajax({
-                    url: "/Cluster/GetJsonList",
-                    type: "GET",
-                    success: function (data) {
-                        options.success(data);
-                    },
-                    async: false,
-                    cache: false
-                });
-            }
-        }
+        data: clusterData
     });
 
     this.onClusterClick = function(e){

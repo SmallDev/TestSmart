@@ -21,16 +21,10 @@ namespace WebClient.Controllers
             return View(MVC.Cluster.Views.Index, clusters);
         }
 
-        public virtual JsonResult GetJsonList()
-        {
-            var clusters = statisticsFacade.Value.GetClusters();
-            return Json(clusters, JsonRequestBehavior.AllowGet);
-        }
-
         public virtual ActionResult Get(Int32 id)
         {
             var cluster = statisticsFacade.Value.GetCluster(id);
-            return View(MVC.Cluster.Views.Index, cluster);
+            return View("ClusterDetails", cluster);
         }
     }
 }

@@ -10,7 +10,8 @@ namespace WebClient
             bundles.Add(new ScriptBundle("~/bundles/lib").Include(
                       "~/Scripts/jquery.min.js",
                       "~/Scripts/kendo/kendo.all.min.js",
-                      "~/Scripts/knockout-3.3.0.js"));
+                      "~/Scripts/knockout-3.3.0.js",
+                      "~/Scripts/js.cookie.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
                       "~/Scripts/app/ControlPanelViewModel.js",

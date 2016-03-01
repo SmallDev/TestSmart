@@ -240,5 +240,26 @@
     float:right;
 }
 
+.app-title{
+     font-family:'Arial Black', Gadget, sans-serif; 
+     font-size:35pt;
+     letter-spacing:4px;
+     margin-top:25%;
+}
+
+.stop-work-gears{
+    background: transparent url("/assets/img/gears.gif") no-repeat 50% 50%;
+    height: 72px;
+    width:72px;
+}
+
+.control-panel-gears{
+    background: transparent url("/assets/img/big-gears.gif") no-repeat 50% 50%;
+    height: 144px;
+    width: 144px;
+    margin: 280px 0 0 80px;
+}
+
+
 
 

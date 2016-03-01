@@ -5,6 +5,6 @@
     this.size = (initData.Size).toFixed(2) + "%";
 
     this.navigateBack = function () {
-        window.location = "/";
+        window.location = "/cluster";
     };
 }

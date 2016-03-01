@@ -182,6 +182,9 @@
     <Content Include=".gitignore" />
     <Content Include="assets\bootstrap\bootstrap-theme.css" />
     <Content Include="assets\bootstrap\bootstrap.css" />
+    <Content Include="assets\img\big-gears.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="assets\kendo\Bootstrap\editor.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -241,6 +244,9 @@
     <Content Include="assets\kendo\kendo.bootstrap.min.css" />
     <Content Include="assets\kendo\kendo.common-bootstrap.min.css" />
     <Content Include="assets\Site.css" />
+    <Content Include="assets\img\gears.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Global.asax" />
     <Content Include="Config\appSettings.config" />
     <Content Include="Config\connectionStrings.config" />
@@ -253,6 +259,7 @@
     <Content Include="Scripts\boostrap\bootstrap.js" />
     <Content Include="Scripts\jquery-1.11.3.js" />
     <Content Include="Scripts\jquery.min.js" />
+    <Content Include="Scripts\js.cookie.js" />
     <Content Include="Scripts\kendo\kendo.all.min.js" />
     <Content Include="Scripts\knockout-3.3.0.js" />
     <Content Include="Web.config">
@@ -265,6 +272,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\Shared\ControlPanel.cshtml" />
+    <Content Include="Views\Cluster\ClusterDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Logic\Logic.csproj">

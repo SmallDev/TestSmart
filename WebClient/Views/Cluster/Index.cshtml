@@ -1,37 +1,38 @@
 ﻿@using Newtonsoft.Json
 @{
     Layout = MVC.Shared.Views._Layout;
-    ViewBag.Title = "Кластер";
+    ViewBag.Title = "Кластеры";
 }
 
-<h2>Кластер</h2>
+<h2>Кластеры</h2>
 
 
-<div id="cluster-info-block" class="row ">
-    <div class="col-lg-2 col-lg-offset-1 cluster-short-info-block">
-        <ul>
-            <li>
-                <label>Id</label>
-                <span data-bind="text:id"></span>
-            </li>
-            <li>
-                <label>Имя</label>
-                <span data-bind="text:name"></span>
-            </li>
-            <li>
-                <label>Размер</label>
-                <span data-bind="text:size"></span>
-            </li>
-        </ul>
-        <button data-bind="click: navigateBack" class="btn btn-primary">Назад</button>
-    </div>  
+<div id="all-clusters-chart">
+    <div data-role="chart"
+         data-series-defaults="{ type: 'pie', labels: { template: 'Cluster: #= category # - #= roundClusterSize(value) #', position: 'outsideEnd',visible: true, background: 'transparent' }}"
+         data-tooltip="{ visible: true, template: 'Cluster: #= category # - #= roundClusterSize(value) #' }"
+         data-series="[{field: 'Size', categoryField: 'Id'}]"
+         data-series-colors="['#7FFFD4','#FFE4C4','#0000FF','#8A2BE2','#A52A2A','#5F9EA0','#DC143C','#006400','#2F4F4F','#FF1493','#FFD700','#ADFF2F','#4B0082','#2E8B57','#6A5ACD']"
+         data-legend="{visible: false}"
+         data-bind="source: clusters, events: { seriesClick: onClusterClick}" class="main-clusters-chart"></div>
 </div>
 
 @section Scripts {
     <script type="text/javascript">
+
         $(document).ready(function() {
-            var viewModel = kendo.observable(new ClusterViewModel(@Html.Raw(JsonConvert.SerializeObject(Model))));
-            kendo.bind($("#cluster-info-block"), viewModel);
+            window.algSpeed = function (label) {
+                if (label == 0)
+                    return label;
+                return label + "x";
+            };
+
+            window.roundClusterSize = function(size){
+                return (size).toFixed(2) + "%";
+            }
+
+            var viewModel = kendo.observable(new ClustersChartViewModel(@Html.Raw(JsonConvert.SerializeObject(Model))));
+            kendo.bind($("#all-clusters-chart"), viewModel);
         })
     </script>
 }

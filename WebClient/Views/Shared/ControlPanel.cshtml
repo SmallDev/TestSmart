@@ -1,5 +1,6 @@
 ﻿<div id="control-painel-block" class="container-fluid control-panel">
-
+    <div class="control-panel-gears" data-bind="click:toogleUpdateProgress, invisible:controlPanelLoaded"></div>
+    <div style="display:none" data-bind="visible:controlPanelLoaded">
         <div class="row" style="text-align:center">
             
             <div class="row speed-clock-block">
@@ -7,9 +8,9 @@
 
                 <div class="speed-gauge-container">
                     <span data-role="radialgauge"
-                          data-scale="{ min: 0, max: 6, ranges: [{from: 0, to: 1, color: 'blue'}, {from: 1, to: 4, color: '#FF8C00'}, {from: 4, to: 6, color: 'red'}], labels: {template: '#=algSpeed(value)#'}}"
-                          data-bind="value: velocity"
-                          class="speed-gauge"></span>
+                            data-scale="{ min: 0, max: 6, ranges: [{from: 0, to: 1, color: 'blue'}, {from: 1, to: 4, color: '#FF8C00'}, {from: 4, to: 6, color: 'red'}], labels: {template: '#=algSpeed(value)#'}}"
+                            data-bind="value: velocity"
+                            class="speed-gauge"></span>
                 </div>
             </div>
             <div class="row">
@@ -28,8 +29,8 @@
                     <h2 class="progress-label">Progress</h2>
                     <div class="k-content ctr-linear-progress-container">
                         <span id="ctr-linear-progress" data-role="lineargauge" data-gauge-area="{width: 150, height: 280}"
-                              data-scale="{ min:0, max: 100, minorUnit: 2, majorUnit: 10, vertical: true}"
-                              data-pointer="[ {value: 0, color: 'green'}, {value:0, color: 'blue', margin:10}]"></span>
+                                data-scale="{ min:0, max: 100, minorUnit: 2, majorUnit: 10, vertical: true}"
+                                data-pointer="[ {value: 0, color: 'green'}, {value:0, color: 'blue', margin:10}]"></span>
                     </div>
                 </div>
             </div>
@@ -37,15 +38,15 @@
             <div class="col-lg-6 start-column">
                 <h3 class="all-time-label"> All Time Counter</h3>
                 <input data-role="maskedtextbox"
-                       data-mask="00:00:00"
-                       data-bind="value: allTime"
-                       class="all-time-input">
+                        data-mask="00:00:00"
+                        data-bind="value: allTime"
+                        class="all-time-input">
                 <div class="start-button-block" data-bind="css: { stopProgressButton: updateIsWorking }">
-                    <button class="btn btn-primary btn-lg start-button" data-bind="click:toogleUpdateProgress"><span data-bind="text:statusText, css: { stopProgressButtonText: updateIsWorking }"></span></button>
+                    <button class="btn btn-primary btn-lg start-button" data-bind="click:toogleUpdateProgress, invisible:stopWorkInProgress"><span data-bind="text:statusText, css: { stopProgressButtonText: updateIsWorking }"></span></button>
+                    <div class="stop-work-gears" data-bind="click:toogleUpdateProgress, visible:stopWorkInProgress"></div>
                 </div>
             </div>
-            
         </div>
-
+    </div>
 </div>
 

@@ -29,8 +29,14 @@
     <script type="text/javascript">
         $(document).ready(function createGauge() {
 
-            var viewModel = kendo.observable(new ControlPanelViewModel);
+            var viewModel = kendo.observable(new ControlPanelViewModel(smartSpyIsWorking));
             kendo.bind($("#control-painel-block"), viewModel);
+
+            var smartSpyIsWorking = Cookies.get('smartSpyWorking');
+
+            if (smartSpyIsWorking) {
+                viewModel.resumeWork();
+            };
         });
 
     </script>

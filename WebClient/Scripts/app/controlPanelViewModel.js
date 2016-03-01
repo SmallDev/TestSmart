@@ -1,4 +1,4 @@
-﻿function ControlPanelViewModel(clocks) {
+﻿function ControlPanelViewModel() {
     var self = this;
     this.selectedNumber = 0;
     this.allTime = "00:00:00";
@@ -6,18 +6,24 @@
     this.statusText = "Start";
 
     this.updateIsWorking = false;
+    this.stopWorkInProgress = false;
 
     this.toogleUpdateProgress = function () {
         if (this.updateIsWorking) {
+            this.set("stopWorkInProgress", true);
             this.set("updateIsWorking", false);
-            this.set("statusText", "Start");
+            stopWork(this);
         }
         else {
-            this.set("updateIsWorking", true);
-            this.set("statusText", "Stop");
-            getControlDataWorker(this)
+            startWork(this);
         }
     };
+
+    this.resumeWork = function () {
+        startWork(this);
+    };
+
+    this.controlPanelLoaded = true;
 
     String.prototype.stringToSeconds = function () {
         var secFromHours = Number(this.substring(0, 2)) * 1200;
@@ -35,15 +41,15 @@
         var calcTimeInSec = data.CalcTime.stringToSeconds();
         var readTimeInSec = data.ReadTime.stringToSeconds();
 
-        var calcTimeInPercent = calcTimeInSec / allTimeInSec * 100;
-        var readTimeInPercent = readTimeInSec / allTimeInSec * 100;
+        var calcTimeInPercent = allTimeInSec >= calcTimeInSec ? (calcTimeInSec / allTimeInSec * 100) : 100;
+        var readTimeInPercent = allTimeInSec >= readTimeInSec ? (readTimeInSec / allTimeInSec * 100) : 100;
 
         var gauge = $("#ctr-linear-progress").data("kendoLinearGauge");
         gauge.pointers[0].value(calcTimeInPercent);
         gauge.pointers[1].value(readTimeInPercent);
     }
 
-    function getControlDataWorker(that) {
+    function startControlDataWorker(that) {
         jQuery.ajax({
             url: "/Home/GetControlData",
             type: "GET",
@@ -52,9 +58,37 @@
                     return;
 
                 setControlData(that, data);
-                setTimeout(function () { getControlDataWorker(that); }, 1000);
+                setTimeout(function () { startControlDataWorker(that); }, 1000);
             },
             cache: false
         });
     };
+
+    function startWork(that) {
+        jQuery.ajax({
+            url: "/Home/Start",
+            type: "GET",
+            success: function () {
+                that.set("updateIsWorking", true);
+                that.set("statusText", "Stop");
+                Cookies.set('smartSpyWorking', true , { expires: 7 });
+                startControlDataWorker(that)
+            },
+            cache: false
+        });
+    }
+
+    function stopWork(that) {
+        jQuery.ajax({
+            url: "/Home/Stop",
+            type: "GET",
+            success: function (data) {
+                that.set("updateIsWorking", false);
+                that.set("statusText", "Start");
+                that.set("stopWorkInProgress", false);
+                Cookies.remove('smartSpyWorking');
+            },
+            cache: false
+        });
+    }
 }

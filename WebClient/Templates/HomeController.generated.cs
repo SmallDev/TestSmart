@@ -125,24 +125,9 @@ namespace WebClient.Controllers
         [NonAction]
         partial void StartOverride(T4MVC_System_Web_Mvc_JsonResult callInfo);
 
-        [NonAction]
-        public override System.Web.Mvc.JsonResult Start()
-        {
-            var callInfo = new T4MVC_System_Web_Mvc_JsonResult(Area, Name, ActionNames.Start);
-            StartOverride(callInfo);
-            return callInfo;
-        }
 
         [NonAction]
         partial void StopOverride(T4MVC_System_Web_Mvc_JsonResult callInfo);
-
-        [NonAction]
-        public override System.Web.Mvc.JsonResult Stop()
-        {
-            var callInfo = new T4MVC_System_Web_Mvc_JsonResult(Area, Name, ActionNames.Stop);
-            StopOverride(callInfo);
-            return callInfo;
-        }
 
         [NonAction]
         partial void GetControlPanelOverride(T4MVC_System_Web_Mvc_ActionResult callInfo);

@@ -6,16 +6,9 @@
 }
 
 
-<h1>Clusters</h1>
+<h1 class="app-title">Smart Spy</h1>
 
-<div id="all-clusters-chart">
-    <div data-role="chart"
-         data-series-defaults="{ type: 'pie', labels: { template: 'Cluster: #= category # - #= roundClusterSize(value) #', position: 'outsideEnd',visible: true, background: 'transparent' }}"
-         data-tooltip="{ visible: true, template: 'Cluster: #= category # - #= roundClusterSize(value) #' }"
-         data-series="[{field: 'Size', categoryField: 'Id'}]"
-         data-legend="{visible: false}"
-         data-bind="source: clusters, events: { seriesClick: onClusterClick}" class="main-clusters-chart"></div>
-</div>
+
 
 @section Scripts {
     <script type="text/javascript">
@@ -31,8 +24,6 @@
                 return (size).toFixed(2) + "%";
             }
 
-            var viewModel = kendo.observable(new ClustersChartViewModel);
-            kendo.bind($("#all-clusters-chart"), viewModel);
         })
     </script>
-    }
+}

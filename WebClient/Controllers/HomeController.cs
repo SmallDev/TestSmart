@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using Logic.Facades;
 using WebClient.Models;
+using System.Net;
 
 namespace WebClient.Controllers
 {
@@ -22,18 +23,24 @@ namespace WebClient.Controllers
             return View(MVC.Home.Views.Index);
         }
 
-        public virtual JsonResult Start()
+        public virtual async Task<ActionResult> Start()
         {
-            return Json(new Object());
+            await Task.WhenAll(emulatorFacade.Value.StartRead(), learningFacade.Value.StartLearning());
+            
+
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
-        public virtual JsonResult Stop()
+        public virtual ActionResult Stop()
         {
-            return Json(new Object());
+            Task.WaitAll(emulatorFacade.Value.StopRead(), learningFacade.Value.StopLearning());
+
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
         [ChildActionOnly]
         public virtual ActionResult GetControlPanel()
         {
+            
             return View(MVC.Shared.Views.ControlPanel, GetControlModel().GetAwaiter().GetResult());
         }
         public virtual async Task<JsonResult> GetControlData()
