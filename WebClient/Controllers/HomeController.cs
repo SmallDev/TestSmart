@@ -37,10 +37,21 @@ namespace WebClient.Controllers
             return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
+        [HttpPost]
+        public virtual void SetVelocity(double velocity)
+        {
+            emulatorFacade.Value.SetVelocity(velocity);
+        }
+
+        [HttpPost]
+        public virtual void SetAllTime(string allTime)
+        {
+            emulatorFacade.Value.SetAllTime(TimeSpan.Parse(allTime));
+        }
+
         [ChildActionOnly]
         public virtual ActionResult GetControlPanel()
-        {
-            
+        {  
             return View(MVC.Shared.Views.ControlPanel, GetControlModel().GetAwaiter().GetResult());
         }
         public virtual async Task<JsonResult> GetControlData()
@@ -60,6 +71,6 @@ namespace WebClient.Controllers
                 .ConfigureAwait(false);
 
             return model;
-        }
+        }        
     }
 }

@@ -3,6 +3,7 @@
     this.selectedNumber = 0;
     this.allTime = "00:00:00";
     this.velocity = 0;
+    this.velocityControl = 0;
     this.statusText = "Start";
 
     this.updateIsWorking = false;
@@ -24,6 +25,14 @@
     };
 
     this.controlPanelLoaded = true;
+
+    this.onVelocityChange = function () {
+        setVelocity(this.velocityControl);
+    };
+
+    this.saveAllTime = function () {
+        setAllTime(this.allTime);
+    };
 
     String.prototype.stringToSeconds = function () {
         var secFromHours = Number(this.substring(0, 2)) * 1200;
@@ -88,6 +97,24 @@
                 that.set("stopWorkInProgress", false);
                 Cookies.remove('smartSpyWorking');
             },
+            cache: false
+        });
+    }
+
+    function setVelocity(velocityControl) {
+        jQuery.ajax({
+            url: "/Home/SetVelocity",
+            type: "POST",
+            data: { velocity: velocityControl },
+            cache: false
+        });
+    }
+
+    function setAllTime(allTime) {
+        jQuery.ajax({
+            url: "/Home/SetAllTime",
+            type: "POST",
+            data: { allTime: allTime },
             cache: false
         });
     }
