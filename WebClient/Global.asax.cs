@@ -18,6 +18,10 @@ namespace WebClient
         {
             InitializeIoc();
 
+            #if !DEBUG
+            BundleTable.EnableOptimizations = true;
+            #endif
+
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);

@@ -8,22 +8,22 @@ namespace WebClient
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/lib").Include(
-                      "~/Scripts/jquery.min.js",
-                      "~/Scripts/kendo/kendo.all.min.js",
-                      "~/Scripts/knockout-3.3.0.js",
-                      "~/Scripts/js.cookie.js"));
+                      "~/Scripts/lib/jquery-{version}.js",
+                      "~/Scripts/lib/kendo.all.min.js",
+                      "~/Scripts/lib/knockout-{version}.js",
+                      "~/Scripts/lib/js.cookie.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
                       "~/Scripts/app/ControlPanelViewModel.js",
                       "~/Scripts/app/ClustersChartViewModel.js",
                       "~/Scripts/app/ClusterViewModel.js"));
 
-            bundles.Add(new StyleBundle("~/bundles/css").Include(
-                      "~/assets/bootstrap/bootstrap.css",
-                      "~/assets/bootstrap/bootstrap-theme.css",
-                      "~/assets/kendo/kendo.bootstrap.min.css",
-                      "~/assets/kendo/kendo.common-bootstrap.min.css",
-                      "~/assets/site.css"));
+            bundles.Add(new StyleBundle("~/bundles/site/css").Include(
+                      "~/Content/bootstrap/bootstrap.css",
+                      "~/Content/bootstrap/bootstrap-theme.css",
+                      "~/Content/kendo/kendo.bootstrap.min.css",
+                      "~/Content/kendo/kendo.common-bootstrap.min.css",
+                      "~/Content/site.css"));
         }
     }
 }

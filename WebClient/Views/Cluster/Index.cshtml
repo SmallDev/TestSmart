@@ -20,19 +20,10 @@
 @section Scripts {
     <script type="text/javascript">
 
-        $(document).ready(function() {
-            window.algSpeed = function (label) {
-                if (label == 0)
-                    return label;
-                return label + "x";
-            };
-
-            window.roundClusterSize = function(size){
-                return (size).toFixed(2) + "%";
-            }
+        require([ "clustersChartViewModel"], function (ClustersChartViewModel) {
 
             var viewModel = kendo.observable(new ClustersChartViewModel(@Html.Raw(JsonConvert.SerializeObject(Model))));
             kendo.bind($("#all-clusters-chart"), viewModel);
-        })
+        });
     </script>
 }

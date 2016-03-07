@@ -180,103 +180,129 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Content Include=".gitignore" />
-    <Content Include="assets\bootstrap\bootstrap-theme.css" />
-    <Content Include="assets\bootstrap\bootstrap.css" />
-    <Content Include="assets\fonts\glyphicons-halflings-regular.svg">
+    <Content Include="Content\bootstrap\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap\bootstrap.css" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\img\big-gears.gif">
+    <Content Include="Content\img\big-gears.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\kendo\Bootstrap\editor.png">
+    <Content Include="Content\kendo\Bootstrap\editor.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\kendo\Bootstrap\imagebrowser.png">
+    <Content Include="Content\kendo\Bootstrap\imagebrowser.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\kendo\Bootstrap\indeterminate.gif">
+    <Content Include="Content\kendo\Bootstrap\indeterminate.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\kendo\Bootstrap\loading-image.gif">
+    <Content Include="Content\kendo\Bootstrap\loading-image.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\kendo\Bootstrap\loading.gif">
+    <Content Include="Content\kendo\Bootstrap\loading.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\kendo\Bootstrap\loading_2x.gif">
+    <Content Include="Content\kendo\Bootstrap\loading_2x.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\kendo\Bootstrap\markers.png">
+    <Content Include="Content\kendo\Bootstrap\markers.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\kendo\Bootstrap\markers_2x.png">
+    <Content Include="Content\kendo\Bootstrap\markers_2x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\kendo\Bootstrap\slider-h.gif">
+    <Content Include="Content\kendo\Bootstrap\slider-h.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\kendo\Bootstrap\slider-v.gif">
+    <Content Include="Content\kendo\Bootstrap\slider-v.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\kendo\Bootstrap\sprite.png">
+    <Content Include="Content\kendo\Bootstrap\sprite.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\kendo\Bootstrap\sprite_2x.png">
+    <Content Include="Content\kendo\Bootstrap\sprite_2x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\kendo\Bootstrap\sprite_kpi.png">
+    <Content Include="Content\kendo\Bootstrap\sprite_kpi.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\kendo\Bootstrap\sprite_kpi_2x.png">
+    <Content Include="Content\kendo\Bootstrap\sprite_kpi_2x.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\kendo\content\gauge\gauge-container-partial-small.png" />
-    <Content Include="assets\kendo\content\gauge\gauge-container-partial.png">
+    <Content Include="Content\kendo\content\gauge\gauge-container-partial-small.png" />
+    <Content Include="Content\kendo\content\gauge\gauge-container-partial.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\kendo\content\gauge\gauge-container.png">
+    <Content Include="Content\kendo\content\gauge\gauge-container.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\kendo\content\gauge\linear-gauge-container-h-long.png" />
-    <Content Include="assets\kendo\content\gauge\linear-gauge-container-h.png">
+    <Content Include="Content\kendo\content\gauge\linear-gauge-container-h-long.png" />
+    <Content Include="Content\kendo\content\gauge\linear-gauge-container-h.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\kendo\content\gauge\linear-gauge-container.png">
+    <Content Include="Content\kendo\content\gauge\linear-gauge-container.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\kendo\kendo.bootstrap.min.css" />
-    <Content Include="assets\kendo\kendo.common-bootstrap.min.css" />
-    <Content Include="assets\Site.css" />
-    <Content Include="assets\img\gears.gif">
+    <Content Include="Content\kendo\kendo.bootstrap.min.css" />
+    <Content Include="Content\kendo\kendo.common-bootstrap.min.css" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Content\img\gears.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Global.asax" />
     <Content Include="Config\appSettings.config" />
     <Content Include="Config\connectionStrings.config" />
     <Content Include="Config\nlog.config" />
-    <Content Include="assets\fonts\glyphicons-halflings-regular.eot">
+    <Content Include="Content\fonts\glyphicons-halflings-regular.eot">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\fonts\glyphicons-halflings-regular.ttf">
+    <Content Include="Content\fonts\glyphicons-halflings-regular.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\fonts\glyphicons-halflings-regular.woff">
+    <Content Include="Content\fonts\glyphicons-halflings-regular.woff">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\fonts\glyphicons-halflings-regular.woff2">
+    <Content Include="Content\fonts\glyphicons-halflings-regular.woff2">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\app\require.bundle.config.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Templates\T4MVC.tt.settings.xml" />
-    <None Include="Scripts\jquery-1.11.3.intellisense.js" />
-    <Content Include="Scripts\app\ClustersChartViewModel.js" />
-    <Content Include="Scripts\app\ClusterViewModel.js" />
-    <Content Include="Scripts\app\ControlPanelViewModel.js" />
-    <Content Include="Scripts\boostrap\bootstrap.js" />
-    <Content Include="Scripts\jquery-1.11.3.js" />
-    <Content Include="Scripts\jquery.min.js" />
-    <Content Include="Scripts\js.cookie.js" />
-    <Content Include="Scripts\kendo\kendo.all.min.js" />
-    <Content Include="Scripts\knockout-3.3.0.js" />
+    <Content Include="Scripts\app\ClustersChartViewModel.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\app\ClusterViewModel.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\app\ControlPanelViewModel.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\app\require.config.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\lib\bootstrap.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\lib\jquery-1.11.3.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\lib\js.cookie.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\lib\kendo.all.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\lib\knockout-3.3.0.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\lib\r.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\lib\require.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

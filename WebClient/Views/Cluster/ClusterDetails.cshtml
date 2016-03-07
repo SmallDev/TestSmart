@@ -28,9 +28,9 @@
 </div>
 @section Scripts {
     <script type="text/javascript">
-        $(document).ready(function() {
+        require(["clusterViewModel"], function (ClusterViewModel) {
             var viewModel = kendo.observable(new ClusterViewModel(@Html.Raw(JsonConvert.SerializeObject(Model))));
             kendo.bind($("#cluster-info-block"), viewModel);
-        })
+        });
     </script>
 }

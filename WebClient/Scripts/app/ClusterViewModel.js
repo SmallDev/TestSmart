@@ -1,10 +1,14 @@
-﻿function ClusterViewModel(initData) {
-    this.id = initData.Id;
-    this.name = initData.Name;
-  
-    this.size = (initData.Size).toFixed(2) + "%";
+﻿define("clusterViewModel", function () {
+    var vm = function ClusterViewModel(initData) {
+        this.id = initData.Id;
+        this.name = initData.Name;
 
-    this.navigateBack = function () {
-        window.location = "/cluster";
+        this.size = (initData.Size).toFixed(2) + "%";
+
+        this.navigateBack = function () {
+            window.location = "/cluster";
+        };
     };
-}
+
+    return vm;
+});

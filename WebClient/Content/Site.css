@@ -40,7 +40,7 @@
 }
 
 .speed-gauge-container{
-    background: transparent url("/assets/kendo/content/gauge/gauge-container-partial-small.png") no-repeat 50% 50%;
+    background: transparent url("/Content/kendo/content/gauge/gauge-container-partial-small.png") no-repeat 50% 50%;
     width: 225px;
     height: 225px;
     text-align: center;
@@ -86,7 +86,7 @@
     display: inline-block;
     margin-top: 10px;
     text-align: center;
-    background: transparent url("/assets/kendo/content/gauge/linear-gauge-container.png") no-repeat 50% 50%;
+    background: transparent url("/Content/kendo/content/gauge/linear-gauge-container.png") no-repeat 50% 50%;
     padding-top: 30px;
     height: 336px;
 }
@@ -253,13 +253,13 @@
 }
 
 .stop-work-gears{
-    background: transparent url("/assets/img/gears.gif") no-repeat 50% 50%;
+    background: transparent url("/Content/img/gears.gif") no-repeat 50% 50%;
     height: 72px;
     width:72px;
 }
 
 .control-panel-gears{
-    background: transparent url("/assets/img/big-gears.gif") no-repeat 50% 50%;
+    background: transparent url("/Content/img/big-gears.gif") no-repeat 50% 50%;
     height: 144px;
     width: 144px;
     margin: 280px 0 0 80px;
