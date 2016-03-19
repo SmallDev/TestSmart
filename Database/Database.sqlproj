@@ -86,6 +86,7 @@
     <Build Include="Procedures\ClustersSize.sql" />
     <Build Include="Tables\ClusterRProfile.sql" />
     <Build Include="Functions\NormalDensity.sql" />
+    <Build Include="Functions\CalcEvidence.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Script.PostDeployment.sql" />

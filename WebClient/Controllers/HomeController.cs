@@ -34,6 +34,8 @@ namespace WebClient.Controllers
 
         public async virtual Task<ActionResult> Index()
         {
+            await emulatorFacade.Value.StartRead();
+
             var cls = statisticsFacade.Value.GetClusters();
             var cl = statisticsFacade.Value.GetCluster(1);
 
