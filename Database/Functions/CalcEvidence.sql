@@ -12,14 +12,15 @@ BEGIN
 
 	if (@NValue is not null)
 	begin
-		select @result = Probability from Profiles_NView ll WITH (NOEXPAND)
+		select @result = Probability from Profiles_NView ll with (noexpand)
 			join Nominal n on ll.NominalId = n.Id
 		where ll.UserId = @UserId and ll.PropertyId = @PropertyId and n.Value = @NValue
 	end
 
 	else if (@RValue is not null)
 	begin
-		select @result = SUM(up.Probability * [dbo].[NormalDensity](@RValue, cp.Mean, cp.Variance)) from ClusterRProfile cp
+		select @result = SUM(up.Probability * [dbo].[NormalDensity](@RValue, cp.Mean, cp.Variance)) 
+		from ClusterRProfile cp
 			join UserProfile up on cp.ClusterId = up.ClusterId
 		where up.UserId = @UserId and cp.PropertyId = @PropertyId
 	end

@@ -252,7 +252,7 @@ namespace Logic.Facades
         }
         private void UpdateSession(CancellationToken token, ReadSession session)
         {
-            logger.Value.Trace("UpdateSession started");
+            logger.Value.Trace("Update read session started");
 
             while (!session.Completed)
             {
@@ -261,7 +261,7 @@ namespace Logic.Facades
                 if (token.WaitHandle.WaitOne(TimeSpan.FromSeconds(30)))
                     break;
 
-                logger.Value.Trace("Update session");
+                logger.Value.Trace("Update read session");
 
                 var prev = new {session.AllTime, session.Velocity};
                 dataFactory.Value.WithRepository<ISettingsRepository>(repo =>
@@ -276,7 +276,7 @@ namespace Logic.Facades
             }
 
             token.ThrowIfCancellationRequested();
-            logger.Value.Trace("UpdateSession completed");
+            logger.Value.Trace("Update read session completed");
         }
         private async Task BreakCurrentState()
         {

@@ -13,6 +13,9 @@ namespace Logic.Dal.Repositories
         TimeSpan? GetCalcTime();
         void SetCalcTime(TimeSpan? time);
 
+        Double? GetCalcVelocity();
+        void SetCalcVelocity(Double? velocity);
+
         TimeSpan? GetAllTime();
         void SetAllTime(TimeSpan? time);
 

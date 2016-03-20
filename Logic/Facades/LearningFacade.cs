@@ -18,7 +18,8 @@ namespace Logic.Facades
         private LearningState state;
         private readonly Object critical = new Object();
 
-        public LearningFacade(Func<IDataManagerFactrory> dataFactory, Func<ILoggerFactoryAdapter> loggerAdapter)
+        public LearningFacade(Func<IDataManagerFactrory> dataFactory, 
+            Func<ILoggerFactoryAdapter> loggerAdapter)
         {
             this.dataFactory = new Lazy<IDataManagerFactrory>(dataFactory);
             logger = new Lazy<ILog>(() => loggerAdapter().GetLogger(GetType()));
@@ -38,9 +39,9 @@ namespace Logic.Facades
                 state = await Task.Run(() => InitState());
 
                 state.LearingTask = Task.WhenAll(
-                    Task.Run(() => CreateLearning(state.Session, state.TokenSource.Token)),
-                    Task.Run(() => IterateLearning(state.Session, state.TokenSource.Token)),
-                    Task.Run(() => UpdateLearning(state.Session, state.TokenSource.Token)));
+                    Task.Run(() => IterateLearning(state.Session, state.TokenSource.Token), state.TokenSource.Token),
+                    Task.Run(() => UpdateLearning(state.Session, state.TokenSource.Token), state.TokenSource.Token),
+                    Task.Run(() => UpdateSession(state.TokenSource.Token, state.Session), state.TokenSource.Token));
 
                 await state.LearingTask;
                 logger.Value.Info("Learning is completed");
@@ -60,11 +61,40 @@ namespace Logic.Facades
             await BreakCurrentState();
             logger.Value.Info("Learning has been stopped");
         }
+        
         public TimeSpan? GetCalcTime()
         {
             return state != null
                 ? state.Session.CalcTime
                 : dataFactory.Value.WithRepository<TimeSpan?, ISettingsRepository>(repo => repo.GetCalcTime());
+        }
+        public Double GetVelocity()
+        {
+            return state != null
+                ? state.Session.Velocity
+                : dataFactory.Value.WithRepository<Double, ISettingsRepository>(repo => repo.GetCalcVelocity() ?? 1.0);
+        }
+        public void SetVelocity(Double velocity)
+        {
+            if (state != null)
+                state.Session.Velocity = velocity;
+
+            dataFactory.Value.WithRepository<ISettingsRepository>(repo => repo.SetCalcVelocity(velocity), true);
+            logger.Value.TraceFormat("CalcVelocity has been changed to {0}", velocity);
+        }
+
+        public void InitClusters(Int32 count)
+        {
+            var sw = new Stopwatch();
+            sw.Start();
+            dataFactory.Value.WithRepository<ILearningRepository>(repo =>
+            {
+                repo.Clear();
+                repo.InitClusters(count);
+            }, true);
+
+            sw.Stop();
+            logger.Value.TraceFormat("Clusters are initialized, elapsed {0}", sw.Elapsed);
         }
 
         private LearningState InitState()
@@ -76,130 +106,129 @@ namespace Logic.Facades
                 dataFactory.Value.WithRepository<ISettingsRepository>(repo =>
                 {
                     newState.Session.CalcTime = repo.GetCalcTime() ?? TimeSpan.Zero;
-                    newState.Session.AllTime = repo.GetAllTime() ?? TimeSpan.Zero;
+                    newState.Session.Velocity = repo.GetCalcVelocity() ?? 1.0;
+                    newState.Session.AllTime = repo.GetAllTime() ?? TimeSpan.MaxValue;
                 });
 
-                logger.Value.InfoFormat("Init learning session: AllTime: {0}\tCalcTime: {1}",
-                    newState.Session.AllTime, newState.Session.CalcTime);
+                logger.Value.InfoFormat("Init learning session: AllTime: {0}\tCalcTime: {1}\tVelocity: {2}",
+                    newState.Session.AllTime, newState.Session.CalcTime, newState.Session.Velocity);
 
                 return newState;
             }
         }
 
-        private void CreateLearning(LearningSession session, CancellationToken token)
+        private void IterateLearning(LearningSession session, CancellationToken token)
         {
             var sw = new Stopwatch();
             sw.Start();
-            logger.Value.Trace("CreateLearning started");
-            Learning currentLearning = null;
+            logger.Value.Trace("IterateLearning started");
 
             while (!session.Completed)
             {
                 token.ThrowIfCancellationRequested();
 
+                if (session.AllDone())
+                    break;
+
                 var readTime = dataFactory.Value.WithRepository<TimeSpan?, ISettingsRepository>(
                     repo => repo.GetReadTime()) ?? TimeSpan.Zero;
 
-                if (session.AllDone())
-                    break;
-                
                 while (!session.NeedCalculate(readTime))
                 {
                     if (token.WaitHandle.WaitOne(TimeSpan.FromSeconds(1)))
                         break;
                 }
 
-                if (currentLearning != null)
-                {
-                    var id = currentLearning.Id;
-                    currentLearning = dataFactory.Value.WithRepository<Learning, ILearningRepository>(repo => repo.Get(id));
-                    while (session.NeedIterate(currentLearning))
-                    {
-                        if (token.WaitHandle.WaitOne(TimeSpan.FromSeconds(10)))
-                            break;
-
-                        currentLearning = dataFactory.Value.WithRepository<Learning, ILearningRepository>(repo => repo.Get(id));
-                    }
-                }
+                token.ThrowIfCancellationRequested();
 
                 var learning = new Learning
-                {
-                    TimeFrom = session.CalcTime,
-                    TimeTo = session.CalcTime + session.CalcInterval(readTime),
-                    Iterations = 0,
+                {                    
+                    TimeTo = session.CalcShift(readTime),
                     CreatedOn = DateTime.Now
                 };
+                learning.TimeFrom = learning.TimeTo.Subtract(session.window);
 
-                currentLearning = dataFactory.Value.WithRepository<Learning, ILearningRepository>(repo => repo.Save(learning), true);
-                logger.Value.TraceFormat("Learning {0}: Created", currentLearning.Id);
+                var savedLearning = dataFactory.Value.WithRepository<Learning, ILearningRepository>(repo => repo.Save(learning), true);
+                logger.Value.TraceFormat("Learning {0}: Created from {1} to {2}", savedLearning.Id, savedLearning.TimeFrom, savedLearning.TimeTo);
+                token.ThrowIfCancellationRequested();
 
-                session.LearningCollection.Add(currentLearning, token);
-                //
+                var sw1 = new Stopwatch();
+                sw1.Start();
+                dataFactory.Value.WithRepository<ILearningRepository>(repo => repo.InitUsers(savedLearning.Id));
 
-                session.CalcTime = learning.TimeTo;
+                sw1.Stop();
+                logger.Value.TraceFormat("Learning {0}: InitUsers elapsed {1}", savedLearning.Id, sw1.Elapsed);
+                session.UpdateCollection.Add(savedLearning, token);
+
+                sw1 = new Stopwatch();
+                sw1.Start();
+                dataFactory.Value.WithRepository<ILearningRepository>(repo => repo.LearnIteration(savedLearning.Id));
+                
+                sw1.Stop();
+                logger.Value.TraceFormat("Learning {0}: Complete, elapsed {1}", savedLearning.Id, sw1.Elapsed);
+                session.UpdateCollection.Add(savedLearning, token);
+
+                session.CalcTime = savedLearning.TimeTo;
                 dataFactory.Value.WithRepository<ISettingsRepository>(repo => repo.SetCalcTime(session.CalcTime), true);
+                logger.Value.TraceFormat("CalcTime: moved to {0}\tstopWatch: {1}", session.CalcTime, session.StopWatch());
             }
 
             token.ThrowIfCancellationRequested();
             session.LearningCollection.CompleteAdding();
 
             sw.Stop();
-            logger.Value.TraceFormat("CreateLearning completed. Elapsed {0}", sw.Elapsed);
+            logger.Value.TraceFormat("IterateLearning completed. Elapsed {0}", sw.Elapsed);
         }
-        private void IterateLearning(LearningSession session, CancellationToken token)
-        {           
-            foreach (var learning in session.LearningCollection.GetConsumingEnumerable(token))
-            {
-                var learningId = learning.Id;
 
-                var tmp = new Stopwatch();
-                tmp.Start();
-                dataFactory.Value.WithRepository<ILearningRepository>(repo => repo.InitUsers(learningId));
-
-                tmp.Stop();
-                logger.Value.TraceFormat("Learning {0}: InitUsers elapsed {1}", learningId, tmp.Elapsed);
-
-                var currentLearning = learning;
-                session.UpdateCollection.Add(currentLearning, token);
-
-                while (session.NeedIterate(currentLearning))
-                {
-                    token.ThrowIfCancellationRequested();
-
-                    var sw = new Stopwatch();
-                    sw.Start();
-                    dataFactory.Value.WithRepository<ILearningRepository>(repo => repo.LearnIteration(learningId));
-                    sw.Stop();
-
-                    currentLearning.Iterations++;
-                    session.UpdateCollection.Add(currentLearning, token);
-
-                    logger.Value.TraceFormat("Learning {0}: Complete #{1} elapsed {2}",
-                        currentLearning.Id, currentLearning.Iterations, sw.Elapsed);
-
-                    currentLearning = dataFactory.Value.WithRepository<Learning, ILearningRepository>(repo => repo.Get(learningId));
-                }
-            }
-        }
         private void UpdateLearning(LearningSession session, CancellationToken token)
         {
             foreach (var learning in session.UpdateCollection.GetConsumingEnumerable(token))
-            {
+            {              
                 var currentLearning = learning;
 
+                var sw = new Stopwatch();
+                sw.Start();
                 dataFactory.Value.WithRepository<ILearningRepository>(repo =>
                 {
                     var likelihood = repo.LogLikelihood(currentLearning.Id);
                     if (currentLearning.StartLikelihood == null)
                         currentLearning.StartLikelihood = likelihood;
+                    else currentLearning.EndLikelihood = likelihood;
 
-                    currentLearning.EndLikelihood = likelihood;
                     repo.Save(currentLearning);
                 }, true);
 
-                logger.Value.TraceFormat("Learning {0}: Update #{1} start={2}\tend={3}", currentLearning.Id,
-                    currentLearning.Iterations, currentLearning.StartLikelihood, currentLearning.EndLikelihood);
+                sw.Stop();
+                logger.Value.TraceFormat("Learning {0}: Update, start={1}\tend={2}, elapsed {3}", 
+                    currentLearning.Id, currentLearning.StartLikelihood, currentLearning.EndLikelihood, sw.Elapsed);
             }
+        }
+        private void UpdateSession(CancellationToken token, LearningSession session)
+        {
+            logger.Value.Trace("Update learning session started");
+
+            while (!session.Completed)
+            {
+                token.ThrowIfCancellationRequested();
+
+                if (token.WaitHandle.WaitOne(TimeSpan.FromSeconds(30)))
+                    break;
+
+                logger.Value.Trace("Update learning session");
+
+                var prev = new { session.AllTime, session.Velocity };
+                dataFactory.Value.WithRepository<ISettingsRepository>(repo =>
+                {
+                    session.Velocity = repo.GetCalcVelocity() ?? 1.0;
+                });
+
+                if (prev.AllTime != session.AllTime || Math.Abs(prev.Velocity - session.Velocity) > 1e-10)
+                    logger.Value.InfoFormat("Learn settings has been changed: AllTime={0}\tVelocity={1}", session.AllTime,
+                        session.Velocity);
+            }
+
+            token.ThrowIfCancellationRequested();
+            logger.Value.Trace("Update learning session completed");
         }
 
         private async Task BreakCurrentState()
@@ -238,7 +267,7 @@ namespace Logic.Facades
         }
         private class LearningSession
         {
-            private readonly TimeSpan window = TimeSpan.FromMinutes(5);
+            public readonly TimeSpan window = TimeSpan.FromMinutes(5);
             public BlockingCollection<Learning> LearningCollection { get; private set; }
             public BlockingCollection<Learning> UpdateCollection { get; private set; }
 
@@ -246,40 +275,73 @@ namespace Logic.Facades
             public TimeSpan CalcTime { get; set; }
             public TimeSpan AllTime { get; set; }
 
+            private TimeSpan elapsed;
+            private DateTime? start;
+
+            private Double velocity;
+            private readonly Object stopWatchCritical = new Object();
+            public Double Velocity
+            {
+                get { return velocity; }
+                set
+                {
+                    if (Math.Abs(velocity - value) < 1e-3)
+                        return;
+
+                    lock (stopWatchCritical)
+                    {
+                        if (start.HasValue)
+                        {
+                            elapsed = StopWatch();
+                            start = DateTime.Now;
+                        }
+                        velocity = value;
+                    }
+                }
+            }
+
             public LearningSession()
             {
                 LearningCollection = new BlockingCollection<Learning>();
                 UpdateCollection = new BlockingCollection<Learning>();
                 Completed = false;
+                elapsed = TimeSpan.Zero;
+            }
+
+            public TimeSpan StopWatch()
+            {
+                if (start == null)
+                    return TimeSpan.Zero;
+
+                lock (stopWatchCritical)
+                {
+                    return elapsed + TimeSpan.FromSeconds((DateTime.Now - start.Value).TotalSeconds * Velocity);
+                }
             }
 
             public Boolean NeedCalculate(TimeSpan readTime)
             {
-                return CalcInterval(readTime) >= window || readTime == AllTime;
-            }
-
-            public Boolean NeedIterate(Learning learning)
-            {
-                if (DateTime.Now - learning.CreatedOn > window)
+                if (readTime < window)
                     return false;
 
-                if (learning.StartLikelihood == null || learning.EndLikelihood == null || learning.Iterations == 0)
-                    return true;
+                if (start == null)
+                {
+                    start = DateTime.Now;
+                    elapsed = window;
+                }
 
-                const Double lessPercentage = 0.2; // уменьшение правдоподобия на каждой итерации
-
-                var f = Math.Pow(1 - lessPercentage, learning.Iterations);
-                var d = learning.StartLikelihood*f;
-                // выходим, если достигнута требуемая точность
-                return learning.StartLikelihood * Math.Pow(1 - lessPercentage, learning.Iterations) < learning.EndLikelihood;
+                return CalcShift(readTime) - CalcTime > TimeSpan.FromSeconds(window.TotalSeconds/10.0);
             }
-            public TimeSpan CalcInterval(TimeSpan readTime)
+           
+            public TimeSpan CalcShift(TimeSpan readTime)
             {
-                return MathExtension.Min(readTime - CalcTime, window);
+                var availibleTime = MathExtension.Min(readTime, StopWatch());
+                return MathExtension.Min(CalcTime + window, availibleTime);
             }
+
             public Boolean AllDone()
             {
-                return CalcTime == AllTime;
+                return CalcTime >= AllTime;
             }
         }
     }

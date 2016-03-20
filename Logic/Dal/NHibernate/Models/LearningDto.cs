@@ -10,7 +10,6 @@ namespace Logic.Dal.NHibernate.Models
         public virtual TimeSpan To { get; set; }
         public virtual Double? StartLikelihood { get; set; }
         public virtual Double? EndLikelihood { get; set; }
-        public virtual Int32 Iterations { get; set; }
 
         public virtual DateTime CreatedOn { get; set; }
 
@@ -23,7 +22,6 @@ namespace Logic.Dal.NHibernate.Models
                 To = learning.TimeTo,
                 StartLikelihood = learning.StartLikelihood,
                 EndLikelihood = learning.EndLikelihood,
-                Iterations = learning.Iterations,
                 CreatedOn = learning.CreatedOn
             };
         }
@@ -37,7 +35,6 @@ namespace Logic.Dal.NHibernate.Models
                 TimeTo = learning.To,
                 StartLikelihood = learning.StartLikelihood,
                 EndLikelihood = learning.EndLikelihood,
-                Iterations = learning.Iterations,
                 CreatedOn = learning.CreatedOn
             };
         }

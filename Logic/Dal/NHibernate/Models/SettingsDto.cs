@@ -10,6 +10,7 @@ namespace Logic.Dal.NHibernate.Models
             ReadTime,
             ReadVelocity,
             CalcTime,
+            CalcVelocity,
         }
 
         public virtual String Name { get; set; }

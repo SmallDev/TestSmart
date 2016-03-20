@@ -9,13 +9,13 @@ RETURNS TABLE AS RETURN
 			WHEN 'MessageType' THEN 1
 			WHEN 'StreamType' THEN 2
 		END PropertyId
-	from LearningData(1)
+	from LearningData(@learning)
 	unpivot (Value FOR Property IN (MessageType, StreamType)) unpvt
 	union all
 	select Mac, null as NValue, Value as RValue,
 		CASE Property
 			WHEN 'ReceivedRate' THEN 3
 		END PropertyId
-	from LearningData(1)
+	from LearningData(@learning)
 	unpivot (Value FOR Property IN (ReceivedRate)) unpvt
 )

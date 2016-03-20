@@ -41,6 +41,15 @@ namespace Logic.Dal.NHibernate.Repositories
             Set(SettingsDto.SettingName.CalcTime, time, t => t.ToString(TimeFormat));
         }
 
+        public Double? GetCalcVelocity()
+        {
+            return Get(SettingsDto.SettingName.CalcVelocity, s => Convert.ToDouble(s, CultureInfo.InvariantCulture));
+        }
+        public void SetCalcVelocity(Double? velocity)
+        {
+            Set(SettingsDto.SettingName.CalcVelocity, velocity, v => Convert.ToString(v, CultureInfo.InvariantCulture));
+        }
+
         public TimeSpan? GetAllTime()
         {
             return Get(SettingsDto.SettingName.AllTime, TimeSpan.Parse);

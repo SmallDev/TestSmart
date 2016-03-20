@@ -15,7 +15,6 @@ namespace Logic.Dal.NHibernate.Mappings
             Map(l => l.To).Column("[To]").CustomType<TimeAsTimeSpanType>().Not.Nullable();
             Map(l => l.StartLikelihood);
             Map(l => l.EndLikelihood);
-            Map(l => l.Iterations);
 
             Map(l => l.CreatedOn);
         }
