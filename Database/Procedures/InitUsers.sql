@@ -11,7 +11,7 @@ BEGIN
 			right join LearningData(@learning) l on l.Mac = u.Mac
 		where u.Id is null
 
-		ALTER INDEX [PK_Profiles_View] ON [dbo].[Profiles_View] DISABLE
+		ALTER INDEX [PK_Profiles_NView] ON [dbo].[Profiles_NView] DISABLE
 
 		insert into UserProfile(UserId, ClusterId, Probability)
 		select u.Id, c.Id, RAND(CHECKSUM(NEWID()))
@@ -24,6 +24,6 @@ BEGIN
 				  inner join @users u on up.UserId = u.Id
 				 group by u.Id) gr on up.UserId = gr.UserId
 
-		ALTER INDEX [PK_Profiles_View] ON [dbo].[Profiles_View] REBUILD
+		ALTER INDEX [PK_Profiles_NView] ON [dbo].[Profiles_NView] REBUILD
 	commit
 END

@@ -6,10 +6,7 @@ RETURNS FLOAT
 AS
 BEGIN
 	RETURN 
-	(select SUM(-LOG(Probability)) from
-		UnpivotData(@learning) unp
-		inner join [User] u with(nolock) on u.Mac = unp.Mac
-		inner join [Nominal] n on unp.PropertyId = n.PropertyId and unp.Value = n.Value
-		inner merge join Profiles_View ll WITH (NOEXPAND)
-	on ll.UserId = u.Id and ll.PropertyId = n.PropertyId and ll.NominalId = n.Id)
+	(select SUM(-LOG(nullif(dbo.CalcEvidence(u.Id, unp.PropertyId, unp.NValue, unp.RValue), 0)))  from
+	UnpivotData(1) unp
+	inner join [User] u with(nolock) on u.Mac = unp.Mac)
 END
