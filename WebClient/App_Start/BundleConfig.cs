@@ -18,7 +18,7 @@ namespace WebClient
                       "~/Scripts/app/ClustersChartViewModel.js",
                       "~/Scripts/app/ClusterViewModel.js"));
 
-            bundles.Add(new StyleBundle("~/bundles/site/css").Include(
+            bundles.Add(new StyleBundle("~/Content/site/css").Include(
                       "~/Content/bootstrap/bootstrap.css",
                       "~/Content/bootstrap/bootstrap-theme.css",
                       "~/Content/kendo/kendo.bootstrap.min.css",
