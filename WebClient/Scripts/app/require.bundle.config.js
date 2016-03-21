@@ -1,6 +1,6 @@
 ﻿var require = {
     bundles: {
-        '/bundles/libs?v=2015': [
+        '/bundles/lib?v=2015': [
             "clustersChartViewModel",
             "clusterViewModel",
             "controlPanelViewModel"
