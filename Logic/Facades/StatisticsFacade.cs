@@ -27,6 +27,15 @@ namespace Logic.Facades
             return result;         
         }
 
+        public void InitClusters(Int32 count)
+        {
+            dataFactory.Value.WithRepository<ILearningRepository>(repo =>
+            {
+                repo.Clear();
+                repo.InitClusters(count);
+            }, true);
+        }
+
         public IList<Cluster> GetClusters()
         {
             return dataFactory.Value.WithRepository<IList<Cluster>, IClusterRepository>(

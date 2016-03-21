@@ -83,20 +83,6 @@ namespace Logic.Facades
             logger.Value.TraceFormat("CalcVelocity has been changed to {0}", velocity);
         }
 
-        public void InitClusters(Int32 count)
-        {
-            var sw = new Stopwatch();
-            sw.Start();
-            dataFactory.Value.WithRepository<ILearningRepository>(repo =>
-            {
-                repo.Clear();
-                repo.InitClusters(count);
-            }, true);
-
-            sw.Stop();
-            logger.Value.TraceFormat("Clusters are initialized, elapsed {0}", sw.Elapsed);
-        }
-
         private LearningState InitState()
         {
             lock (critical)
@@ -137,6 +123,9 @@ namespace Logic.Facades
                 {
                     if (token.WaitHandle.WaitOne(TimeSpan.FromSeconds(1)))
                         break;
+
+                    readTime = dataFactory.Value.WithRepository<TimeSpan?, ISettingsRepository>(
+                        repo => repo.GetReadTime()) ?? TimeSpan.Zero;
                 }
 
                 token.ThrowIfCancellationRequested();

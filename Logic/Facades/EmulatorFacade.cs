@@ -167,10 +167,11 @@ namespace Logic.Facades
 
                     while (session.InFuture(rawData.Timestamp))
                     {
-                        if (!session.ChunkDataCollection.Any() && !session.RawDataCollection.Any())                        
+                        if (!session.ChunkDataCollection.Any() && !session.RawDataCollection.Any())
                             SetReadTime(session, session.StopWatch());
 
-                        if (token.WaitHandle.WaitOne(MathExtension.Min(TimeSpan.FromSeconds(1), session.FutureRealTime(rawData.Timestamp))))
+                        if (token.WaitHandle.WaitOne(MathExtension.Min(TimeSpan.FromSeconds(1),
+                                session.FutureRealTime(rawData.Timestamp))))
                             break;
                     }
 
@@ -234,9 +235,12 @@ namespace Logic.Facades
             foreach (var data in session.ChunkDataCollection.GetConsumingEnumerable(token))
             {
                 sw.Start();
-
+                var sw1 = new Stopwatch();
+                sw1.Start();
                 dataFactory.Value.WithRepository<IDataRepository>(repo => repo.Save(data));
-                logger.Value.TraceFormat("DataSave: {0} items saved", data.Count);
+                
+                sw.Stop();
+                logger.Value.TraceFormat("DataSave: {0} items saved, elapsed {1}", data.Count, sw1.Elapsed);
 
                 SetReadTime(session, data.Last().Timestamp);
             }
