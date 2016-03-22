@@ -352,7 +352,8 @@ namespace Logic.Facades
                     if (!chunk.Any())
                         realTime = DateTime.Now.TimeOfDay;
 
-                    if (DateTime.Now.TimeOfDay - realTime > TimeSpan.FromSeconds(1) && session.ChunkDataCollection.Count < 20)
+                    if (DateTime.Now.TimeOfDay - realTime > TimeSpan.FromSeconds(1) && (
+                        session.ChunkDataCollection.Count < 20) || chunk.Count > 20000) 
                     {
                         realTime = DateTime.Now.TimeOfDay;
                         session.ChunkDataCollection.Add(chunk.ToList(), token);
@@ -522,8 +523,8 @@ namespace Logic.Facades
             public ReadSession()
             {
                 Completed = false;
-                RawDataCollection = new BlockingCollection<RawData>();
-                ChunkDataCollection = new BlockingCollection<IList<Data>>();
+                RawDataCollection = new BlockingCollection<RawData>(1000000);
+                ChunkDataCollection = new BlockingCollection<IList<Data>>(50);
                 start = DateTime.Now;
                 elapsed = TimeSpan.Zero;
             }
