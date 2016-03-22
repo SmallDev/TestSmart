@@ -25,9 +25,13 @@ namespace Logic.Facades
             logger = new Lazy<ILog>(() => loggerAdapter().GetLogger(GetType()));
         }
 
+        public Boolean IsStarted()
+        {
+            return state != null;
+        }
         public async Task StartLearning()
         {
-            if (state != null)
+            if (IsStarted())
             {
                 logger.Value.Info("Learning is already run");
                 return;

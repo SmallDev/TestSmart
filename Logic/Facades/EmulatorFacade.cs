@@ -46,9 +46,13 @@ namespace Logic.Facades
             }, true);
         }
 
+        public Boolean IsStarted()
+        {
+            return state != null;
+        }
         public async Task StartRead()
         {
-            if (state != null)
+            if (IsStarted())
             {
                 logger.Value.Info("Read is already run");
                 return;

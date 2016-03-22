@@ -20,6 +20,7 @@ namespace WebClient.Controllers
 
         public virtual ActionResult Index()
         {
+            //TODO: use var isStarted = emulatorFacade.Value.IsStarted() || learningFacade.Value.IsStarted();
             return View(MVC.Home.Views.Index);
         }
 
