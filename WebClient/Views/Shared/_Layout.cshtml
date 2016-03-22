@@ -6,25 +6,25 @@
         <title>@ViewBag.Title</title>
         @Styles.Render("~/Content/site/css")
     </head>
-    <body>
-        @Html.Partial(MVC.Shared.Views.Header)
-        <div class="container-fluid main">
-            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-right right-cp-block">
-                @Html.Action(MVC.Home.GetControlPanel())
-            </div>
-            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 main-block">
-                @RenderBody()
-            </div>
+<body>
+    @Html.Partial(MVC.Shared.Views.Header)
+    <div class="container-fluid main-container">
+        <div class="col-lg-2 col-md-2"></div>
+        <div class="main-content-block col-lg-8 col-md-8">
+            @RenderBody()
         </div>
-        <footer class="footer">
-            <div class="container">
-                <p class="text-muted">@DateTime.Now.Year - Smart Spy</p>
-            </div>
-        </footer>
+        <div class="col-lg-2 col-md-2"></div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="text-muted">@DateTime.Now.Year - Smart Spy</p>
+        </div>
+    </footer>
 
     @Scripts.Render("~/bundles/lib")
-    
-   
+
+
     @if (HttpContext.Current.IsDebuggingEnabled)
     {
         <script type="text/javascript" src="/Scripts/app/require.config.js"></script>
@@ -33,36 +33,14 @@
     {
         <script type="text/javascript" src="/Scripts/app/require.bundle.config.js"></script>
     }
-    
-    <script type="text/javascript" src="/Scripts/lib/require.js"></script> 
-   
+
+    <script type="text/javascript" src="/Scripts/lib/require.js"></script>
+
     @*Scripts.Render("~/bundles/app")*@
     @RenderSection("Scripts", false)
 
-    <script type="text/javascript">
-        window.algSpeed = function (label) {
-            if (label == 0)
-                return label;
-            return label + "x";
-        };
 
-        window.roundClusterSize = function (size) {
-            return (size).toFixed(2) + "%";
-        }
 
-        require(["controlPanelViewModel"], function (ControlPanelViewModel) {
-            var viewModel = kendo.observable(new ControlPanelViewModel(smartSpyIsWorking));
-            kendo.bind($("#control-painel-block"), viewModel);
 
-            var smartSpyIsWorking = Cookies.get('smartSpyWorking');
-
-            if (smartSpyIsWorking) {
-                viewModel.resumeWork();
-            };
-        });
-
-    </script>
-
-        
-    </body>
+</body>
 </html>

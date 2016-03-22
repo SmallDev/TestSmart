@@ -38,9 +38,15 @@ namespace WebClient.Controllers
         }
 
         [HttpPost]
-        public virtual void SetVelocity(double velocity)
+        public virtual void SetReadVelocity(double velocity)
         {
             emulatorFacade.Value.SetVelocity(velocity);
+        }
+
+        [HttpPost]
+        public virtual void SetLearningVelocity(double velocity)
+        {
+            learningFacade.Value.SetVelocity(velocity);
         }
 
         [HttpPost]
@@ -64,7 +70,8 @@ namespace WebClient.Controllers
             var model = new ControlModel();
 
             await Task.WhenAll(
-                Task.Run(() => model.Velocity = emulatorFacade.Value.GetVelocity()),
+                Task.Run(() => model.ReadVelocity = emulatorFacade.Value.GetVelocity()),
+                Task.Run(() => model.LearnVelocity = learningFacade.Value.GetVelocity()),
                 Task.Run(() => model.SetAllTime(emulatorFacade.Value.GetAllTime())),
                 Task.Run(() => model.SetReadTime(emulatorFacade.Value.GetReadTime())),
                 Task.Run(() => model.SetCalcTime(learningFacade.Value.GetCalcTime())))

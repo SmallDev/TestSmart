@@ -4,7 +4,10 @@ namespace WebClient.Models
 {
     public class ControlModel
     {
-        public Double Velocity { get; set; }
+        public Double ReadVelocity { get; set; }
+
+        public Double LearnVelocity { get; set; } 
+        
         public String AllTime { get; set; }
         public String ReadTime { get; set; }
         public String CalcTime { get; set; }
