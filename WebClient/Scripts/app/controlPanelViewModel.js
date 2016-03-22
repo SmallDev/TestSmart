@@ -3,8 +3,10 @@
         var self = this;
         this.selectedNumber = 0;
         this.allTime = "00:00:00";
-        this.velocity = 0;
-        this.velocityControl = 0;
+        this.readVelocity = 0;
+        this.learnVelocity = 0;
+        this.readVelocityControl = 0;
+        this.learnVelocityControl = 0;
         this.statusText = "Start";
 
         this.updateIsWorking = false;
@@ -27,8 +29,12 @@
 
         this.controlPanelLoaded = true;
 
-        this.onVelocityChange = function () {
-            setVelocity(this.velocityControl);
+        this.onReadVelocityChange = function () {
+            setReadVelocity(this.readVelocityControl);
+        };
+
+        this.onLearnVelocityChange = function () {
+            setLearnVelocity(this.learnVelocityControl);
         };
 
         this.saveAllTime = function () {
@@ -44,7 +50,8 @@
         }
 
         function setControlData(that, data) {
-            that.set("velocity", data.Velocity);
+            that.set("readVelocity", data.ReadVelocity);
+            that.set("learnVelocity", data.LearnVelocity);
             that.set("allTime", data.AllTime);
 
             var allTimeInSec = data.AllTime.stringToSeconds();
@@ -102,9 +109,18 @@
             });
         }
 
-        function setVelocity(velocityControl) {
+        function setReadVelocity(velocityControl) {
             jQuery.ajax({
-                url: "/Home/SetVelocity",
+                url: "/Home/SetReadVelocity",
+                type: "POST",
+                data: { velocity: velocityControl },
+                cache: false
+            });
+        }
+
+        function setLearnVelocity(velocityControl) {
+            jQuery.ajax({
+                url: "/Home/SetLearningVelocity",
                 type: "POST",
                 data: { velocity: velocityControl },
                 cache: false
