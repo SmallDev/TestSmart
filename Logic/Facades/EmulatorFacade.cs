@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -172,7 +171,11 @@ namespace Logic.Facades
             }
             finally
             {
-                state.Session.RawDataCollection.CompleteAdding();
+                lock (critical)
+                {
+                    if (state != null)
+                        state.Session.RawDataCollection.CompleteAdding();
+                }
             }
         }
         private async Task DataChunkTask()
@@ -202,7 +205,11 @@ namespace Logic.Facades
             }
             finally
             {
-                state.Session.ChunkDataCollection.CompleteAdding();
+                lock (critical)
+                {
+                    if (state != null)
+                        state.Session.ChunkDataCollection.CompleteAdding();
+                }
             }
         }
         private async Task DataSaveTask()
@@ -231,7 +238,11 @@ namespace Logic.Facades
             }
             finally
             {
-                state.Session.ChunkDataCollection.CompleteAdding();
+                lock (critical)
+                {
+                    if (state != null)
+                        state.Session.ChunkDataCollection.CompleteAdding();
+                }
             }
         }
         private async Task UpdateSessionTask()

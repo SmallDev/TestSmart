@@ -22,7 +22,7 @@ namespace WebClient.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetClusters()
+        public virtual JsonResult GetClusters()
         {
             var clusters = statisticsFacade.Value.GetClusters();
             

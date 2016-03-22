@@ -79,6 +79,7 @@ namespace WebClient.Controllers
         public class ActionNamesClass
         {
             public readonly string GetList = "GetList";
+            public readonly string GetClusters = "GetClusters";
             public readonly string Get = "Get";
         }
 
@@ -86,6 +87,7 @@ namespace WebClient.Controllers
         public class ActionNameConstants
         {
             public const string GetList = "GetList";
+            public const string GetClusters = "GetClusters";
             public const string Get = "Get";
         }
 
@@ -108,8 +110,10 @@ namespace WebClient.Controllers
             public _ViewNamesClass ViewNames { get { return s_ViewNames; } }
             public class _ViewNamesClass
             {
+                public readonly string ClusterDetails = "ClusterDetails";
                 public readonly string Index = "Index";
             }
+            public readonly string ClusterDetails = "~/Views/Cluster/ClusterDetails.cshtml";
             public readonly string Index = "~/Views/Cluster/Index.cshtml";
         }
     }
@@ -127,6 +131,17 @@ namespace WebClient.Controllers
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.GetList);
             GetListOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void GetClustersOverride(T4MVC_System_Web_Mvc_JsonResult callInfo);
+
+        [NonAction]
+        public override System.Web.Mvc.JsonResult GetClusters()
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_JsonResult(Area, Name, ActionNames.GetClusters);
+            GetClustersOverride(callInfo);
             return callInfo;
         }
 

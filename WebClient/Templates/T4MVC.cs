@@ -90,29 +90,115 @@ namespace Links
             private const string URLPATH = "~/Scripts/app";
             public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
             public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
+            public static readonly string ClustersChartViewModel_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/ClustersChartViewModel.min.js") ? Url("ClustersChartViewModel.min.js") : Url("ClustersChartViewModel.js");
+            public static readonly string ClusterViewModel_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/ClusterViewModel.min.js") ? Url("ClusterViewModel.min.js") : Url("ClusterViewModel.js");
             public static readonly string ControlPanelViewModel_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/ControlPanelViewModel.min.js") ? Url("ControlPanelViewModel.min.js") : Url("ControlPanelViewModel.js");
+            public static readonly string require_bundle_config_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/require.bundle.config.min.js") ? Url("require.bundle.config.min.js") : Url("require.bundle.config.js");
+            public static readonly string require_config_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/require.config.min.js") ? Url("require.config.min.js") : Url("require.config.js");
         }
     
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public static class boostrap {
-            private const string URLPATH = "~/Scripts/boostrap";
+        public static class lib {
+            private const string URLPATH = "~/Scripts/lib";
             public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
             public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
             public static readonly string bootstrap_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/bootstrap.min.js") ? Url("bootstrap.min.js") : Url("bootstrap.js");
+            public static readonly string jquery_1_11_3_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/jquery-1.11.3.min.js") ? Url("jquery-1.11.3.min.js") : Url("jquery-1.11.3.js");
+            public static readonly string js_cookie_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/js.cookie.min.js") ? Url("js.cookie.min.js") : Url("js.cookie.js");
+            public static readonly string kendo_all_min_js = Url("kendo.all.min.js");
+            public static readonly string knockout_3_3_0_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/knockout-3.3.0.min.js") ? Url("knockout-3.3.0.min.js") : Url("knockout-3.3.0.js");
+            public static readonly string r_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/r.min.js") ? Url("r.min.js") : Url("r.js");
+            public static readonly string require_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/require.min.js") ? Url("require.min.js") : Url("require.js");
         }
     
-        public static readonly string jquery_1_11_3_intellisense_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/jquery-1.11.3.intellisense.min.js") ? Url("jquery-1.11.3.intellisense.min.js") : Url("jquery-1.11.3.intellisense.js");
-        public static readonly string jquery_1_11_3_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/jquery-1.11.3.min.js") ? Url("jquery-1.11.3.min.js") : Url("jquery-1.11.3.js");
-        public static readonly string jquery_min_js = Url("jquery.min.js");
+    }
+
+    [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+    public static class Content {
+        private const string URLPATH = "~/Content";
+        public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
+        public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public static class kendo {
-            private const string URLPATH = "~/Scripts/kendo";
+        public static class bootstrap {
+            private const string URLPATH = "~/Content/bootstrap";
             public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
             public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
-            public static readonly string kendo_all_min_js = Url("kendo.all.min.js");
+            public static readonly string bootstrap_theme_css = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/bootstrap-theme.min.css") ? Url("bootstrap-theme.min.css") : Url("bootstrap-theme.css");
+            public static readonly string bootstrap_css = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/bootstrap.min.css") ? Url("bootstrap.min.css") : Url("bootstrap.css");
         }
     
-        public static readonly string knockout_3_3_0_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/knockout-3.3.0.min.js") ? Url("knockout-3.3.0.min.js") : Url("knockout-3.3.0.js");
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public static class fonts {
+            private const string URLPATH = "~/Content/fonts";
+            public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
+            public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
+            public static readonly string glyphicons_halflings_regular_eot = Url("glyphicons-halflings-regular.eot");
+            public static readonly string glyphicons_halflings_regular_svg = Url("glyphicons-halflings-regular.svg");
+            public static readonly string glyphicons_halflings_regular_ttf = Url("glyphicons-halflings-regular.ttf");
+            public static readonly string glyphicons_halflings_regular_woff = Url("glyphicons-halflings-regular.woff");
+            public static readonly string glyphicons_halflings_regular_woff2 = Url("glyphicons-halflings-regular.woff2");
+        }
+    
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public static class img {
+            private const string URLPATH = "~/Content/img";
+            public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
+            public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
+            public static readonly string big_gears_gif = Url("big-gears.gif");
+            public static readonly string gears_gif = Url("gears.gif");
+        }
+    
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public static class kendo {
+            private const string URLPATH = "~/Content/kendo";
+            public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
+            public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
+            [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+            public static class Bootstrap {
+                private const string URLPATH = "~/Content/kendo/Bootstrap";
+                public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
+                public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
+                public static readonly string editor_png = Url("editor.png");
+                public static readonly string imagebrowser_png = Url("imagebrowser.png");
+                public static readonly string indeterminate_gif = Url("indeterminate.gif");
+                public static readonly string loading_image_gif = Url("loading-image.gif");
+                public static readonly string loading_gif = Url("loading.gif");
+                public static readonly string loading_2x_gif = Url("loading_2x.gif");
+                public static readonly string markers_png = Url("markers.png");
+                public static readonly string markers_2x_png = Url("markers_2x.png");
+                public static readonly string slider_h_gif = Url("slider-h.gif");
+                public static readonly string slider_v_gif = Url("slider-v.gif");
+                public static readonly string sprite_png = Url("sprite.png");
+                public static readonly string sprite_2x_png = Url("sprite_2x.png");
+                public static readonly string sprite_kpi_png = Url("sprite_kpi.png");
+                public static readonly string sprite_kpi_2x_png = Url("sprite_kpi_2x.png");
+            }
+        
+            [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+            public static class content {
+                private const string URLPATH = "~/Content/kendo/content";
+                public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
+                public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
+                [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+                public static class gauge {
+                    private const string URLPATH = "~/Content/kendo/content/gauge";
+                    public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
+                    public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
+                    public static readonly string gauge_container_partial_small_png = Url("gauge-container-partial-small.png");
+                    public static readonly string gauge_container_partial_png = Url("gauge-container-partial.png");
+                    public static readonly string gauge_container_png = Url("gauge-container.png");
+                    public static readonly string linear_gauge_container_h_long_png = Url("linear-gauge-container-h-long.png");
+                    public static readonly string linear_gauge_container_h_png = Url("linear-gauge-container-h.png");
+                    public static readonly string linear_gauge_container_png = Url("linear-gauge-container.png");
+                }
+            
+            }
+        
+            public static readonly string kendo_bootstrap_min_css = Url("kendo.bootstrap.min.css");
+            public static readonly string kendo_common_bootstrap_min_css = Url("kendo.common-bootstrap.min.css");
+        }
+    
+        public static readonly string Site_css = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/Site.min.css") ? Url("Site.min.css") : Url("Site.css");
     }
 
     
@@ -125,29 +211,81 @@ namespace Links
             {
                 public static class Assets
                 {
+                    public const string ClustersChartViewModel_js = "~/Scripts/app/ClustersChartViewModel.js"; 
+                    public const string ClusterViewModel_js = "~/Scripts/app/ClusterViewModel.js"; 
                     public const string ControlPanelViewModel_js = "~/Scripts/app/ControlPanelViewModel.js"; 
+                    public const string require_bundle_config_js = "~/Scripts/app/require.bundle.config.js"; 
+                    public const string require_config_js = "~/Scripts/app/require.config.js"; 
                 }
             }
-            public static partial class boostrap 
+            public static partial class lib 
             {
                 public static class Assets
                 {
-                    public const string bootstrap_js = "~/Scripts/boostrap/bootstrap.js"; 
-                }
-            }
-            public static partial class kendo 
-            {
-                public static class Assets
-                {
-                    public const string kendo_all_min_js = "~/Scripts/kendo/kendo.all.min.js"; 
+                    public const string bootstrap_js = "~/Scripts/lib/bootstrap.js"; 
+                    public const string jquery_1_11_3_js = "~/Scripts/lib/jquery-1.11.3.js"; 
+                    public const string js_cookie_js = "~/Scripts/lib/js.cookie.js"; 
+                    public const string kendo_all_min_js = "~/Scripts/lib/kendo.all.min.js"; 
+                    public const string knockout_3_3_0_js = "~/Scripts/lib/knockout-3.3.0.js"; 
+                    public const string r_js = "~/Scripts/lib/r.js"; 
+                    public const string require_js = "~/Scripts/lib/require.js"; 
                 }
             }
             public static class Assets
             {
-                public const string jquery_1_11_3_intellisense_js = "~/Scripts/jquery-1.11.3.intellisense.js"; 
-                public const string jquery_1_11_3_js = "~/Scripts/jquery-1.11.3.js"; 
-                public const string jquery_min_js = "~/Scripts/jquery.min.js"; 
-                public const string knockout_3_3_0_js = "~/Scripts/knockout-3.3.0.js"; 
+            }
+        }
+        public static partial class Content 
+        {
+            public static partial class bootstrap 
+            {
+                public static class Assets
+                {
+                    public const string bootstrap_theme_css = "~/Content/bootstrap/bootstrap-theme.css";
+                    public const string bootstrap_css = "~/Content/bootstrap/bootstrap.css";
+                }
+            }
+            public static partial class fonts 
+            {
+                public static class Assets
+                {
+                }
+            }
+            public static partial class img 
+            {
+                public static class Assets
+                {
+                }
+            }
+            public static partial class kendo 
+            {
+                public static partial class Bootstrap 
+                {
+                    public static class Assets
+                    {
+                    }
+                }
+                public static partial class content 
+                {
+                    public static partial class gauge 
+                    {
+                        public static class Assets
+                        {
+                        }
+                    }
+                    public static class Assets
+                    {
+                    }
+                }
+                public static class Assets
+                {
+                    public const string kendo_bootstrap_min_css = "~/Content/kendo/kendo.bootstrap.min.css";
+                    public const string kendo_common_bootstrap_min_css = "~/Content/kendo/kendo.common-bootstrap.min.css";
+                }
+            }
+            public static class Assets
+            {
+                public const string Site_css = "~/Content/Site.css";
             }
         }
     }

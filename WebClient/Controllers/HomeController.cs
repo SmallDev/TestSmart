@@ -24,17 +24,16 @@ namespace WebClient.Controllers
             return View(MVC.Home.Views.Index, new { IsStarted = isStarted });
         }
 
-        public virtual async Task<ActionResult> Start()
+        public virtual ActionResult Start()
         {
-            await Task.WhenAll(emulatorFacade.Value.StartRead(), learningFacade.Value.StartLearning());
-            
+            Task.WhenAll(emulatorFacade.Value.StartRead(), learningFacade.Value.StartLearning());
 
             return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
-        public virtual ActionResult Stop()
+        public virtual async Task<ActionResult> Stop()
         {
-            Task.WaitAll(emulatorFacade.Value.StopRead(), learningFacade.Value.StopLearning());
-
+            await Task.WhenAll(emulatorFacade.Value.StopRead(), learningFacade.Value.StopLearning());
+            
             return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
