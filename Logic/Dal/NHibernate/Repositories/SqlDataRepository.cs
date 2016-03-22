@@ -22,7 +22,7 @@ namespace Logic.Dal.NHibernate.Repositories
             {
                 using (var bulk = new SqlBulkCopy(connection, SqlBulkCopyOptions.Default, transaction))
                 {
-
+                    bulk.BulkCopyTimeout = (Int32)TimeSpan.FromMinutes(5).TotalSeconds;
                     bulk.BatchSize = 100;
                     bulk.DestinationTableName = "dbo.Data";
                     bulk.WriteToServer(AsDataTable(data));
