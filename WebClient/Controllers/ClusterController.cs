@@ -4,6 +4,7 @@ using System.Web.Mvc;
 using Logic.Facades;
 using Logic.Model;
 using System.Linq;
+using WebClient.Models;
 
 namespace WebClient.Controllers
 {
@@ -17,8 +18,16 @@ namespace WebClient.Controllers
 
         public virtual ActionResult GetList()
         {
+            return View(MVC.Cluster.Views.Index);
+        }
+
+        [HttpPost]
+        public JsonResult GetClusters()
+        {
             var clusters = statisticsFacade.Value.GetClusters();
-            return View(MVC.Cluster.Views.Index, clusters);
+            var showChart = clusters != null && clusters.Count > 0 && clusters.Any(cluster => cluster.Size > 0);
+
+            return Json(new ClustersChartModel { Clusters = clusters, ShowChart = showChart});
         }
 
         public virtual ActionResult Get(Int32 id)

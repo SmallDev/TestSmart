@@ -41,7 +41,7 @@ body{
 }
 
 .main-content-block{
-    overflow-y: auto; 
+
 }
 
 .l-settings-block
@@ -125,7 +125,7 @@ body{
     width: 100px !important;
     height: 40px !important;
     font-size: 13pt;
-    padding: 0px!important;
+    padding: 0!important;
 }
 
 .save-all-time-btn{
@@ -210,7 +210,7 @@ body{
 }
 
 .main-clusters-chart{
-    height:600px;
+    height:500px;
 }
 
 .cluster-short-info-block{

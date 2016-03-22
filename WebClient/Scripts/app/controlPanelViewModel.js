@@ -89,7 +89,7 @@
                     that.set("updateIsWorking", true);
                     that.set("statusText", "Stop");
                     Cookies.set('smartSpyWorking', true, { expires: 7 });
-                    startControlDataWorker(that)
+                    startControlDataWorker(that);
                 },
                 cache: false
             });

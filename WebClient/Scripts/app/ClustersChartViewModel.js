@@ -1,12 +1,14 @@
 ﻿define("clustersChartViewModel", function () {
-    var vm = function ClustersChartViewModel(data) {
-        var clusterData = data;
+    var vm = function ClustersChartViewModel() {
+        var self = this;
+        self.clusterData = [];
+        self.showClustersChart = false;
 
-        this.clusters = new kendo.data.DataSource({
-            data: clusterData
+        self.clusters = new kendo.data.DataSource({
+            data: self.clusterData
         });
 
-        this.onClusterClick = function (e) {
+        self.onClusterClick = function (e) {
             explodePie(e);
             setTimeout(function () { window.location = "/cluster/" + e.category; }, 200);
         }
@@ -20,6 +22,28 @@
             e.dataItem.explode = true;
             e.sender.refresh();
         };
+
+        self.startDataWorker = function() {
+            getDataWork(this);
+        };
+
+        function getDataWork(that) {
+            jQuery.ajax({
+                url: "/Cluster/GetClusters",
+                type: "POST",
+                success: function(data) {
+                    that.set("showClustersChart", data.ShowChart);
+                    if (data.ShowChart) {
+                        that.set("clusterData", data.Clusters);
+                    }
+                    setTimeout(function () { getDataWork(that); }, 1000);
+                },
+                error: function() {
+                    setTimeout(function () { getDataWork(that); }, 1000);
+                },
+                cache: false
+            });
+        }
     }
 
     return vm;

@@ -145,6 +145,7 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\ConfigService.cs" />
+    <Compile Include="Models\ClustersChartModel.cs" />
     <Compile Include="Services\DependencyHostFactory.cs" />
     <Compile Include="Services\IEmulatorService.cs" />
     <Compile Include="Services\EmulatorService.cs" />

@@ -8,22 +8,34 @@
 
 
 <div id="all-clusters-chart">
+
+    <div data-bind="invisible: showClustersChart">Кластеры не проинициализрованы либо пусты</div>
+
     <div data-role="chart"
          data-series-defaults="{ type: 'pie', labels: { template: 'Cluster: #= category # - #= roundClusterSize(value) #', position: 'outsideEnd',visible: true, background: 'transparent' }}"
          data-tooltip="{ visible: true, template: 'Cluster: #= category # - #= roundClusterSize(value) #' }"
          data-series="[{field: 'Size', categoryField: 'Id'}]"
          data-series-colors="['#7FFFD4','#FFE4C4','#0000FF','#8A2BE2','#A52A2A','#5F9EA0','#DC143C','#006400','#2F4F4F','#FF1493','#FFD700','#ADFF2F','#4B0082','#2E8B57','#6A5ACD']"
          data-legend="{visible: false}"
-         data-bind="source: clusters, events: { seriesClick: onClusterClick}" class="main-clusters-chart"></div>
+         data-bind="source: clusters, events: { seriesClick: onClusterClick}, visible: showClustersChart" class="main-clusters-chart"></div>
 </div>
 
 @section Scripts {
     <script type="text/javascript">
+        window.algSpeed = function (label) {
+            if (label == 0)
+                return label;
+            return label + "x";
+        };
 
-        require([ "clustersChartViewModel"], function (ClustersChartViewModel) {
+        window.roundClusterSize = function (size) {
+            return (size).toFixed(2) + "%";
+        }
+        require(["clustersChartViewModel"], function (ClustersChartViewModel) {
 
-            var viewModel = kendo.observable(new ClustersChartViewModel(@Html.Raw(JsonConvert.SerializeObject(Model))));
+            var viewModel = kendo.observable(new ClustersChartViewModel());
             kendo.bind($("#all-clusters-chart"), viewModel);
+            viewModel.startDataWorker();
         });
     </script>
 }
