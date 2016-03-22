@@ -38,10 +38,10 @@
                     if (data.ShowChart) {
                         self.clusters.data(data.Clusters);
                     }
-                    setTimeout(function () { getDataWork(that); }, 1000);
+                    setTimeout(function () { getDataWork(that); }, 5000);
                 },
                 error: function() {
-                    setTimeout(function () { getDataWork(that); }, 1000);
+                    setTimeout(function () { getDataWork(that); }, 5000);
                 },
                 cache: false
             });
