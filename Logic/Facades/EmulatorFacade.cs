@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Logging;
@@ -422,12 +423,21 @@ namespace Logic.Facades
 
             if (data.StreamType == null && !String.IsNullOrEmpty(rawData.StreamType))
                 logger.Value.WarnFormat("Stream type {0} is unknown", rawData.StreamType);
-
-            TimeSpan interval;
-            if (!TimeSpan.TryParseExact(rawData.Interval, "mm\\:ss\\.fff", CultureInfo.InvariantCulture, out interval))
+            
+            const String intervalPattern = @"(?<mm>\d+):(?<ss>\d+).(?<fff>\d+)";
+            var match = Regex.Match(rawData.Interval, intervalPattern);
+            Int32 minutes;
+            Int32 seconds;
+            Int32 milliseconds;
+            if (!match.Success ||
+                !Int32.TryParse(match.Groups["mm"].Value, out minutes) ||
+                !Int32.TryParse(match.Groups["ss"].Value, out seconds) ||
+                !Int32.TryParse(match.Groups["fff"].Value, out milliseconds))
                 logger.Value.WarnFormat("Interval '{0}' parsing fail", rawData.Interval);
+            
             else
             {
+                var interval = new TimeSpan(minutes/(60*24), minutes/60, minutes%60, seconds, milliseconds);
                 Int32 received;
                 if (!Int32.TryParse(rawData.Received, out received))
                     logger.Value.WarnFormat("Received '{0}' parsing fail", rawData.Received);
