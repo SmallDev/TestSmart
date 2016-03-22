@@ -41,11 +41,7 @@ namespace Logic.Facades
             try
             {
                 state = await Task.Run(() => InitState());
-
-                state.LearingTask = Task.WhenAll(
-                    Task.Run(() => IterateLearning(state.Session, state.TokenSource.Token), state.TokenSource.Token),
-                    Task.Run(() => UpdateLearning(state.Session, state.TokenSource.Token), state.TokenSource.Token),
-                    Task.Run(() => UpdateSession(state.TokenSource.Token, state.Session), state.TokenSource.Token));
+                state.LearingTask = Task.WhenAll(IterateLearningTask(), UpdateLearningTask(), UpdateSessionTask());
 
                 await state.LearingTask;
                 logger.Value.Info("Learning is completed");
@@ -54,16 +50,26 @@ namespace Logic.Facades
             {
                 logger.Value.Info("Learning is cancelled");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.Value.Info("Learning is failed");
+                logger.Value.Error(ex.Message, ex);
+
                 BreakCurrentState().Wait();
-                throw;
             }
         }
         public async Task StopLearning()
         {
-            await BreakCurrentState();
-            logger.Value.Info("Learning has been stopped");
+            try
+            {
+                await BreakCurrentState();
+                logger.Value.Info("Learning has been stopped");
+            }
+            catch (Exception ex)
+            {
+                logger.Value.Info("Learning stop has failed");
+                logger.Value.Error(ex.Message, ex);
+            }
         }
         
         public TimeSpan? GetCalcTime()
@@ -107,12 +113,92 @@ namespace Logic.Facades
             }
         }
 
+        private async Task IterateLearningTask()
+        {
+            try
+            {
+                var sw = new Stopwatch();
+                sw.Start();
+                logger.Value.Trace("IterateLearning has started");
+
+                await Task.Run(() => IterateLearning(state.Session, state.TokenSource.Token), state.TokenSource.Token);
+
+                sw.Stop();
+                logger.Value.TraceFormat("IterateLearning has successfully completed, elapsed {0}", sw.Elapsed);
+            }
+            catch (OperationCanceledException)
+            {
+                logger.Value.TraceFormat("IterateLearning has been cancelled");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                logger.Value.TraceFormat("IterateLearning has failed");
+                logger.Value.Error(ex.Message, ex);
+                throw;
+            }
+            finally
+            {
+                lock (critical)
+                {
+                    if (state != null)
+                        state.Session.LearningCollection.CompleteAdding();
+                }
+            }
+        }
+        private async Task UpdateLearningTask()
+        {
+            try
+            {
+                var sw = new Stopwatch();
+                sw.Start();
+                logger.Value.Trace("UpdateLearning has started");
+
+                await Task.Run(() => UpdateLearning(state.Session, state.TokenSource.Token), state.TokenSource.Token);
+
+                sw.Stop();
+                logger.Value.TraceFormat("UpdateLearning has successfully completed, elapsed {0}", sw.Elapsed);
+            }
+            catch (OperationCanceledException)
+            {
+                logger.Value.TraceFormat("UpdateLearning has been cancelled");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                logger.Value.TraceFormat("UpdateLearning has failed");
+                logger.Value.Error(ex.Message, ex);
+                throw;
+            }
+        }
+        private async Task UpdateSessionTask()
+        {
+            try
+            {
+                var sw = new Stopwatch();
+                sw.Start();
+                logger.Value.Trace("Update learning session has started");
+
+                await Task.Run(() => UpdateSession(state.TokenSource.Token, state.Session), state.TokenSource.Token);
+
+                sw.Stop();
+                logger.Value.TraceFormat("Update learning session has sccessfully completed, elapsed {0}", sw.Elapsed);
+            }
+            catch (OperationCanceledException)
+            {
+                logger.Value.TraceFormat("Update learning session has been cancelled");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                logger.Value.TraceFormat("Update learning session has failed");
+                logger.Value.Error(ex.Message, ex);
+                throw;
+            }
+        }
+
         private void IterateLearning(LearningSession session, CancellationToken token)
         {
-            var sw = new Stopwatch();
-            sw.Start();
-            logger.Value.Trace("IterateLearning started");
-
             while (!session.Completed)
             {
                 token.ThrowIfCancellationRequested();
@@ -145,32 +231,26 @@ namespace Logic.Facades
                 logger.Value.TraceFormat("Learning {0}: Created from {1} to {2}", savedLearning.Id, savedLearning.TimeFrom, savedLearning.TimeTo);
                 token.ThrowIfCancellationRequested();
 
-                var sw1 = new Stopwatch();
-                sw1.Start();
+                var sw = new Stopwatch();
+                sw.Start();
                 dataFactory.Value.WithRepository<ILearningRepository>(repo => repo.InitUsers(savedLearning.Id));
 
-                sw1.Stop();
-                logger.Value.TraceFormat("Learning {0}: InitUsers elapsed {1}", savedLearning.Id, sw1.Elapsed);
+                sw.Stop();
+                logger.Value.TraceFormat("Learning {0}: InitUsers elapsed {1}", savedLearning.Id, sw.Elapsed);
                 session.UpdateCollection.Add(savedLearning, token);
 
-                sw1 = new Stopwatch();
-                sw1.Start();
+                sw = new Stopwatch();
+                sw.Start();
                 dataFactory.Value.WithRepository<ILearningRepository>(repo => repo.LearnIteration(savedLearning.Id));
                 
-                sw1.Stop();
-                logger.Value.TraceFormat("Learning {0}: Complete, elapsed {1}", savedLearning.Id, sw1.Elapsed);
+                sw.Stop();
+                logger.Value.TraceFormat("Learning {0}: Complete, elapsed {1}", savedLearning.Id, sw.Elapsed);
                 session.UpdateCollection.Add(savedLearning, token);
 
                 session.CalcTime = savedLearning.TimeTo;
                 dataFactory.Value.WithRepository<ISettingsRepository>(repo => repo.SetCalcTime(session.CalcTime), true);
                 logger.Value.TraceFormat("CalcTime: moved to {0}\tstopWatch: {1}", session.CalcTime, session.StopWatch());
             }
-
-            token.ThrowIfCancellationRequested();
-            session.LearningCollection.CompleteAdding();
-
-            sw.Stop();
-            logger.Value.TraceFormat("IterateLearning completed. Elapsed {0}", sw.Elapsed);
         }
 
         private void UpdateLearning(LearningSession session, CancellationToken token)
@@ -198,16 +278,12 @@ namespace Logic.Facades
         }
         private void UpdateSession(CancellationToken token, LearningSession session)
         {
-            logger.Value.Trace("Update learning session started");
-
             while (!session.Completed)
             {
                 token.ThrowIfCancellationRequested();
 
                 if (token.WaitHandle.WaitOne(TimeSpan.FromSeconds(30)))
                     break;
-
-                logger.Value.Trace("Update learning session");
 
                 var prev = new { session.AllTime, session.Velocity };
                 dataFactory.Value.WithRepository<ISettingsRepository>(repo =>
@@ -219,9 +295,6 @@ namespace Logic.Facades
                     logger.Value.InfoFormat("Learn settings has been changed: AllTime={0}\tVelocity={1}", session.AllTime,
                         session.Velocity);
             }
-
-            token.ThrowIfCancellationRequested();
-            logger.Value.Trace("Update learning session completed");
         }
 
         private async Task BreakCurrentState()
@@ -243,7 +316,14 @@ namespace Logic.Facades
             {
                 await task;
             }
-            catch (OperationCanceledException) { }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (Exception ex)
+            {
+                logger.Value.Info("Break learning is failed");
+                logger.Value.Error(ex.Message, ex);
+            }
         }
 
         private class LearningState

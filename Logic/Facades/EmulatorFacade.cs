@@ -58,7 +58,7 @@ namespace Logic.Facades
                 return;
             }
 
-            logger.Value.Info("Read is started");
+            logger.Value.Info("Read has started");
             try
             {
                 state = await Task.Run(() => InitState());
@@ -68,22 +68,32 @@ namespace Logic.Facades
                     DataSaveTask(), UpdateSessionTask());
 
                 await state.ReadTask;
-                logger.Value.Info("Read is completed");
+                logger.Value.Info("Read has completed");
             }
             catch (OperationCanceledException)
             {
-                logger.Value.Info("Read is cancelled");
+                logger.Value.Info("Read has been cancelled");
             }
-            catch(Exception)
+            catch(Exception ex)
             {
+                logger.Value.Info("Read has failed");
+                logger.Value.Error(ex.Message, ex);
+
                 BreakCurrentState().Wait();
-                throw;
             }
         }
         public async Task StopRead()
         {
-            await BreakCurrentState();
-            logger.Value.Info("Read has been stopped");
+            try
+            {
+                await BreakCurrentState();
+                logger.Value.Info("Read has been stopped");
+            }
+            catch (Exception ex)
+            {
+                logger.Value.Info("Read stop has failed");
+                logger.Value.Error(ex.Message, ex);
+            }
         }
 
         public TimeSpan? GetReadTime()
@@ -151,21 +161,21 @@ namespace Logic.Facades
             {
                 var sw = new Stopwatch();
                 sw.Start();
-                logger.Value.Trace("DataRead started");
+                logger.Value.Trace("DataRead has started");
 
                 await Task.Run(() => DataRead(state.TokenSource.Token, state.Session), state.TokenSource.Token);
 
                 sw.Stop();
-                logger.Value.TraceFormat("DataRead sccessfully completed, elapsed {0}", sw.Elapsed);
+                logger.Value.TraceFormat("DataRead has sccessfully completed, elapsed {0}", sw.Elapsed);
             }
             catch (OperationCanceledException)
             {
-                logger.Value.TraceFormat("DataRead is cancelled");
+                logger.Value.TraceFormat("DataRead has been cancelled");
                 throw;
             }
             catch (Exception ex)
             {
-                logger.Value.TraceFormat("DataRead failed");
+                logger.Value.TraceFormat("DataRead has failed");
                 logger.Value.Error(ex.Message, ex);
                 throw;
             }
@@ -184,21 +194,21 @@ namespace Logic.Facades
             {
                 var sw = new Stopwatch();
                 sw.Start();
-                logger.Value.Trace("DataChunk started");
+                logger.Value.Trace("DataChunk has started");
 
                 await Task.Run(() => DataChunk(state.TokenSource.Token, state.Session), state.TokenSource.Token);
 
                 sw.Stop();
-                logger.Value.TraceFormat("DataChunk sccessfully completed, elapsed {0}", sw.Elapsed);
+                logger.Value.TraceFormat("DataChunk has sccessfully completed, elapsed {0}", sw.Elapsed);
             }
             catch (OperationCanceledException)
             {
-                logger.Value.TraceFormat("DataChunk is cancelled");
+                logger.Value.TraceFormat("DataChunk has been cancelled");
                 throw;
             }
             catch (Exception ex)
             {
-                logger.Value.TraceFormat("DataChunk failed");
+                logger.Value.TraceFormat("DataChunk has failed");
                 logger.Value.Error(ex.Message, ex);
                 state.Session.RawDataCollection.CompleteAdding();
                 throw;
@@ -218,21 +228,21 @@ namespace Logic.Facades
             {
                 var sw = new Stopwatch();
                 sw.Start();
-                logger.Value.Trace("DataSave started");
+                logger.Value.Trace("DataSave has started");
 
                 await Task.Run(() => DataSave(state.TokenSource.Token, state.Session), state.TokenSource.Token);
 
                 sw.Stop();
-                logger.Value.TraceFormat("DataSave sccessfully completed, elapsed {0}", sw.Elapsed);
+                logger.Value.TraceFormat("DataSave has sccessfully completed, elapsed {0}", sw.Elapsed);
             }
             catch (OperationCanceledException)
             {
-                logger.Value.TraceFormat("DataSave is cancelled");
+                logger.Value.TraceFormat("DataSave has been cancelled");
                 throw;
             }
             catch (Exception ex)
             {
-                logger.Value.TraceFormat("DataSave failed");
+                logger.Value.TraceFormat("DataSave has failed");
                 logger.Value.Error(ex.Message, ex);
                 throw;
             }
@@ -251,21 +261,21 @@ namespace Logic.Facades
             {
                 var sw = new Stopwatch();
                 sw.Start();
-                logger.Value.Trace("Update read session started");
+                logger.Value.Trace("Update read session has started");
 
                 await Task.Run(() => UpdateSession(state.TokenSource.Token, state.Session), state.TokenSource.Token);
 
                 sw.Stop();
-                logger.Value.TraceFormat("Update read session sccessfully completed, elapsed {0}", sw.Elapsed);
+                logger.Value.TraceFormat("Update read session has sccessfully completed, elapsed {0}", sw.Elapsed);
             }
             catch (OperationCanceledException)
             {
-                logger.Value.TraceFormat("Update read session is cancelled");
+                logger.Value.TraceFormat("Update read session has been cancelled");
                 throw;
             }
             catch (Exception ex)
             {
-                logger.Value.TraceFormat("Update read session failed");
+                logger.Value.TraceFormat("Update read session has failed");
                 logger.Value.Error(ex.Message, ex);
                 throw;
             }
@@ -291,6 +301,11 @@ namespace Logic.Facades
                 await task;
             }
             catch (OperationCanceledException) { }
+            catch (Exception ex)
+            {
+                logger.Value.Info("Break read is failed");
+                logger.Value.Error(ex.Message, ex);
+            }
         }
 
         private void DataRead(CancellationToken token, ReadSession session)
