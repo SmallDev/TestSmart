@@ -15,7 +15,7 @@ BEGIN
 		end
 
 		if (@calcData = 1)
-		begin tran
+		begin
 			ALTER INDEX [PK_Profiles_NView] ON [dbo].[Profiles_NView] DISABLE
 
 			delete from dbo.[UserProfile]
@@ -32,6 +32,6 @@ BEGIN
 			where Name = 'CalcTime'
 			update dbo.[Settings] set Value = NULL
 			where Name = 'CalcVelocity'
-		commit tran
+		end
 	commit
 END
