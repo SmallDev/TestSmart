@@ -20,7 +20,8 @@ namespace WebClient.Controllers
 
         public virtual ActionResult Index()
         {
-            return View(MVC.Home.Views.Index, new { IsStarted= true});
+            var isStarted = emulatorFacade.Value.IsStarted() || learningFacade.Value.IsStarted();
+            return View(MVC.Home.Views.Index, new { IsStarted = isStarted });
         }
 
         public virtual async Task<ActionResult> Start()
