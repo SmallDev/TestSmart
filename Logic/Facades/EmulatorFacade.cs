@@ -343,15 +343,15 @@ namespace Logic.Facades
             if (data.StreamType == null && !String.IsNullOrEmpty(rawData.StreamType))
                 logger.Value.WarnFormat("Stream type {0} is unknown", rawData.StreamType);
 
-            TimeSpan interval;          
-            if (!TimeSpan.TryParseExact("05:00.188", "mm\\:ss\\.fff", CultureInfo.InvariantCulture, out interval))
+            TimeSpan interval;
+            if (!TimeSpan.TryParseExact(rawData.Interval, "mm\\:ss\\.fff", CultureInfo.InvariantCulture, out interval))
                 logger.Value.WarnFormat("Interval '{0}' parsing fail", rawData.Interval);
             else
             {
                 Int32 received;
                 if (!Int32.TryParse(rawData.Received, out received))
                     logger.Value.WarnFormat("Received '{0}' parsing fail", rawData.Received);
-                else
+                else if (received > 0)
                     data.ReceivedRate = received/interval.TotalSeconds;
             }
 
