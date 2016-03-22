@@ -24,7 +24,9 @@
         };
 
         this.resumeWork = function () {
-            startWork(this);
+            this.set("updateIsWorking", true);
+            this.set("statusText", "Stop");
+            startControlDataWorker(this);
         };
 
         this.controlPanelLoaded = true;
@@ -88,7 +90,6 @@
                 success: function () {
                     that.set("updateIsWorking", true);
                     that.set("statusText", "Stop");
-                    Cookies.set('smartSpyWorking', true, { expires: 7 });
                     startControlDataWorker(that);
                 },
                 cache: false

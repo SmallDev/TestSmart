@@ -106,12 +106,13 @@
         }
 
         require(["controlPanelViewModel"], function (ControlPanelViewModel) {
-            var viewModel = kendo.observable(new ControlPanelViewModel(smartSpyIsWorking));
+            var viewModel = kendo.observable(new ControlPanelViewModel());
             kendo.bind($("#control-painel-block"), viewModel);
 
-            var smartSpyIsWorking = Cookies.get('smartSpyWorking');
+            
+            var modelData = @Html.Raw(JsonConvert.SerializeObject(Model));
 
-            if (smartSpyIsWorking) {
+            if (modelData.IsStarted) {
                 viewModel.resumeWork();
             };
         });

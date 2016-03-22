@@ -20,7 +20,7 @@ namespace WebClient.Controllers
 
         public virtual ActionResult Index()
         {
-            return View(MVC.Home.Views.Index);
+            return View(MVC.Home.Views.Index, new { IsStarted= true});
         }
 
         public virtual async Task<ActionResult> Start()

@@ -25,6 +25,7 @@ namespace WebClient.Controllers
         public JsonResult GetClusters()
         {
             var clusters = statisticsFacade.Value.GetClusters();
+            
             var showChart = clusters != null && clusters.Count > 0 && clusters.Any(cluster => cluster.Size > 0);
 
             return Json(new ClustersChartModel { Clusters = clusters, ShowChart = showChart});
