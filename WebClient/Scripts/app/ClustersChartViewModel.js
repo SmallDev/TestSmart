@@ -3,6 +3,7 @@
         var self = this;
         self.clusterData = [];
         self.showClustersChart = false;
+        self.showNoClustersMessage = false;
 
         self.clusters = new kendo.data.DataSource({
             data: self.clusterData
@@ -33,8 +34,9 @@
                 type: "POST",
                 success: function(data) {
                     that.set("showClustersChart", data.ShowChart);
+                    that.set("showNoClustersMessage", !data.ShowChart);
                     if (data.ShowChart) {
-                        that.set("clusterData", data.Clusters);
+                        self.clusters.data(data.Clusters);
                     }
                     setTimeout(function () { getDataWork(that); }, 1000);
                 },
