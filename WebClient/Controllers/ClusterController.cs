@@ -28,7 +28,7 @@ namespace WebClient.Controllers
             
             var showChart = clusters != null && clusters.Count > 0 && clusters.Any(cluster => cluster.Size > 0);
 
-            return Json(new ClustersChartModel { Clusters = clusters, ShowChart = showChart});
+            return Json(new ClustersChartModel { Clusters = clusters, ShowChart = showChart });
         }
 
         public virtual ActionResult Get(Int32 id)

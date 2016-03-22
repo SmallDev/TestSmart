@@ -290,6 +290,15 @@ body{
     margin-top: 0;
 }
 
+.clusters-pie-block {
+    text-align: center;
+}
+
+.no-clusters-text {
+    font-size: 26pt;
+    margin-top: 25%;
+}
+
 
 
 

@@ -7,9 +7,9 @@
 <h2>Кластеры</h2>
 
 
-<div id="all-clusters-chart">
+<div id="all-clusters-chart" class="clusters-pie-block">
 
-    <div data-bind="invisible: showClustersChart">Кластеры не проинициализрованы либо пусты</div>
+    <div style="display:none" class="no-clusters-text" data-bind="visible: showNoClustersMessage">Нет кластеров, либо они пусты</div>
 
     <div data-role="chart"
          data-series-defaults="{ type: 'pie', labels: { template: 'Cluster: #= category # - #= roundClusterSize(value) #', position: 'outsideEnd',visible: true, background: 'transparent' }}"
@@ -17,6 +17,7 @@
          data-series="[{field: 'Size', categoryField: 'Id'}]"
          data-series-colors="['#7FFFD4','#FFE4C4','#0000FF','#8A2BE2','#A52A2A','#5F9EA0','#DC143C','#006400','#2F4F4F','#FF1493','#FFD700','#ADFF2F','#4B0082','#2E8B57','#6A5ACD']"
          data-legend="{visible: false}"
+         data-transitions ="false"
          data-bind="source: clusters, events: { seriesClick: onClusterClick}, visible: showClustersChart" class="main-clusters-chart"></div>
 </div>
 
