@@ -352,7 +352,7 @@ namespace Logic.Facades
                     if (!chunk.Any())
                         realTime = DateTime.Now.TimeOfDay;
 
-                    if (DateTime.Now.TimeOfDay - realTime > TimeSpan.FromSeconds(1))
+                    if (DateTime.Now.TimeOfDay - realTime > TimeSpan.FromSeconds(1) && session.ChunkDataCollection.Count < 20)
                     {
                         realTime = DateTime.Now.TimeOfDay;
                         session.ChunkDataCollection.Add(chunk.ToList(), token);
