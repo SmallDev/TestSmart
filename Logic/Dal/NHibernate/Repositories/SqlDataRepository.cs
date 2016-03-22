@@ -86,9 +86,8 @@ namespace Logic.Dal.NHibernate.Repositories
             {
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandText = "dbo.Clear";
-                command.Parameters.AddWithValue("users", true);
-                command.Parameters.AddWithValue("data", true);
-                command.CommandTimeout = (Int32) TimeSpan.FromMinutes(1).TotalSeconds;
+                command.Parameters.AddWithValue("readData", true);
+                command.CommandTimeout = (Int32) TimeSpan.FromMinutes(10).TotalSeconds;
                 command.ExecuteNonQuery();
             });
         }

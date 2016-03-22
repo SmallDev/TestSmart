@@ -39,11 +39,7 @@ namespace Logic.Facades
 
         public void Clear()
         {
-            dataFactory.Value.WithDataManager(dm =>
-            {
-                dm.WithRepository<ISettingsRepository>(repo => repo.SetReadTime(null));
-                dm.WithRepository<IDataRepository>(repo => repo.Clear());
-            }, true);
+            dataFactory.Value.WithDataManager(dm => dm.WithRepository<IDataRepository>(repo => repo.Clear()));
         }
 
         public Boolean IsStarted()
@@ -353,7 +349,7 @@ namespace Logic.Facades
                         realTime = DateTime.Now.TimeOfDay;
 
                     if (DateTime.Now.TimeOfDay - realTime > TimeSpan.FromSeconds(1) && (
-                        session.ChunkDataCollection.Count < 20) || chunk.Count > 20000) 
+                        session.ChunkDataCollection.Count < 10 || chunk.Count > 20000))
                     {
                         realTime = DateTime.Now.TimeOfDay;
                         session.ChunkDataCollection.Add(chunk.ToList(), token);
@@ -523,7 +519,7 @@ namespace Logic.Facades
             public ReadSession()
             {
                 Completed = false;
-                RawDataCollection = new BlockingCollection<RawData>(1000000);
+                RawDataCollection = new BlockingCollection<RawData>(500000);
                 ChunkDataCollection = new BlockingCollection<IList<Data>>(50);
                 start = DateTime.Now;
                 elapsed = TimeSpan.Zero;

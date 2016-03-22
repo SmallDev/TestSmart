@@ -33,7 +33,7 @@ namespace Logic.Facades
             {
                 repo.Clear();
                 repo.InitClusters(count);
-            }, true);
+            });
         }
 
         public IList<Cluster> GetClusters()
