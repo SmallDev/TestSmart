@@ -19,14 +19,14 @@ BEGIN
 	begin tran
 		ALTER INDEX [PK_Profiles_NView] ON [dbo].[Profiles_NView] DISABLE
 
-		update up set Probability = ISNULL(np.ProbSum/NULLIF(np.[Sum],0), 0)
+		update up set Probability = ISNULL(np.ProbSum/NULLIF(np.[Sum],0), Probability)
 		from UserProfile up
 			left hash join (select h1.UserId, h1.ClusterId, SUM(h1.Probability) as ProbSum, h2.Probability as [Sum] from @H h1    
 							inner join (select UserId, SUM(Probability) Probability from @H group by UserId) h2 on h1.UserId = h2.UserId
 						group by h1.UserId, h1.ClusterId, h2.Probability) np 
 				on np.UserId = up.UserId and np.ClusterId = up.ClusterId
 
-		update cp set Probability = ISNULL(np.ProbSum/NULLIF(np.[Sum],0), 0)
+		update cp set Probability = ISNULL(np.ProbSum/NULLIF(np.[Sum],0), Probability)
 		from ClusterNProfile cp
 			left hash join (select h1.ClusterId, h1.PropertyId, h1.NominalId, SUM(h1.Probability) as ProbSum, h2.Probability as [Sum] from @H h1    
 							inner join (select ClusterId, PropertyId, SUM(Probability) Probability from @H group by ClusterId, PropertyId) h2 

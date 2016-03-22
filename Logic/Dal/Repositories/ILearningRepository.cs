@@ -21,5 +21,8 @@ namespace Logic.Dal.Repositories
 
         // Очистка результатов вычислений и промежуточных данных
         void Clear();
+
+        // Сохранить промежуточную статистику обучения
+        void SaveStatistics(Int32 learningId);
     }
 }

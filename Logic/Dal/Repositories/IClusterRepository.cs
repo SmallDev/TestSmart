@@ -5,9 +5,6 @@ namespace Logic.Dal.Repositories
 {
     public interface IClusterRepository : IRepository
     {
-        IList<Cluster> GetList(ClusterFilter filter);
-        Cluster Get(ClusterFilter filter);
-
-        void Save(Cluster cluster);        
+        IList<Cluster> GetList(ClusterFilter filter);       
     }
 }

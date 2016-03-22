@@ -6,7 +6,8 @@ namespace Logic.Dal.Repositories
     {
         public Int32 Id { get; set; }
         public Boolean WithSize { get; set; }
-        public Boolean WithProperties { get; set; }        
+        public Boolean WithProperties { get; set; }
+        public Boolean WithUsers { get; set; }
     }
 
     public static class ClusterFilterExtension
@@ -19,6 +20,11 @@ namespace Logic.Dal.Repositories
         public static ClusterFilter WithSize(this ClusterFilter filter)
         {
             filter.WithSize = true;
+            return filter;
+        }
+        public static ClusterFilter WithUsers(this ClusterFilter filter)
+        {
+            filter.WithUsers = true;
             return filter;
         }
         public static ClusterFilter WithProperties(this ClusterFilter filter)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Logic.Model;
 
 namespace WebClient.Models
@@ -13,7 +14,7 @@ namespace WebClient.Models
         {
             Id = cluster.Id;
             Name = cluster.Name;
-            UsersCount = cluster.Size;
+            UsersCount = cluster.SizeHistory.Last().Item2;
         }
     }
 }

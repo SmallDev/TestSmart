@@ -11,6 +11,8 @@ namespace Logic.Dal.NHibernate.Mappings
 
             Id(d => d.Id).GeneratedBy.Identity();
             Map(d => d.Name).Length(50);
+
+            HasMany(dto => dto.Sizes).KeyColumn("ClusterId").LazyLoad();
         }
     }
 }

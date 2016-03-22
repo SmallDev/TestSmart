@@ -3,7 +3,7 @@ using Logic.Model;
 
 namespace Logic.Dal.NHibernate.Models
 {
-    class UserDto
+    public class UserDto
     {
         public virtual Int32 Id { get; set; }
         public virtual String Mac { get; set; }

@@ -74,13 +74,17 @@
     <Compile Include="Common\CodeAttribute.cs" />
     <Compile Include="Dal\IDataManagerFactrory.cs" />
     <Compile Include="Dal\IDbConfig.cs" />
+    <Compile Include="Dal\NHibernate\Mappings\SizeMap.cs" />
     <Compile Include="Dal\NHibernate\Mappings\LearningMap.cs" />
     <Compile Include="Dal\NHibernate\Mappings\ClusterMap.cs" />
     <Compile Include="Dal\NHibernate\Mappings\SettingsMap.cs" />
+    <Compile Include="Dal\NHibernate\Mappings\UserProfileMap.cs" />
     <Compile Include="Dal\NHibernate\Mappings\UserMap.cs" />
+    <Compile Include="Dal\NHibernate\Models\SizeDto.cs" />
     <Compile Include="Dal\NHibernate\Models\LearningDto.cs" />
     <Compile Include="Dal\NHibernate\Models\ClusterDto.cs" />
     <Compile Include="Dal\NHibernate\Models\SettingsDto.cs" />
+    <Compile Include="Dal\NHibernate\Models\UserProfileDto.cs" />
     <Compile Include="Dal\NHibernate\Models\UserDto.cs" />
     <Compile Include="Dal\NHibernate\Repositories\LearingRepository.cs" />
     <Compile Include="Dal\NHibernate\Repositories\SqlExtensions.cs" />
@@ -103,7 +107,6 @@
     <Compile Include="Facades\MathExtension.cs" />
     <Compile Include="Model\Learning.cs" />
     <Compile Include="Facades\EmulatorFacade.cs" />
-    <Compile Include="Facades\DataFacade.cs" />
     <Compile Include="Facades\IEmulatorConfig.cs" />
     <Compile Include="Facades\LearningFacade.cs" />
     <Compile Include="Facades\StatisticsFacade.cs" />

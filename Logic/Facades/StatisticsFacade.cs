@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Logic.Dal;
 using Logic.Dal.Repositories;
 using Logic.Model;
@@ -44,7 +45,7 @@ namespace Logic.Facades
         public Cluster GetCluster(Int32 id)
         {
             return dataFactory.Value.WithRepository<Cluster, IClusterRepository>(
-                repo => repo.Get(new ClusterFilter().Id(id).WithSize()));
+                repo => repo.GetList(new ClusterFilter().Id(id).WithSize().WithUsers()).FirstOrDefault());
         }
 
         public User GetUser(Int32 id)

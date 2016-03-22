@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Logic.Model
 {
@@ -7,6 +8,7 @@ namespace Logic.Model
         public Int32 Id { get; set; }
         public String Name { get; set; }
 
-        public Double Size { get; set; }
+        public ICollection<Tuple<TimeSpan, Double>> SizeHistory { get; set; }
+        public ICollection<Tuple<User, Double>> UsersInfo { get; set; } 
     }
 }

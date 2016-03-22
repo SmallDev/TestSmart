@@ -7,8 +7,6 @@ using Logic.Dal.NHibernate.Models;
 using Logic.Dal.Repositories;
 using Logic.Model;
 using NHibernate;
-using NHibernate.Linq;
-using NHibernate.Util;
 
 namespace Logic.Dal.NHibernate.Repositories
 {
@@ -23,42 +21,28 @@ namespace Logic.Dal.NHibernate.Repositories
 
         public IList<Cluster> GetList(ClusterFilter filter)
         {
-            var clusters = Session.Query<ClusterDto>().ToList()
-                .Select(dto => (Cluster) dto).ToDictionary(c => c.Id, c => c);
+            var query = Session.QueryOver<ClusterDto>().Future();
 
             if (filter.WithSize)
-                connectionFunc().WithCommand(command =>
+                Session.QueryOver<ClusterDto>()
+                    .Fetch(dto => dto.Sizes)
+                    .Eager.Fetch(dto => dto.Sizes[0].Learning)
+                    .Eager.Future();
+
+            var clusters = query.ToList();
+            if (filter.WithUsers)
+                foreach (var cluster in clusters)
                 {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.CommandText = "dbo.ClustersSize";
-                    return SizeReader(command.ExecuteReader());
-                }).ForEach(t => clusters[t.Item1].Size = t.Item2);
+                    var clusterId = cluster.Id;
+                    cluster.Users =
+                        Session.QueryOver<UserProfileDto>()
+                            .Fetch(p => p.User).Eager
+                            .Where(p => p.Cluster.Id == clusterId)
+                            .OrderBy(p => p.Probability)
+                            .Desc.Take(20).List();
+                }
 
-            return clusters.Values.ToList();
-        }
-        public Cluster Get(ClusterFilter filter)
-        {
-            Cluster cluster = Session.Get<ClusterDto>(filter.Id);
-
-            if (filter.WithSize)
-                cluster.Size = connectionFunc().WithCommand(command =>
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.CommandText = "dbo.ClustersSize";
-                    command.Parameters.AddWithValue("id", filter.Id);
-                    return SizeReader(command.ExecuteReader()).First().Item2;
-                });
-
-            return cluster;
-        }
-
-        private ICollection<Tuple<Int32, Double>> SizeReader(SqlDataReader reader)
-        {
-            var result = new List<Tuple<Int32, Double>>();
-            while (reader.Read())
-                result.Add(new Tuple<Int32, Double>(reader.GetInt32(0), reader.GetDouble(1)));
-
-            return result;
+            return clusters.Select(dto => (Cluster) dto).ToList();
         }
 
         public void Save(Cluster cluster)

@@ -1,21 +1,33 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Logic.Model;
 
 namespace Logic.Dal.NHibernate.Models
 {
-    internal class ClusterDto
+    public class ClusterDto
     {
         public virtual Int32 Id { get; set; }
         public virtual String Name { get; set; }
+        public virtual IList<SizeDto> Sizes { get; set; }
+        public virtual IList<UserProfileDto> Users { get; set; } 
 
         public static implicit operator Cluster(ClusterDto cluster)
         {
-            return new Cluster {Id = cluster.Id, Name = cluster.Name};
+            var result = new Cluster {Id = cluster.Id, Name = cluster.Name};
+            if (cluster.Sizes != null)
+                result.SizeHistory =
+                    cluster.Sizes.Select(s => new Tuple<TimeSpan, Double>(s.Learning.From, s.Size)).ToList();
+
+            if (cluster.Users != null)
+                result.UsersInfo = cluster.Users.Select(u => new Tuple<User, Double>(u.User, u.Probability)).ToList();
+
+            return result;
         }
 
         public static implicit operator ClusterDto(Cluster cluster)
         {
-            return new ClusterDto {Id = cluster.Id, Name = cluster.Name};        
+            return new ClusterDto {Id = cluster.Id, Name = cluster.Name};
         }
     }
 }

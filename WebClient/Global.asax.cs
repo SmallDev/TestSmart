@@ -29,7 +29,6 @@ namespace WebClient
             builder.RegisterType<NHibernateDataManagerFactory>().As<IDataManagerFactrory>().SingleInstance();
             builder.RegisterType<ConfigService>().As<IDbConfig>().SingleInstance();
             
-            builder.RegisterType<DataFacade>().SingleInstance();
             builder.RegisterType<EmulatorFacade>().SingleInstance();
             builder.RegisterType<LearningFacade>().SingleInstance();
             builder.RegisterType<StatisticsFacade>().SingleInstance();

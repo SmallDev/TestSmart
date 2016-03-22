@@ -3,7 +3,7 @@ using Logic.Model;
 
 namespace Logic.Dal.NHibernate.Models
 {
-    internal class LearningDto
+    public class LearningDto
     {
         public virtual Int32 Id { get; set; }
         public virtual TimeSpan From { get; set; }

@@ -88,5 +88,17 @@ namespace Logic.Dal.NHibernate.Repositories
                 command.ExecuteNonQuery();
             });
         }
+
+        public void SaveStatistics(Int32 learningId)
+        {
+            connectionFunc().WithCommand(command =>
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandText = "dbo.SaveStatistics";
+                command.Parameters.AddWithValue("learning", learningId);
+                command.CommandTimeout = (Int32)TimeSpan.FromMinutes(10).TotalSeconds;
+                command.ExecuteNonQuery();
+            });
+        }
     }
 }

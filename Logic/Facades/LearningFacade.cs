@@ -237,7 +237,7 @@ namespace Logic.Facades
 
                 sw.Stop();
                 logger.Value.TraceFormat("Learning {0}: InitUsers elapsed {1}", savedLearning.Id, sw.Elapsed);
-                session.UpdateCollection.Add(savedLearning, token);
+                session.LearningCollection.Add(savedLearning, token);
 
                 sw = new Stopwatch();
                 sw.Start();
@@ -245,7 +245,7 @@ namespace Logic.Facades
                 
                 sw.Stop();
                 logger.Value.TraceFormat("Learning {0}: Complete, elapsed {1}", savedLearning.Id, sw.Elapsed);
-                session.UpdateCollection.Add(savedLearning, token);
+                session.LearningCollection.Add(savedLearning, token);
 
                 session.CalcTime = savedLearning.TimeTo;
                 dataFactory.Value.WithRepository<ISettingsRepository>(repo => repo.SetCalcTime(session.CalcTime), true);
@@ -255,11 +255,22 @@ namespace Logic.Facades
 
         private void UpdateLearning(LearningSession session, CancellationToken token)
         {
-            foreach (var learning in session.UpdateCollection.GetConsumingEnumerable(token))
+            foreach (var learning in session.LearningCollection.GetConsumingEnumerable(token))
             {              
                 var currentLearning = learning;
 
-                var sw = new Stopwatch();
+                Stopwatch sw;
+                if (currentLearning.StartLikelihood == null)
+                {
+                    sw = new Stopwatch();
+                    sw.Start();
+                    dataFactory.Value.WithRepository<ILearningRepository>(repo => repo.SaveStatistics(currentLearning.Id));
+
+                    sw.Stop();
+                    logger.Value.TraceFormat("Learning {0}: statistics is saved, elapsed {1}", sw.Elapsed);
+                }
+
+                sw = new Stopwatch();
                 sw.Start();
                 dataFactory.Value.WithRepository<ILearningRepository>(repo =>
                 {
@@ -276,6 +287,7 @@ namespace Logic.Facades
                     currentLearning.Id, currentLearning.StartLikelihood, currentLearning.EndLikelihood, sw.Elapsed);
             }
         }
+
         private void UpdateSession(CancellationToken token, LearningSession session)
         {
             while (!session.Completed)
@@ -342,7 +354,6 @@ namespace Logic.Facades
         {
             public readonly TimeSpan window = TimeSpan.FromMinutes(5);
             public BlockingCollection<Learning> LearningCollection { get; private set; }
-            public BlockingCollection<Learning> UpdateCollection { get; private set; }
 
             public Boolean Completed { get; set; }
             public TimeSpan CalcTime { get; set; }
@@ -376,7 +387,6 @@ namespace Logic.Facades
             public LearningSession()
             {
                 LearningCollection = new BlockingCollection<Learning>();
-                UpdateCollection = new BlockingCollection<Learning>();
                 Completed = false;
                 elapsed = TimeSpan.Zero;
             }

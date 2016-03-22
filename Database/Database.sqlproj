@@ -83,10 +83,11 @@
     <Build Include="Functions\UnpivotData.sql" />
     <Build Include="Procedures\LearnIterate.sql" />
     <Build Include="Views\Profiles_NView.sql" />
-    <Build Include="Procedures\ClustersSize.sql" />
     <Build Include="Tables\ClusterRProfile.sql" />
     <Build Include="Functions\NormalDensity.sql" />
     <Build Include="Functions\CalcEvidence.sql" />
+    <Build Include="Tables\ClusterSize.sql" />
+    <Build Include="Procedures\SaveStatistics.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Script.PostDeployment.sql" />
@@ -96,5 +97,8 @@
     <None Include="Database.publish.xml" />
     <None Include="Scripts\FillNominal.sql" />
     <None Include="sql2-g.publish.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="Database.refactorlog" />
   </ItemGroup>
 </Project>
