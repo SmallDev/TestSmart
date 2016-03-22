@@ -60,10 +60,8 @@ namespace Logic.Facades
                 state = await Task.Run(() => InitState());
 
                 state.ReadTask = Task.WhenAll(
-                    Task.Run(() => DataRead(state.TokenSource.Token, state.Session), state.TokenSource.Token),
-                    Task.Run(() => DataChunk(state.TokenSource.Token, state.Session), state.TokenSource.Token),
-                    Task.Run(() => DataSave(state.TokenSource.Token, state.Session), state.TokenSource.Token),
-                    Task.Run(() => UpdateSession(state.TokenSource.Token, state.Session), state.TokenSource.Token));
+                    DataReadTask(), DataChunkTask(),
+                    DataSaveTask(), UpdateSessionTask());
 
                 await state.ReadTask;
                 logger.Value.Info("Read is completed");
@@ -143,17 +141,148 @@ namespace Logic.Facades
             }
         }
 
+        private async Task DataReadTask()
+        {
+            try
+            {
+                var sw = new Stopwatch();
+                sw.Start();
+                logger.Value.Trace("DataRead started");
+
+                await Task.Run(() => DataRead(state.TokenSource.Token, state.Session), state.TokenSource.Token);
+
+                sw.Stop();
+                logger.Value.TraceFormat("DataRead sccessfully completed, elapsed {0}", sw.Elapsed);
+            }
+            catch (OperationCanceledException)
+            {
+                logger.Value.TraceFormat("DataRead is cancelled");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                logger.Value.TraceFormat("DataRead failed");
+                logger.Value.Error(ex.Message, ex);
+                throw;
+            }
+            finally
+            {
+                state.Session.RawDataCollection.CompleteAdding();
+            }
+        }
+        private async Task DataChunkTask()
+        {
+            try
+            {
+                var sw = new Stopwatch();
+                sw.Start();
+                logger.Value.Trace("DataChunk started");
+
+                await Task.Run(() => DataChunk(state.TokenSource.Token, state.Session), state.TokenSource.Token);
+
+                sw.Stop();
+                logger.Value.TraceFormat("DataChunk sccessfully completed, elapsed {0}", sw.Elapsed);
+            }
+            catch (OperationCanceledException)
+            {
+                logger.Value.TraceFormat("DataChunk is cancelled");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                logger.Value.TraceFormat("DataChunk failed");
+                logger.Value.Error(ex.Message, ex);
+                state.Session.RawDataCollection.CompleteAdding();
+                throw;
+            }
+            finally
+            {
+                state.Session.ChunkDataCollection.CompleteAdding();
+            }
+        }
+        private async Task DataSaveTask()
+        {
+            try
+            {
+                var sw = new Stopwatch();
+                sw.Start();
+                logger.Value.Trace("DataSave started");
+
+                await Task.Run(() => DataSave(state.TokenSource.Token, state.Session), state.TokenSource.Token);
+
+                sw.Stop();
+                logger.Value.TraceFormat("DataSave sccessfully completed, elapsed {0}", sw.Elapsed);
+            }
+            catch (OperationCanceledException)
+            {
+                logger.Value.TraceFormat("DataSave is cancelled");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                logger.Value.TraceFormat("DataSave failed");
+                logger.Value.Error(ex.Message, ex);
+                throw;
+            }
+            finally
+            {
+                state.Session.ChunkDataCollection.CompleteAdding();
+            }
+        }
+        private async Task UpdateSessionTask()
+        {
+            try
+            {
+                var sw = new Stopwatch();
+                sw.Start();
+                logger.Value.Trace("Update read session started");
+
+                await Task.Run(() => UpdateSession(state.TokenSource.Token, state.Session), state.TokenSource.Token);
+
+                sw.Stop();
+                logger.Value.TraceFormat("Update read session sccessfully completed, elapsed {0}", sw.Elapsed);
+            }
+            catch (OperationCanceledException)
+            {
+                logger.Value.TraceFormat("Update read session is cancelled");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                logger.Value.TraceFormat("Update read session failed");
+                logger.Value.Error(ex.Message, ex);
+                throw;
+            }
+        }
+
+        private async Task BreakCurrentState()
+        {
+            Task task;
+            lock (critical)
+            {
+                if (state == null)
+                    return;
+
+                state.Session.Completed = true;
+                state.TokenSource.Cancel();
+
+                task = state.ReadTask;
+                state = null;
+            }
+
+            try
+            {
+                await task;
+            }
+            catch (OperationCanceledException) { }
+        }
+
         private void DataRead(CancellationToken token, ReadSession session)
         {
-            var sw = new Stopwatch();
-
             using (var stream = File.OpenRead(readerConfig.Value.FileName))
             using (var reader = new StreamReader(stream))
             using (var csv = new CsvReader(reader, new CsvConfiguration {Delimiter = " "}))
             {
-                sw.Start();
-                logger.Value.Trace("DataRead started");
-
                 while (csv.Read() && !session.Completed)
                 {
                     token.ThrowIfCancellationRequested();
@@ -178,26 +307,15 @@ namespace Logic.Facades
                     session.RawDataCollection.Add(rawData, token);
                 }
             }
-
-            token.ThrowIfCancellationRequested();
-            session.RawDataCollection.CompleteAdding();
-
-            sw.Stop();
-            logger.Value.TraceFormat("DataRead completed. Elapsed {0}", sw.Elapsed);
         }
         private void DataChunk(CancellationToken token, ReadSession session)
         {
-            var sw = new Stopwatch();
-            logger.Value.Trace("DataChunk started");
-
             var chunk = new List<Data>();
             var readTime = session.StopWatch();
             var realTime = DateTime.Now.TimeOfDay;
 
             foreach (var item in session.RawDataCollection.GetConsumingEnumerable(token))
             {
-                sw.Start();
-
                 if (item.Timestamp != readTime)
                 {
                     if (!chunk.Any())
@@ -217,55 +335,37 @@ namespace Logic.Facades
                 chunk.Add(data);
             }
 
-            token.ThrowIfCancellationRequested();
-
             if (chunk.Any())
-                session.ChunkDataCollection.Add(chunk, token);
-
-            session.ChunkDataCollection.CompleteAdding();
-
-            sw.Stop();
-            logger.Value.TraceFormat("DataChunk completed. Elapsed {0}", sw.Elapsed);
+                session.ChunkDataCollection.Add(chunk, token); 
         }
         private void DataSave(CancellationToken token, ReadSession session)
         {
-            var sw = new Stopwatch();
-            logger.Value.Trace("DataSave started");
-
             foreach (var data in session.ChunkDataCollection.GetConsumingEnumerable(token))
-            {
+            {               
+                var sw = new Stopwatch();
                 sw.Start();
-                var sw1 = new Stopwatch();
-                sw1.Start();
-                dataFactory.Value.WithRepository<IDataRepository>(repo => repo.Save(data));
+
+                var chunk = data;
+                dataFactory.Value.WithRepository<IDataRepository>(repo => repo.Save(chunk));
                 
                 sw.Stop();
-                logger.Value.TraceFormat("DataSave: {0} items saved, elapsed {1}", data.Count, sw1.Elapsed);
+                logger.Value.TraceFormat("DataSave: {0} items saved, elapsed {1}", chunk.Count, sw.Elapsed);
 
-                SetReadTime(session, data.Last().Timestamp);
+                SetReadTime(session, chunk.Last().Timestamp);
             }
-
-            token.ThrowIfCancellationRequested();
 
             session.Completed = true;
             if (session.AllTime.HasValue && session.ReadTime != session.AllTime)
                 SetReadTime(session, session.AllTime.Value);
-
-            sw.Stop();
-            logger.Value.TraceFormat("DataSave completed. Elapsed {0}", sw.Elapsed);
         }
         private void UpdateSession(CancellationToken token, ReadSession session)
         {
-            logger.Value.Trace("Update read session started");
-
             while (!session.Completed)
             {
                 token.ThrowIfCancellationRequested();
 
                 if (token.WaitHandle.WaitOne(TimeSpan.FromSeconds(30)))
                     break;
-
-                logger.Value.Trace("Update read session");
 
                 var prev = new {session.AllTime, session.Velocity};
                 dataFactory.Value.WithRepository<ISettingsRepository>(repo =>
@@ -278,32 +378,8 @@ namespace Logic.Facades
                     logger.Value.InfoFormat("Read settings has been changed: AllTime={0}\tVelocity={1}", session.AllTime,
                         session.Velocity);
             }
-
-            token.ThrowIfCancellationRequested();
-            logger.Value.Trace("Update read session completed");
         }
-        private async Task BreakCurrentState()
-        {
-            Task task;
-            lock (critical)
-            {
-                if (state == null)
-                    return;
-
-                state.Session.Completed = true;
-                state.TokenSource.Cancel();
-
-                task = state.ReadTask;
-                state = null;
-            }
-
-            try
-            {
-                await task;
-            }
-            catch (OperationCanceledException) { }
-        }
-
+        
         private void SetReadTime(ReadSession session, TimeSpan readTime)
         {
             dataFactory.Value.WithRepository<ISettingsRepository>(repo => repo.SetReadTime(readTime), true);
@@ -343,15 +419,15 @@ namespace Logic.Facades
             if (data.StreamType == null && !String.IsNullOrEmpty(rawData.StreamType))
                 logger.Value.WarnFormat("Stream type {0} is unknown", rawData.StreamType);
 
-            TimeSpan interval;          
-            if (!TimeSpan.TryParseExact("05:00.188", "mm\\:ss\\.fff", CultureInfo.InvariantCulture, out interval))
+            TimeSpan interval;
+            if (!TimeSpan.TryParseExact(rawData.Interval, "mm\\:ss\\.fff", CultureInfo.InvariantCulture, out interval))
                 logger.Value.WarnFormat("Interval '{0}' parsing fail", rawData.Interval);
             else
             {
                 Int32 received;
                 if (!Int32.TryParse(rawData.Received, out received))
                     logger.Value.WarnFormat("Received '{0}' parsing fail", rawData.Received);
-                else
+                else if (received > 0)
                     data.ReceivedRate = received/interval.TotalSeconds;
             }
 

@@ -270,7 +270,6 @@
     <Content Include="Scripts\app\require.bundle.config.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Properties\PublishProfiles\ps89-g.pubxml" />
     <None Include="Templates\T4MVC.tt.settings.xml" />
     <Content Include="Scripts\app\ClustersChartViewModel.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
