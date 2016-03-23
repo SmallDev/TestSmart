@@ -426,6 +426,13 @@ namespace Logic.Facades
                 StreamType = row[2],
                 Interval = row[5],
                 Received = row[8],
+                LinkFaults = row[9],
+                Lost = row[12],
+                Restored = row[13],
+                Overflow = row[14],
+                Underflow = row[15],
+                DelayFactor = row[16],
+                MediaLossRate = row[17]
             };
 
             rawData.Timestamp = DateTime.Parse(rawData.Date) + TimeSpan.Parse(rawData.Time) - minDate;
@@ -461,11 +468,54 @@ namespace Logic.Facades
             else
             {
                 var interval = new TimeSpan(minutes/(60*24), minutes/60, minutes%60, seconds, milliseconds);
+
                 Int32 received;
                 if (!Int32.TryParse(rawData.Received, out received))
                     logger.Value.WarnFormat("Received '{0}' parsing fail", rawData.Received);
-                else if (received > 0)
-                    data.ReceivedRate = received/interval.TotalSeconds;
+                else if (received > 0 && interval.TotalSeconds > 0)
+                    data.ReceivedRate = received / interval.TotalSeconds;
+
+                Int32 faults;
+                if (!Int32.TryParse(rawData.LinkFaults, out faults))
+                    logger.Value.WarnFormat("LinkFaults '{0}' parsing fail", rawData.LinkFaults);
+                else if (faults >= 0 && interval.TotalSeconds > 0)
+                    data.LinkFaultsRate = faults / interval.TotalSeconds;
+
+                Int32 lost;
+                if (!Int32.TryParse(rawData.Lost, out lost))
+                    logger.Value.WarnFormat("Lost '{0}' parsing fail", rawData.Lost);
+                else if (lost >= 0 && interval.TotalSeconds > 0)
+                    data.LostRate = lost / interval.TotalSeconds;
+
+                Int32 restored;
+                if (!Int32.TryParse(rawData.Restored, out restored))
+                    logger.Value.WarnFormat("Restored '{0}' parsing fail", rawData.Restored);
+                else if (received >= 0 && interval.TotalSeconds > 0)
+                    data.RestoredRate = restored / interval.TotalSeconds;
+
+                Int32 overflow;
+                if (!Int32.TryParse(rawData.Overflow, out overflow))
+                    logger.Value.WarnFormat("Overflow '{0}' parsing fail", rawData.Overflow);
+                else if (overflow >= 0 && interval.TotalSeconds > 0)
+                    data.OverflowRate = overflow / interval.TotalSeconds;
+
+                Int32 underflow;
+                if (!Int32.TryParse(rawData.Underflow, out underflow))
+                    logger.Value.WarnFormat("Underflow '{0}' parsing fail", rawData.Underflow);
+                else if (underflow >= 0 && interval.TotalSeconds > 0)
+                    data.UnderflowRate = underflow / interval.TotalSeconds;
+
+                Int32 delayFactor;
+                if (!Int32.TryParse(rawData.DelayFactor, out delayFactor))
+                    logger.Value.WarnFormat("DelayFactor '{0}' parsing fail", rawData.DelayFactor);
+                else if (delayFactor >= 0)
+                    data.DelayFactor = delayFactor;
+
+                Int32 lossRate;
+                if (!Int32.TryParse(rawData.MediaLossRate, out lossRate))
+                    logger.Value.WarnFormat("MediaLossRate '{0}' parsing fail", rawData.MediaLossRate);
+                else if (lossRate >= 0)
+                    data.MediaLossRate = lossRate;
             }
 
             return data;
@@ -581,6 +631,13 @@ namespace Logic.Facades
             public String StreamType { get; set; }
             public String Interval { get; set; }
             public String Received { get; set; }
+            public String LinkFaults { get; set; }
+            public String Lost { get; set; }
+            public String Restored { get; set; }
+            public String Overflow { get; set; }
+            public String Underflow { get; set; }
+            public String DelayFactor { get; set; }
+            public String MediaLossRate { get; set; }
         }
     }
 }

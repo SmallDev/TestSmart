@@ -65,6 +65,41 @@ namespace Logic.Dal.NHibernate.Repositories
                 {
                     ColumnName = "ReceivedRate",
                     DataType = typeof (Double)
+                },
+                new DataColumn
+                {
+                    ColumnName = "LinkFaultsRate",
+                    DataType = typeof (Double)
+                },
+                new DataColumn
+                {
+                    ColumnName = "LostRate",
+                    DataType = typeof (Double)
+                },
+                new DataColumn
+                {
+                    ColumnName = "RestoredRate",
+                    DataType = typeof (Double)
+                },
+                new DataColumn
+                {
+                    ColumnName = "OverflowRate",
+                    DataType = typeof (Double)
+                },
+                new DataColumn
+                {
+                    ColumnName = "UnderflowRate",
+                    DataType = typeof (Double)
+                },
+                new DataColumn
+                {
+                    ColumnName = "DelayFactor",
+                    DataType = typeof (Double)
+                },
+                new DataColumn
+                {
+                    ColumnName = "MediaLossRate",
+                    DataType = typeof (Double)
                 }
             });
 
@@ -74,7 +109,14 @@ namespace Logic.Dal.NHibernate.Repositories
                     item.Timestamp, item.Mac,
                     item.MessageType.HasValue ? item.MessageType : (Object) DBNull.Value,
                     item.StreamType.HasValue ? item.StreamType : (Object) DBNull.Value,
-                    item.ReceivedRate.HasValue ? item.ReceivedRate : (Object) DBNull.Value);
+                    item.ReceivedRate.HasValue ? item.ReceivedRate : (Object) DBNull.Value,
+                    item.LinkFaultsRate.HasValue ? item.LinkFaultsRate : (Object) DBNull.Value,
+                    item.LostRate.HasValue ? item.LostRate : (Object) DBNull.Value,
+                    item.RestoredRate.HasValue ? item.RestoredRate : (Object) DBNull.Value,
+                    item.OverflowRate.HasValue ? item.OverflowRate : (Object) DBNull.Value,
+                    item.UnderflowRate.HasValue ? item.UnderflowRate : (Object) DBNull.Value,
+                    item.DelayFactor.HasValue ? item.DelayFactor : (Object) DBNull.Value,
+                    item.MediaLossRate.HasValue ? item.MediaLossRate : (Object) DBNull.Value);
             }
 
             return table;
