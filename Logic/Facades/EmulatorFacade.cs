@@ -57,7 +57,7 @@ namespace Logic.Facades
             logger.Value.Info("Read has started");
             try
             {
-                state = await Task.Run(() => InitState());
+                state = await Task.Run(() => InitState()).ConfigureAwait(false);
 
                 state.ReadTask = Task.WhenAll(
                     DataReadTask(), DataChunkTask(),

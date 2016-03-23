@@ -40,7 +40,7 @@ namespace Logic.Facades
             logger.Value.Info("Learning is started");
             try
             {
-                state = await Task.Run(() => InitState());
+                state = await Task.Run(() => InitState()).ConfigureAwait(false);
                 state.LearingTask = Task.WhenAll(IterateLearningTask(), UpdateLearningTask(), UpdateSessionTask());
 
                 await state.LearingTask;
