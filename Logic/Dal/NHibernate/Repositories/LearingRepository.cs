@@ -24,7 +24,7 @@ namespace Logic.Dal.NHibernate.Repositories
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandText = "dbo.InitClusters";
                 command.Parameters.AddWithValue("count", clusterCount);
-                command.CommandTimeout = (Int32) TimeSpan.FromMinutes(1).TotalSeconds;
+                command.CommandTimeout = (Int32) TimeSpan.FromMinutes(10).TotalSeconds;
                 command.ExecuteNonQuery();
             });
         }
@@ -47,7 +47,7 @@ namespace Logic.Dal.NHibernate.Repositories
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandText = "dbo.InitUsers";
                 command.Parameters.AddWithValue("learning", learningId);
-                command.CommandTimeout = (Int32)TimeSpan.FromMinutes(5).TotalSeconds;
+                command.CommandTimeout = (Int32)TimeSpan.FromMinutes(30).TotalSeconds;
                 command.ExecuteNonQuery();
             });
         }
@@ -59,8 +59,7 @@ namespace Logic.Dal.NHibernate.Repositories
                 command.CommandType = CommandType.Text;
                 command.CommandText = "select dbo.CalcLogLikelihood(@learning)";
                 command.Parameters.AddWithValue("learning", learningId);
-                command.CommandTimeout = (Int32)TimeSpan.FromMinutes(1).TotalSeconds;
-                command.CommandTimeout = (Int32)TimeSpan.FromMinutes(5).TotalSeconds;
+                command.CommandTimeout = (Int32)TimeSpan.FromMinutes(30).TotalSeconds;
                 return (Double)command.ExecuteScalar();
             });
         }
@@ -72,7 +71,7 @@ namespace Logic.Dal.NHibernate.Repositories
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandText = "dbo.LearnIterate";
                 command.Parameters.AddWithValue("learning", learningId);
-                command.CommandTimeout = (Int32)TimeSpan.FromMinutes(10).TotalSeconds;
+                command.CommandTimeout = (Int32)TimeSpan.FromHours(1).TotalSeconds;
                 command.ExecuteNonQuery();
             });
         }
@@ -84,7 +83,7 @@ namespace Logic.Dal.NHibernate.Repositories
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandText = "dbo.Clear";
                 command.Parameters.AddWithValue("calcData", true);
-                command.CommandTimeout = (Int32)TimeSpan.FromMinutes(10).TotalSeconds;
+                command.CommandTimeout = (Int32)TimeSpan.FromMinutes(30).TotalSeconds;
                 command.ExecuteNonQuery();
             });
         }
@@ -96,7 +95,7 @@ namespace Logic.Dal.NHibernate.Repositories
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandText = "dbo.SaveStatistics";
                 command.Parameters.AddWithValue("learning", learningId);
-                command.CommandTimeout = (Int32)TimeSpan.FromMinutes(10).TotalSeconds;
+                command.CommandTimeout = (Int32)TimeSpan.FromMinutes(30).TotalSeconds;
                 command.ExecuteNonQuery();
             });
         }
