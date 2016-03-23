@@ -23,9 +23,11 @@ BEGIN
 			
 			delete from dbo.[ClusterNProfile]
 			delete from dbo.[ClusterRProfile]
-			delete from dbo.[Cluster];DBCC CHECKIDENT ('dbo.[Cluster]',RESEED, 0)
+			delete from dbo.[ClusterSize]
 
-			truncate table dbo.[Learning]
+			delete from dbo.[Cluster];DBCC CHECKIDENT ('dbo.[Cluster]',RESEED, 0)
+			delete from dbo.[Learning];DBCC CHECKIDENT ('dbo.[Learning]',RESEED, 0)
+
 			ALTER INDEX [PK_Profiles_NView] ON [dbo].[Profiles_NView] REBUILD
 
 			update dbo.[Settings] set Value = NULL
