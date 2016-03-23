@@ -145,7 +145,7 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\ConfigService.cs" />
-    <Compile Include="Models\ClustersChartModel.cs" />
+    <Compile Include="Models\ClustersModel.cs" />
     <Compile Include="Models\InitClusterModel.cs" />
     <Compile Include="Services\DependencyHostFactory.cs" />
     <Compile Include="Services\IEmulatorService.cs" />
@@ -162,7 +162,7 @@
     <Compile Include="Templates\HomeController.generated.cs">
       <DependentUpon>T4MVC.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\ClusterModel.cs" />
+    <Compile Include="Models\ClusterPieModel.cs" />
     <Compile Include="Models\HomeModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

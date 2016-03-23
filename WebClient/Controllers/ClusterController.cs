@@ -26,9 +26,15 @@ namespace WebClient.Controllers
         {
             var clusters = statisticsFacade.Value.GetClusters();
 
+            var pieClusters =  new List<ClusterPieModel>();
+            if (clusters != null && clusters.Count > 0)
+            {
+                pieClusters = clusters.Select(cluster => new ClusterPieModel(cluster)).ToList();
+            }
+            
             var showChart = true;//clusters != null && clusters.Count > 0 && clusters.Any(cluster => cluster.Size > 0);
 
-            return Json(new ClustersChartModel { Clusters = clusters, ShowChart = showChart });
+            return Json(new ClustersModel { PieClusters = pieClusters, ShowChart = showChart });
         }
 
         public virtual ActionResult Get(Int32 id)

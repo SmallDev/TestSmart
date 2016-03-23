@@ -38,7 +38,7 @@
                     that.set("showClustersChart", data.ShowChart);
                     that.set("showNoClustersMessage", !data.ShowChart);
                     if (data.ShowChart) {
-                        self.clusters.data(data.Clusters);
+                        self.clusters.data(data.PieClusters);
                     }
                     setTimeout(function () { getDataWork(that); }, 5000);
                 },
