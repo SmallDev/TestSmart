@@ -52,7 +52,7 @@
         };
 
         String.prototype.stringToSeconds = function () {
-            var secFromHours = Number(this.substring(0, 2)) * 1200;
+            var secFromHours = Number(this.substring(0, 2)) * 3600;
             var secFromMinuts = Number(this.substring(3, 5)) * 60;
             var sec = Number(this.substring(6, 8));
             var totalSec = secFromHours + secFromMinuts + sec;
