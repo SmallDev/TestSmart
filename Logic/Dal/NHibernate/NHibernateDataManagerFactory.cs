@@ -40,7 +40,7 @@ namespace Logic.Dal.NHibernate
             var builder = new ContainerBuilder();
 
             builder.Register(context => sessionFactory.Value.OpenSession()).InstancePerLifetimeScope();
-            builder.Register(context => new SqlConnection(config.Value.ConnectionString)).InstancePerLifetimeScope();
+            builder.Register(context => new SqlConnection(config.Value.ConnectionString));
             GetType().Assembly.GetTypes().Where(type => type.IsClass && !type.IsAbstract && type
                 .IsAssignableTo<IRepository>()).ForEach(type => type.GetInterfaces()
                     .Where(i => i.IsAssignableTo<IRepository>())
