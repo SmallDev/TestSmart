@@ -3,7 +3,8 @@
         '/bundles/app?v=2015': [
             "clustersChartViewModel",
             "clusterViewModel",
-            "controlPanelViewModel"
+            "controlPanelViewModel",
+            "clustersInitViewModel"
         ]
     }
 };

@@ -146,6 +146,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\ConfigService.cs" />
     <Compile Include="Models\ClustersChartModel.cs" />
+    <Compile Include="Models\InitClusterModel.cs" />
     <Compile Include="Services\DependencyHostFactory.cs" />
     <Compile Include="Services\IEmulatorService.cs" />
     <Compile Include="Services\EmulatorService.cs" />
@@ -267,6 +268,9 @@
     <Content Include="Content\fonts\glyphicons-halflings-regular.woff2">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Scripts\app\ClustersInitViewModel.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Scripts\app\require.bundle.config.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -315,6 +319,7 @@
     </Content>
     <Content Include="Views\Shared\ControlPanel.cshtml" />
     <Content Include="Views\Cluster\ClusterDetails.cshtml" />
+    <Content Include="Views\Home\_clustersInitModalPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Logic\Logic.csproj">

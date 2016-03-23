@@ -4,6 +4,7 @@
         self.clusterData = [];
         self.showClustersChart = false;
         self.showNoClustersMessage = false;
+        
 
         self.clusters = new kendo.data.DataSource({
             data: self.clusterData
@@ -13,6 +14,7 @@
             explodePie(e);
             setTimeout(function () { window.location = "/cluster/" + e.category; }, 200);
         }
+
 
         function explodePie(e) {
             $.each(e.sender.dataSource.view(), function () {

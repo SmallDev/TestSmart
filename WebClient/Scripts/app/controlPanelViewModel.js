@@ -1,4 +1,4 @@
-﻿define("controlPanelViewModel", function () {
+﻿define("controlPanelViewModel", ['clustersInitViewModel'], function (ClusterInitViewModel) {
     var vm = function ControlPanelViewModel() {
         var self = this;
         this.selectedNumber = 0;
@@ -8,6 +8,14 @@
         this.readVelocityControl = 0;
         this.learnVelocityControl = 0;
         this.statusText = "Start";
+
+        this.ClustersInitVM = new ClusterInitViewModel();
+
+        this.openChartInitModal = function () {
+            this.ClustersInitVM.clearData = false;
+            this.ClustersInitVM.clustersNumber = 0;
+            $('#init-clusters-modal').modal('show');
+        }
 
         this.updateIsWorking = false;
         this.stopWorkInProgress = false;
@@ -52,6 +60,8 @@
         }
 
         function setControlData(that, data) {
+            that.set("readVelocityControl", data.ReadVelocity);
+            that.set("learnVelocityControl", data.LearnVelocity);
             that.set("readVelocity", data.ReadVelocity);
             that.set("learnVelocity", data.LearnVelocity);
             that.set("allTime", data.AllTime);
@@ -77,7 +87,7 @@
                         return;
 
                     setControlData(that, data);
-                    setTimeout(function () { startControlDataWorker(that); }, 1000);
+                    setTimeout(function () { startControlDataWorker(that); }, 3000);
                 },
                 cache: false
             });

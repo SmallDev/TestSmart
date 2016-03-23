@@ -171,7 +171,7 @@ body{
     border-width: 2px;
     border-color: #000;
     padding: 5px;
-    margin-top: 30%;
+    margin-top: 20%;
     margin-left: 25%;
 }
 
@@ -279,7 +279,7 @@ body{
     background: transparent url("/Content/img/big-gears.gif") no-repeat 50% 50%;
     height: 144px;
     width: 144px;
-    margin: 280px 0 0 80px;
+    margin: 9% 44%;
 }
 
 .slider-block  div{
@@ -298,6 +298,40 @@ body{
     font-size: 26pt;
     margin-top: 25%;
 }
+
+.cluster-modal-row {
+    height: 30px;
+    margin-bottom: 20px;
+}
+
+.cluster-modal-number-text {
+    display: inline-block;
+    font-size: 14pt;
+    margin-right: 15px;
+}
+
+.cluster-namber-input {
+    display: inline-block;
+    width: 80px;
+}
+
+.cluster-modal-data-checkbox {
+    display: inline-block;
+    margin-left: 10px;
+    font-size: 14pt;
+}
+
+.cluster-modal-chebox {
+    display: inline-block;
+    margin-left: 0!important;
+}
+
+.new-learning-button {
+    width: 100px;
+    padding: 8px 2px;
+    margin-top: 25px;
+}
+
 
 
 

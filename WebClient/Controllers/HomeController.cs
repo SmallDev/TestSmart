@@ -11,11 +11,13 @@ namespace WebClient.Controllers
     {
         private readonly Lazy<EmulatorFacade> emulatorFacade;
         private readonly Lazy<LearningFacade> learningFacade;
+        private readonly Lazy<StatisticsFacade> statisticsFacade;
 
-        public HomeController(Func<EmulatorFacade> emulatorFacade, Func<LearningFacade> learningFacade)
+        public HomeController(Func<EmulatorFacade> emulatorFacade, Func<LearningFacade> learningFacade, Func<StatisticsFacade> statisticsFacade)
         {
             this.emulatorFacade = new Lazy<EmulatorFacade>(emulatorFacade);
             this.learningFacade = new Lazy<LearningFacade>(learningFacade);
+            this.statisticsFacade = new Lazy<StatisticsFacade>(statisticsFacade);
         }
 
         public virtual ActionResult Index()
@@ -78,6 +80,16 @@ namespace WebClient.Controllers
                 .ConfigureAwait(false);
 
             return model;
-        }        
+        }
+
+        [HttpPost]
+        public virtual void InitClusters(InitClusterModel model)
+        {
+            statisticsFacade.Value.InitClusters(model.ClustersNumber);
+            if (model.ClearData)
+            {
+                emulatorFacade.Value.Clear();
+            }
+        }      
     }
 }

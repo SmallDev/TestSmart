@@ -11,12 +11,14 @@ namespace WebClient
                       "~/Scripts/lib/jquery-{version}.js",
                       "~/Scripts/lib/kendo.all.min.js",
                       "~/Scripts/lib/knockout-{version}.js",
-                      "~/Scripts/lib/js.cookie.js"));
+                      "~/Scripts/lib/js.cookie.js",
+                      "~/Scripts/lib/bootstrap.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
                       "~/Scripts/app/ControlPanelViewModel.js",
                       "~/Scripts/app/ClustersChartViewModel.js",
-                      "~/Scripts/app/ClusterViewModel.js"));
+                      "~/Scripts/app/ClusterViewModel.js",
+                      "~/Scripts/app/ClustersInitViewModel.js"));
 
             bundles.Add(new StyleBundle("~/Content/site/css").Include(
                       "~/Content/bootstrap/bootstrap.css",

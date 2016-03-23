@@ -1,0 +1,24 @@
+﻿<div class="modal fade" id="init-clusters-modal" tabindex="-1" role="dialog" >
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title" id="myModalLabel">New Learning</h3>
+            </div>
+            <div class="modal-body">
+                <div class="cluster-modal-row">
+                    <span class="cluster-modal-number-text">Number Of Clusters</span>
+                    <input data-bind="value:ClustersInitVM.clustersNumber" class="form-control cluster-namber-input"/>
+                </div>
+                <div class="cluster-modal-row">
+                    <input class="cluster-modal-chebox" type="checkbox" data-bind="checked: ClustersInitVM.clearData"/>
+                    <span class="cluster-modal-data-checkbox">Clear Data</span>
+                </div>
+            </div> 
+            <div class="modal-footer">
+                <button type="button" id="modal-add-win-conf-cancel" class="btn btn-default" data-bind="click: ClustersInitVM.cancel"> Cancel</button>
+                <button type="button" id="modal-add-win-conf-save" class="btn btn-primary image-button" data-bind="click: ClustersInitVM.saveData">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
