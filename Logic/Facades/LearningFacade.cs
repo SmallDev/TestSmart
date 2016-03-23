@@ -267,7 +267,7 @@ namespace Logic.Facades
                     dataFactory.Value.WithRepository<ILearningRepository>(repo => repo.SaveStatistics(currentLearning.Id));
 
                     sw.Stop();
-                    logger.Value.TraceFormat("Learning {0}: statistics is saved, elapsed {1}", sw.Elapsed);
+                    logger.Value.TraceFormat("Learning {0}: statistics is saved, elapsed {1}", currentLearning.Id, sw.Elapsed);
                 }
 
                 sw = new Stopwatch();
