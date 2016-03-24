@@ -5,123 +5,128 @@
     ViewBag.Title = "Главная";
 }
 
-<div id="control-painel-block" >
-    <div class="container-fluid control-panel">
-        <div class="control-panel-gears" data-bind="click:toogleUpdateProgress, invisible:controlPanelLoaded"></div>
-        <div style="display: none"data-bind="visible:controlPanelLoaded">
-            <div class="col-lg-7 col-md-7">
-                <div class="col-lg-6">
-                    <div class="speed-clock-block">
+<div class="col-lg-2 col-md-2"></div>
+    <div class="main-content-block col-lg-8 col-md-8">
+        <div id="control-painel-block">
+            <div class="container-fluid control-panel">
+                <div class="control-panel-gears" data-bind="click:toogleUpdateProgress, invisible:controlPanelLoaded"></div>
+                <div style="display: none" data-bind="visible:controlPanelLoaded">
+                    <div class="col-lg-7 col-md-7">
+                        <div class="col-lg-6">
+                            <div class="speed-clock-block">
 
-                        <h4 class="velocity-header">Read Velocity</h4>
+                                <h4 class="velocity-header">Read Velocity</h4>
 
-                        <div class="speed-gauge-container">
-                            <span data-role="radialgauge"
-                                  data-scale="{ min: 0, max: 6, ranges: [{from: 0, to: 1, color: 'blue'}, {from: 1, to: 4, color: '#FF8C00'}, {from: 4, to: 6, color: 'red'}], labels: {template: '#=algSpeed(value)#'}}"
-                                  data-bind="value: readVelocity"
-                                  data-pointer="{color:'blue'}"
-                                  class="speed-gauge"></span>
+                                <div class="speed-gauge-container">
+                                    <span data-role="radialgauge"
+                                          data-scale="{ min: 0, max: 6, ranges: [{from: 0, to: 1, color: 'blue'}, {from: 1, to: 4, color: '#FF8C00'}, {from: 4, to: 6, color: 'red'}], labels: {template: '#=algSpeed(value)#'}}"
+                                          data-bind="value: readVelocity"
+                                          data-pointer="{color:'blue'}"
+                                          class="speed-gauge"></span>
+                                </div>
+                            </div>
+                            <div>
+
+                                <h4>Read Velocity Control</h4>
+                                <div class="slider-block">
+                                    <input id="speed-control-slider" class="speed-gauge-value" data-role="slider" data-orientation="horizontal" data-min="0" data-max="6" data-small-step="0.5" data-large-step="1" data-show-buttons="false" data-bind="value: readVelocityControl, events: { change: onReadVelocityChange }">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="speed-clock-block">
+                                <h4 class="velocity-header">Learning Velocity</h4>
+
+                                <div class="speed-gauge-container">
+                                    <span data-role="radialgauge"
+                                          data-scale="{ min: 0, max: 6, ranges: [{from: 0, to: 1, color: 'blue'}, {from: 1, to: 4, color: '#FF8C00'}, {from: 4, to: 6, color: 'red'}], labels: {template: '#=algSpeed(value)#'}}"
+                                          data-bind="value: learnVelocity"
+                                          data-pointer="{color:'green'}"
+                                          class="speed-gauge"></span>
+                                </div>
+                            </div>
+                            <div>
+                                <h4>Learning Velocity Control</h4>
+                                <div class="slider-block">
+                                    <input id="speed-control-slider2" class="speed-gauge-value" data-role="slider" data-orientation="horizontal" data-min="0" data-max="6" data-small-step="0.5" data-large-step="1" data-show-buttons="false" data-bind="value: learnVelocityControl, events: { change: onLearnVelocityChange }">
+
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div>
 
-                        <h4>Read Velocity Control</h4>
-                        <div class="slider-block">
-                            <input id="speed-control-slider" class="speed-gauge-value" data-role="slider" data-orientation="horizontal" data-min="0" data-max="6" data-small-step="0.5" data-large-step="1" data-show-buttons="false" data-bind="value: readVelocityControl, events: { change: onReadVelocityChange }">
+                    <div class="col-lg-2">
+                        <h3 class="all-time-label"> All Time Counter</h3>
+                        <input data-role="maskedtextbox"
+                               data-mask="00:00:00"
+                               data-bind="value: allTime"
+                               class="all-time-input">
+
+                        <button data-bind="click:saveAllTime" type="button" class="btn btn-default save-all-time-btn" aria-label="Save">
+                            <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span>
+                        </button>
+
+                        <button class="btn btn-primary new-learning-button" data-bind="click:openChartInitModal">New Learning</button>
+
+                        <div class="start-button-block" data-bind="css: { stopProgressButton: updateIsWorking }">
+                            <button class="btn btn-primary btn-lg start-button" data-bind="click:toogleUpdateProgress, invisible:stopWorkInProgress"><span data-bind="text:statusText, css: { stopProgressButtonText: updateIsWorking }"></span></button>
+                            <div class="stop-work-gears" data-bind="click:toogleUpdateProgress, visible:stopWorkInProgress"></div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-3">
+                        <div class="crl-progress-block">
+                            <h2 class="progress-label">Progress</h2>
+                            <div class="k-content ctr-linear-progress-container">
+                                <span id="ctr-linear-progress" data-role="lineargauge" data-gauge-area="{width: 150, height: 280}"
+                                      data-scale="{ min:0, max: 100, minorUnit: 2, majorUnit: 10, vertical: true}"
+                                      data-pointer="[ {value: 0, color: 'green'}, {value:0, color: 'blue', margin:10}]"></span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="col-lg-6">
-                    <div class="speed-clock-block">
-                        <h4 class="velocity-header">Learning Velocity</h4>
-
-                        <div class="speed-gauge-container">
-                            <span data-role="radialgauge"
-                                  data-scale="{ min: 0, max: 6, ranges: [{from: 0, to: 1, color: 'blue'}, {from: 1, to: 4, color: '#FF8C00'}, {from: 4, to: 6, color: 'red'}], labels: {template: '#=algSpeed(value)#'}}"
-                                  data-bind="value: learnVelocity"
-                                  data-pointer="{color:'green'}"
-                                  class="speed-gauge"></span>
-                        </div>
-                    </div>
-                    <div>
-                        <h4>Learning Velocity Control</h4>
-                        <div class="slider-block">
-                            <input id="speed-control-slider2" class="speed-gauge-value" data-role="slider" data-orientation="horizontal" data-min="0" data-max="6" data-small-step="0.5" data-large-step="1" data-show-buttons="false" data-bind="value: learnVelocityControl, events: { change: onLearnVelocityChange }">
-
-                        </div>
-                    </div>
                 </div>
             </div>
 
-            <div class="col-lg-2">
-                <h3 class="all-time-label"> All Time Counter</h3>
-                <input data-role="maskedtextbox"
-                       data-mask="00:00:00"
-                       data-bind="value: allTime"
-                       class="all-time-input">
 
-                <button data-bind="click:saveAllTime" type="button" class="btn btn-default save-all-time-btn" aria-label="Save">
-                    <span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span>
-                </button>
-
-                <button class="btn btn-primary new-learning-button" data-bind="click:openChartInitModal">New Learning</button>
-
-                <div class="start-button-block" data-bind="css: { stopProgressButton: updateIsWorking }">
-                    <button class="btn btn-primary btn-lg start-button" data-bind="click:toogleUpdateProgress, invisible:stopWorkInProgress"><span data-bind="text:statusText, css: { stopProgressButtonText: updateIsWorking }"></span></button>
-                    <div class="stop-work-gears" data-bind="click:toogleUpdateProgress, visible:stopWorkInProgress"></div>
-                </div>
-
-            </div>
-
-            <div class="col-lg-3">
-                <div class="crl-progress-block">
-                    <h2 class="progress-label">Progress</h2>
-                    <div class="k-content ctr-linear-progress-container">
-                        <span id="ctr-linear-progress" data-role="lineargauge" data-gauge-area="{width: 150, height: 280}"
-                              data-scale="{ min:0, max: 100, minorUnit: 2, majorUnit: 10, vertical: true}"
-                              data-pointer="[ {value: 0, color: 'green'}, {value:0, color: 'blue', margin:10}]"></span>
-                    </div>
-                </div>
-            </div>
-
+            @Html.Partial("~/Views/Home/_clustersInitModalPartial.cshtml")
         </div>
     </div>
-
-
-    @Html.Partial("~/Views/Home/_clustersInitModalPartial.cshtml")
-</div>  
+<div class="col-lg-2 col-md-2"></div>
 
 
 
-@section Scripts {
-    <script type="text/javascript">
-        $('#init-clusters-modal').modal({
-            keyboard: false,
-            show: false,
-            backdrop: 'static'
-        });
-        
-        window.algSpeed = function (label) {
-            if (label == 0)
-                return label;
-            return label + "x";
-        };
 
-        window.roundClusterSize = function (size) {
-            return (size).toFixed(2) + "%";
-        }
+    @section Scripts {
+        <script type="text/javascript">
+            $('#init-clusters-modal').modal({
+                keyboard: false,
+                show: false,
+                backdrop: 'static'
+            });
 
-        require(["controlPanelViewModel", "clustersInitViewModel"], function (ControlPanelViewModel) {
-            var viewModel = kendo.observable(new ControlPanelViewModel());
-            kendo.bind($("#control-painel-block"), viewModel);
-
-            
-            var modelData = @Html.Raw(JsonConvert.SerializeObject(Model));
-
-            if (modelData.IsStarted) {
-                viewModel.resumeWork();
+            window.algSpeed = function (label) {
+                if (label == 0)
+                    return label;
+                return label + "x";
             };
-        });
 
-    </script>}
+            window.roundClusterSize = function (size) {
+                return (size).toFixed(2) + "%";
+            }
+
+            require(["controlPanelViewModel", "clustersInitViewModel"], function (ControlPanelViewModel) {
+                var viewModel = kendo.observable(new ControlPanelViewModel());
+                kendo.bind($("#control-painel-block"), viewModel);
+
+
+                var modelData = @Html.Raw(JsonConvert.SerializeObject(Model));
+
+                if (modelData.IsStarted) {
+                    viewModel.resumeWork();
+                };
+            });
+
+        </script>}
