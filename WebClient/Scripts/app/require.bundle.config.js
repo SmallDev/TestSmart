@@ -5,7 +5,7 @@
             "clusterViewModel",
             "controlPanelViewModel",
             "clustersInitViewModel",
-            "KMeansClustersChartViewModel"
+            "kMeansClustersChartViewModel"
         ]
     }
 };
