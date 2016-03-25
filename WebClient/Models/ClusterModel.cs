@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Logic.Model;
 
 namespace WebClient.Models
@@ -11,7 +10,7 @@ namespace WebClient.Models
         public ClusterModel(Cluster cluster)
         {
             Name = cluster.Name;
-            var allUserModels = cluster.UsersInfo.Select(userInf => new UserModel(userInf.Item1)).ToList();
+            var allUserModels = cluster.UsersInfo.Select(userInf => new UserModel(userInf.Item1, userInf.Item2)).ToList();
             Users = SplitUsers(allUserModels);
         }
 
