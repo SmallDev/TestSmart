@@ -25,10 +25,10 @@ using System.Web.Routing;
 using T4MVC;
 namespace WebClient.Controllers
 {
-    public partial class UserController
+    public partial class KMeansClusterController
     {
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        protected UserController(Dummy d) { }
+        protected KMeansClusterController(Dummy d) { }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         protected RedirectToRouteResult RedirectToAction(ActionResult result)
@@ -58,25 +58,19 @@ namespace WebClient.Controllers
 
         [NonAction]
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public virtual System.Web.Mvc.ActionResult GetList()
-        {
-            return new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.GetList);
-        }
-        [NonAction]
-        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public virtual System.Web.Mvc.ActionResult Get()
         {
             return new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Get);
         }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public UserController Actions { get { return MVC.User; } }
+        public KMeansClusterController Actions { get { return MVC.KMeansCluster; } }
         [GeneratedCode("T4MVC", "2.0")]
         public readonly string Area = "";
         [GeneratedCode("T4MVC", "2.0")]
-        public readonly string Name = "User";
+        public readonly string Name = "KMeansCluster";
         [GeneratedCode("T4MVC", "2.0")]
-        public const string NameConst = "User";
+        public const string NameConst = "KMeansCluster";
         [GeneratedCode("T4MVC", "2.0")]
         static readonly ActionNamesClass s_actions = new ActionNamesClass();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -85,6 +79,7 @@ namespace WebClient.Controllers
         public class ActionNamesClass
         {
             public readonly string GetList = "GetList";
+            public readonly string GetClusters = "GetClusters";
             public readonly string Get = "Get";
         }
 
@@ -92,20 +87,11 @@ namespace WebClient.Controllers
         public class ActionNameConstants
         {
             public const string GetList = "GetList";
+            public const string GetClusters = "GetClusters";
             public const string Get = "Get";
         }
 
 
-        static readonly ActionParamsClass_GetList s_params_GetList = new ActionParamsClass_GetList();
-        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public ActionParamsClass_GetList GetListParams { get { return s_params_GetList; } }
-        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public class ActionParamsClass_GetList
-        {
-            public readonly string macFilter = "macFilter";
-            public readonly string page = "page";
-            public readonly string size = "size";
-        }
         static readonly ActionParamsClass_Get s_params_Get = new ActionParamsClass_Get();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public ActionParamsClass_Get GetParams { get { return s_params_Get; } }
@@ -124,28 +110,38 @@ namespace WebClient.Controllers
             public _ViewNamesClass ViewNames { get { return s_ViewNames; } }
             public class _ViewNamesClass
             {
+                public readonly string ClusterDetails = "ClusterDetails";
                 public readonly string Index = "Index";
             }
-            public readonly string Index = "~/Views/User/Index.cshtml";
+            public readonly string ClusterDetails = "~/Views/KMeansCluster/ClusterDetails.cshtml";
+            public readonly string Index = "~/Views/KMeansCluster/Index.cshtml";
         }
     }
 
     [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-    public partial class T4MVC_UserController : WebClient.Controllers.UserController
+    public partial class T4MVC_KMeansClusterController : WebClient.Controllers.KMeansClusterController
     {
-        public T4MVC_UserController() : base(Dummy.Instance) { }
+        public T4MVC_KMeansClusterController() : base(Dummy.Instance) { }
 
         [NonAction]
-        partial void GetListOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string macFilter, int page, int size);
+        partial void GetListOverride(T4MVC_System_Web_Mvc_ActionResult callInfo);
 
         [NonAction]
-        public override System.Web.Mvc.ActionResult GetList(string macFilter, int page, int size)
+        public override System.Web.Mvc.ActionResult GetList()
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.GetList);
-            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "macFilter", macFilter);
-            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "page", page);
-            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "size", size);
-            GetListOverride(callInfo, macFilter, page, size);
+            GetListOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void GetClustersOverride(T4MVC_System_Web_Mvc_JsonResult callInfo);
+
+        [NonAction]
+        public override System.Web.Mvc.JsonResult GetClusters()
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_JsonResult(Area, Name, ActionNames.GetClusters);
+            GetClustersOverride(callInfo);
             return callInfo;
         }
 

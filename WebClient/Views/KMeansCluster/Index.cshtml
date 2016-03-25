@@ -1,0 +1,43 @@
+﻿@{
+    Layout = MVC.Shared.Views._Layout;
+    ViewBag.Title = "K-means кластеры";
+}
+
+<div class="col-lg-1 col-md-1"></div>
+<div class="main-content-block col-lg-10 col-md-10">
+    <h2>K-means Кластеры</h2>
+    <div id="all-clusters-chart" class="clusters-pie-block">
+
+        <div style="display: none" class="no-clusters-text" data-bind="visible: showNoClustersMessage">Нет кластеров, либо они пусты</div>
+
+        <div data-role="chart"
+             data-series-defaults="{ type: 'pie',  labels: { template: 'Cluster: #= category # - #= roundClusterSize(value) #', position: 'outsideEnd',visible: true, background: 'transparent', font: '18px Arial,Helvetica,sans-serif' }}"
+             data-tooltip="{ visible: true, template: 'Cluster: #= category # - #= roundClusterSize(value) #' , font: '18px Arial,Helvetica,sans-serif'}"
+             data-series="[{field: 'UsersCount', categoryField: 'Id'}]"
+             data-series-colors="['#7FFFD4','#FFE4C4','#0000FF','#8A2BE2','#A52A2A','#5F9EA0','#DC143C','#006400','#2F4F4F','#FF1493','#FFD700','#ADFF2F','#4B0082','#2E8B57','#6A5ACD']"
+             data-legend="{visible: false}"
+             data-transitions="false"
+             data-bind="source: clusters, events: { seriesClick: onClusterClick}, visible: showClustersChart" class="main-clusters-chart"></div>
+    </div>
+</div>
+<div class="col-lg-1 col-md-1"></div>
+
+@section Scripts {
+    <script type="text/javascript">
+        window.algSpeed = function (label) {
+            if (label === 0)
+                return label;
+            return label + "x";
+        };
+
+        window.roundClusterSize = function (size) {
+            return (size).toFixed(0);
+        }
+        require(["kMeansClustersChartViewModel"], function (KMeansClustersChartViewModel) {
+
+            var viewModel = kendo.observable(new KMeansClustersChartViewModel());
+            kendo.bind($("#all-clusters-chart"), viewModel);
+            viewModel.startDataWorker();
+        });
+    </script>
+}

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Logic.Facades;
-using Logic.Model;
 using System.Linq;
 using WebClient.Models;
 
@@ -40,7 +39,7 @@ namespace WebClient.Controllers
         public virtual ActionResult Get(Int32 id)
         {
             var cluster = statisticsFacade.Value.GetCluster(id);
-            return View("ClusterDetails", new ClusterModel(cluster));
+            return View(MVC.Cluster.Views.ClusterDetails, new ClusterModel(cluster));
         }
     }
 }

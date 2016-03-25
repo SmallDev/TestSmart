@@ -39,24 +39,24 @@ namespace Logic.Facades
 
         public IList<Cluster> GetClusters()
         {
-            return dataFactory.Value.WithRepository<IList<Cluster>, IHiveClusterRepository>(
+            return dataFactory.Value.WithRepository<IList<Cluster>, IClusterRepository>(
                 repo => repo.GetList(new ClusterFilter().WithSize()));
         }
         public Cluster GetCluster(Int32 id)
         {
-            return dataFactory.Value.WithRepository<Cluster, IHiveClusterRepository>(
+            return dataFactory.Value.WithRepository<Cluster, IClusterRepository>(
                 repo => repo.GetList(new ClusterFilter().Id(id).WithSize().WithUsers()).FirstOrDefault());
         }
 
-        public User GetUser(Int32 id)
+        public IList<Cluster> GetKMeansClusters()
         {
-            return dataFactory.Value.WithRepository<User, IUserRepository>(
-                repo => repo.GetUser(new UserFilter().Id(id)));
+            return dataFactory.Value.WithRepository<IList<Cluster>, IHiveClusterRepository>(
+                repo => repo.GetList(new ClusterFilter().WithSize()));
         }
-        public IList<User> GetUsers(String macFilter, Int32 page = 1, Int32 size = 0)
+        public Cluster GetKMeansCluster(Int32 id)
         {
-            return dataFactory.Value.WithRepository<IList<User>, IUserRepository>(
-                repo => repo.GetUsers(new UserFilter().Mac(macFilter).PageNumber(page).PageSize(size)));
+            return dataFactory.Value.WithRepository<Cluster, IHiveClusterRepository>(
+                repo => repo.GetList(new ClusterFilter().Id(id).WithSize().WithUsers()).FirstOrDefault());
         }
     }
 }

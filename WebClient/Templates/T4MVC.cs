@@ -29,7 +29,7 @@ public static partial class MVC
 {
     public static WebClient.Controllers.ClusterController Cluster = new WebClient.Controllers.T4MVC_ClusterController();
     public static WebClient.Controllers.HomeController Home = new WebClient.Controllers.T4MVC_HomeController();
-    public static WebClient.Controllers.UserController User = new WebClient.Controllers.T4MVC_UserController();
+    public static WebClient.Controllers.KMeansClusterController KMeansCluster = new WebClient.Controllers.T4MVC_KMeansClusterController();
     public static T4MVC.SharedController Shared = new T4MVC.SharedController();
 }
 
@@ -91,8 +91,10 @@ namespace Links
             public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
             public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
             public static readonly string ClustersChartViewModel_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/ClustersChartViewModel.min.js") ? Url("ClustersChartViewModel.min.js") : Url("ClustersChartViewModel.js");
+            public static readonly string ClustersInitViewModel_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/ClustersInitViewModel.min.js") ? Url("ClustersInitViewModel.min.js") : Url("ClustersInitViewModel.js");
             public static readonly string ClusterViewModel_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/ClusterViewModel.min.js") ? Url("ClusterViewModel.min.js") : Url("ClusterViewModel.js");
             public static readonly string ControlPanelViewModel_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/ControlPanelViewModel.min.js") ? Url("ControlPanelViewModel.min.js") : Url("ControlPanelViewModel.js");
+            public static readonly string KMeansClustersChartViewModel_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/KMeansClustersChartViewModel.min.js") ? Url("KMeansClustersChartViewModel.min.js") : Url("KMeansClustersChartViewModel.js");
             public static readonly string require_bundle_config_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/require.bundle.config.min.js") ? Url("require.bundle.config.min.js") : Url("require.bundle.config.js");
             public static readonly string require_config_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/require.config.min.js") ? Url("require.config.min.js") : Url("require.config.js");
         }
@@ -212,8 +214,10 @@ namespace Links
                 public static class Assets
                 {
                     public const string ClustersChartViewModel_js = "~/Scripts/app/ClustersChartViewModel.js"; 
+                    public const string ClustersInitViewModel_js = "~/Scripts/app/ClustersInitViewModel.js"; 
                     public const string ClusterViewModel_js = "~/Scripts/app/ClusterViewModel.js"; 
                     public const string ControlPanelViewModel_js = "~/Scripts/app/ControlPanelViewModel.js"; 
+                    public const string KMeansClustersChartViewModel_js = "~/Scripts/app/KMeansClustersChartViewModel.js"; 
                     public const string require_bundle_config_js = "~/Scripts/app/require.bundle.config.js"; 
                     public const string require_config_js = "~/Scripts/app/require.config.js"; 
                 }
