@@ -16,6 +16,11 @@ namespace WebClient
             get { return GetKey(ConnectionStringsSection, "DbConnection"); }
         }
 
+        public string HiveConnectionString
+        {
+            get { return GetKey(ConnectionStringsSection, "HiveConnection"); }
+        }
+
         public String FileName
         {
             get { return GetKey(AppSettingsSection, "FileName"); }

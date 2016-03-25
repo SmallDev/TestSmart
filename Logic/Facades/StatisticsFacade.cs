@@ -39,12 +39,12 @@ namespace Logic.Facades
 
         public IList<Cluster> GetClusters()
         {
-            return dataFactory.Value.WithRepository<IList<Cluster>, IClusterRepository>(
+            return dataFactory.Value.WithRepository<IList<Cluster>, IHiveClusterRepository>(
                 repo => repo.GetList(new ClusterFilter().WithSize()));
         }
         public Cluster GetCluster(Int32 id)
         {
-            return dataFactory.Value.WithRepository<Cluster, IClusterRepository>(
+            return dataFactory.Value.WithRepository<Cluster, IHiveClusterRepository>(
                 repo => repo.GetList(new ClusterFilter().Id(id).WithSize().WithUsers()).FirstOrDefault());
         }
 

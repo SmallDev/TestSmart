@@ -4,7 +4,7 @@ namespace Logic.Dal.Repositories
 {
     public class ClusterFilter
     {
-        public Int32 Id { get; set; }
+        public Int32? Id { get; set; }
         public Boolean WithSize { get; set; }
         public Boolean WithProperties { get; set; }
         public Boolean WithUsers { get; set; }

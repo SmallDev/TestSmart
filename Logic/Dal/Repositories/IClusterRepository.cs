@@ -7,4 +7,8 @@ namespace Logic.Dal.Repositories
     {
         IList<Cluster> GetList(ClusterFilter filter);       
     }
+    public interface IHiveClusterRepository : IRepository
+    {
+        IList<Cluster> GetList(ClusterFilter filter);
+    }
 }

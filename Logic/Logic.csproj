@@ -72,6 +72,8 @@
     <Compile Include="Algorithms\StbModeling.cs" />
     <Compile Include="Common\AttributeExtension.cs" />
     <Compile Include="Common\CodeAttribute.cs" />
+    <Compile Include="Dal\Hive\Dto\UserDto.cs" />
+    <Compile Include="Dal\Hive\ClusterRepository.cs" />
     <Compile Include="Dal\IDataManagerFactrory.cs" />
     <Compile Include="Dal\IDbConfig.cs" />
     <Compile Include="Dal\NHibernate\Mappings\SizeMap.cs" />

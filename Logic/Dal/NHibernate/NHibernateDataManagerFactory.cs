@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Odbc;
 using System.Data.SqlClient;
 using System.Linq;
 using Autofac;
@@ -41,6 +42,8 @@ namespace Logic.Dal.NHibernate
 
             builder.Register(context => sessionFactory.Value.OpenSession()).InstancePerLifetimeScope();
             builder.Register(context => new SqlConnection(config.Value.ConnectionString));
+            builder.Register(context => new OdbcConnection(config.Value.HiveConnectionString));
+
             GetType().Assembly.GetTypes().Where(type => type.IsClass && !type.IsAbstract && type
                 .IsAssignableTo<IRepository>()).ForEach(type => type.GetInterfaces()
                     .Where(i => i.IsAssignableTo<IRepository>())
