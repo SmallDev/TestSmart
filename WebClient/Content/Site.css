@@ -333,6 +333,68 @@ body{
 }
 
 
+.cluster-details-header {
+    margin-top: 0!important;
+    margin-left: 15px; 
+}
 
 
+.cluser-property-block {
+    margin-top: 25px;
+    margin-left: 15px;
+    margin-bottom: 20px;
+}
 
+.cluster-name-option {
+    font-size: 15pt;
+    margin-right: 10px
+}
+
+.cluster-name-text {
+    font-size: 13pt;
+    
+    border-radius: 10px;
+    border: solid;
+    border-width: 1px;
+    padding: 5px 10px;
+    border-color: grey !important;
+    min-width: 40px;
+
+}
+
+.values-table {
+    font-size: 13pt;
+}
+
+.col-cluster-left {
+    width: 20%;
+    float:left;
+    position: relative;
+    min-height: 1px;
+}
+
+.main-cluster-block {
+    padding-left: 3%
+}
+
+.cluster-users-block {
+    border-left: solid;
+    border-width: 2px;
+    border-color: grey;
+}
+
+.users-table {
+    font-size: 15pt;
+}
+
+.mac-column {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important
+}
+
+.mac-column > span {
+    font-size: 12pt;
+    text-align: center;
+}

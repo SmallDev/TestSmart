@@ -5,27 +5,99 @@
     ViewBag.Title = "Кластер";
 }
 
-<h2>Кластер</h2>
 
-<div id="cluster-info-block" class="row ">
-    <div class="col-lg-2 col-lg-offset-1 cluster-short-info-block">
-        <ul>
-            <li>
-                <label>Id</label>
-                <span data-bind="text:id"></span>
-            </li>
-            <li>
-                <label>Имя</label>
-                <span data-bind="text:name"></span>
-            </li>
-            <li>
-                <label>Размер</label>
-                <span data-bind="text:size"></span>
-            </li>
-        </ul>
-        <button data-bind="click: navigateBack" class="btn btn-primary">Назад</button>
+<div id="cluster-info-block" class="main-content-block main-cluster-block col-lg-11 col-md-11">
+    <h2 class="cluster-details-header">Кластер</h2>
+    <div class="cluser-property-block">
+        <span class="cluster-name-option">Название кластера</span>
+        <span  data-bind="text:name" class="cluster-name-text"></span>
+    </div>
+    <div>
+
+
+        <hr />
+        <div class="col-lg-3">
+            <div class="panel panel-default">
+                <div class="panel-heading values-table">Предпочтительны значения свойств</div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Наименование</th>
+                            <th>Среднее значени</th>
+                            <th>Разброс</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Значение</td>
+                            <td>12453</td>
+                            <td>70%</td>
+                        </tr>
+                        <tr>
+                            <td>Значение</td>
+                            <td>12453</td>
+                            <td>70%</td>
+                        </tr>
+                        <tr>
+                            <td>Значение</td>
+                            <td>12453</td>
+                            <td>70%</td>
+                        </tr>
+                        <tr>
+                            <td>Значение</td>
+                            <td>12453</td>
+                            <td>70%</td>
+                        </tr>
+                        <tr>
+                            <td>Значение</td>
+                            <td>12453</td>
+                            <td>70%</td>
+                        </tr>
+                        <tr>
+                            <td>Значение</td>
+                            <td>12453</td>
+                            <td>70%</td>
+                        </tr>
+                        <tr>
+                            <td>Значение</td>
+                            <td>12453</td>
+                            <td>70%</td>
+                        </tr>
+                        <tr>
+                            <td>Значение</td>
+                            <td>12453</td>
+                            <td>70%</td>
+                        </tr>
+                        <tr>
+                            <td>Значение</td>
+                            <td>12453</td>
+                            <td>70%</td>
+                        </tr>
+                        <tr>
+                            <td>Значение</td>
+                            <td>12453</td>
+                            <td>70%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 cluster-users-block">
+            <div class="panel panel-default">
+                <div class="panel-heading users-table">Пользователи</div>
+                <div data-template="mac-table-template" class="col-lg-6 col-md-6 mac-column" data-bind="source: users[0]">
+                    
+                </div>
+                <div data-template="mac-table-template" class="col-lg-6 col-md-6 mac-column" data-bind="source: users[1]">
+                    
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+
+<div class="col-lg-0 col-md-0"></div>
 @section Scripts {
     <script type="text/javascript">
         require(["clusterViewModel"], function (ClusterViewModel) {
@@ -34,3 +106,10 @@
         });
     </script>
 }
+
+
+<script id="mac-table-template" type="text/x-kendo-template">
+    
+        <span class="list-group-item"> #: Name #</span>
+    
+</script>
