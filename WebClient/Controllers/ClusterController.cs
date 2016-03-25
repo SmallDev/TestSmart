@@ -38,6 +38,7 @@ namespace WebClient.Controllers
 
         public virtual ActionResult Get(Int32 id)
         {
+            ViewBag.Title = "Кластер";
             var cluster = statisticsFacade.Value.GetCluster(id);
             return View(MVC.Cluster.Views.ClusterDetails, new ClusterModel(cluster));
         }

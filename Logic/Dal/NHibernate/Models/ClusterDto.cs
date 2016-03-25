@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Logic.Model;
 
@@ -22,6 +23,7 @@ namespace Logic.Dal.NHibernate.Models
             if (cluster.Users != null)
                 result.UsersInfo = cluster.Users.Select(u => new Tuple<User, Double>(u.User, u.Probability)).ToList();
 
+            result.Properties = new Collection<Property>();
             return result;
         }
 

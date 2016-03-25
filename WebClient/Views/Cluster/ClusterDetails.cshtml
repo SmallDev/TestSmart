@@ -1,84 +1,28 @@
 ﻿@using Newtonsoft.Json
-@using Newtonsoft.Json
 @{
     Layout = MVC.Shared.Views._Layout;
-    ViewBag.Title = "Кластер";
 }
 
 
 <div id="cluster-info-block" class="main-content-block main-cluster-block col-lg-11 col-md-11">
-    <h2 class="cluster-details-header">Кластер</h2>
+    <h2 class="cluster-details-header">@ViewBag.Title</h2>
     <div class="cluser-property-block">
         <span class="cluster-name-option">Название кластера</span>
         <span  data-bind="text:name" class="cluster-name-text"></span>
     </div>
     <div>
-
-
         <hr />
         <div class="col-lg-3">
             <div class="panel panel-default">
-                <div class="panel-heading values-table">Предпочтительные значения свойств</div>
+                <div class="panel-heading values-table">Ожидаемые значения кластера</div>
                 <table class="table">
                     <thead>
                         <tr>
                             <th>Наименование</th>
-                            <th>Среднее значени</th>
-                            <th>Разброс</th>
+                            <th>Значение</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>Значение</td>
-                            <td>12453</td>
-                            <td>70%</td>
-                        </tr>
-                        <tr>
-                            <td>Значение</td>
-                            <td>12453</td>
-                            <td>70%</td>
-                        </tr>
-                        <tr>
-                            <td>Значение</td>
-                            <td>12453</td>
-                            <td>70%</td>
-                        </tr>
-                        <tr>
-                            <td>Значение</td>
-                            <td>12453</td>
-                            <td>70%</td>
-                        </tr>
-                        <tr>
-                            <td>Значение</td>
-                            <td>12453</td>
-                            <td>70%</td>
-                        </tr>
-                        <tr>
-                            <td>Значение</td>
-                            <td>12453</td>
-                            <td>70%</td>
-                        </tr>
-                        <tr>
-                            <td>Значение</td>
-                            <td>12453</td>
-                            <td>70%</td>
-                        </tr>
-                        <tr>
-                            <td>Значение</td>
-                            <td>12453</td>
-                            <td>70%</td>
-                        </tr>
-                        <tr>
-                            <td>Значение</td>
-                            <td>12453</td>
-                            <td>70%</td>
-                        </tr>
-                        <tr>
-                            <td>Значение</td>
-                            <td>12453</td>
-                            <td>70%</td>
-                        </tr>
-                    </tbody>
+                    <tbody data-template="row-template" data-bind="source: properties"></tbody>
                 </table>
             </div>
         </div>
@@ -110,4 +54,10 @@
 
 <script id="mac-table-template" type="text/x-kendo-template">
     <span class="list-group-item"> #: Name # #: Weight #%</span>
+</script>
+<script id="row-template" type="text/x-kendo-template">
+    <tr>
+        <td data-bind="text: Key"></td>
+        <td data-bind="text: Value"></td>
+    </tr>
 </script>

@@ -17,7 +17,7 @@ namespace WebClient.Controllers
 
         public virtual ActionResult GetList()
         {
-            return View(MVC.KMeansCluster.Views.Index);
+            return View(MVC.Cluster.Views.KMeansIndex);
         }
 
         [HttpPost]
@@ -38,8 +38,9 @@ namespace WebClient.Controllers
 
         public virtual ActionResult Get(Int32 id)
         {
+            ViewBag.Title = "K-means кластер";
             var cluster = statisticsFacade.Value.GetKMeansCluster(id);
-            return View(MVC.KMeansCluster.Views.ClusterDetails, new ClusterModel(cluster));
+            return View(MVC.Cluster.Views.ClusterDetails, new ClusterModel(cluster));
         }
     }
 }

@@ -9,6 +9,7 @@ namespace Logic.Model
         public String Name { get; set; }
 
         public ICollection<Tuple<TimeSpan, Double>> SizeHistory { get; set; }
-        public ICollection<Tuple<User, Double>> UsersInfo { get; set; } 
+        public ICollection<Tuple<User, Double>> UsersInfo { get; set; }
+        public ICollection<Property> Properties { get; set; } 
     }
 }

@@ -110,11 +110,7 @@ namespace WebClient.Controllers
             public _ViewNamesClass ViewNames { get { return s_ViewNames; } }
             public class _ViewNamesClass
             {
-                public readonly string ClusterDetails = "ClusterDetails";
-                public readonly string Index = "Index";
             }
-            public readonly string ClusterDetails = "~/Views/KMeansCluster/ClusterDetails.cshtml";
-            public readonly string Index = "~/Views/KMeansCluster/Index.cshtml";
         }
     }
 

@@ -112,9 +112,11 @@ namespace WebClient.Controllers
             {
                 public readonly string ClusterDetails = "ClusterDetails";
                 public readonly string Index = "Index";
+                public readonly string KMeansIndex = "KMeansIndex";
             }
             public readonly string ClusterDetails = "~/Views/Cluster/ClusterDetails.cshtml";
             public readonly string Index = "~/Views/Cluster/Index.cshtml";
+            public readonly string KMeansIndex = "~/Views/Cluster/KMeansIndex.cshtml";
         }
     }
 

@@ -324,7 +324,6 @@
     <Content Include="Views\Shared\ControlPanel.cshtml" />
     <Content Include="Views\Cluster\ClusterDetails.cshtml" />
     <Content Include="Views\Home\_clustersInitModalPartial.cshtml" />
-    <Content Include="Views\KMeansCluster\ClusterDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Logic\Logic.csproj">
@@ -354,7 +353,7 @@
     <Content Include="Views\Shared\Scripts.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\KMeansCluster\Index.cshtml" />
+    <Content Include="Views\Cluster\KMeansIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Templates\T4MVC.tt.hooks.t4" />
