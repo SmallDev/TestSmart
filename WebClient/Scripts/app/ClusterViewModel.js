@@ -1,13 +1,9 @@
 ﻿define("clusterViewModel", function () {
     var vm = function ClusterViewModel(initData) {
-        this.id = initData.Id;
         this.name = initData.Name;
 
-        this.size = (initData.Size).toFixed(2) + "%";
+        this.users = initData.Users;
 
-        this.navigateBack = function () {
-            window.location = "/cluster";
-        };
     };
 
     return vm;

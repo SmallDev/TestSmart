@@ -32,7 +32,7 @@ namespace WebClient.Controllers
                 pieClusters = clusters.Select(cluster => new ClusterPieModel(cluster)).ToList();
             }
             
-            var showChart = true;//clusters != null && clusters.Count > 0 && clusters.Any(cluster => cluster.Size > 0);
+            var showChart = clusters != null && clusters.Count > 0 && clusters.Any(cluster => cluster.SizeHistory.Count > 0);
 
             return Json(new ClustersModel { PieClusters = pieClusters, ShowChart = showChart });
         }
@@ -40,7 +40,7 @@ namespace WebClient.Controllers
         public virtual ActionResult Get(Int32 id)
         {
             var cluster = statisticsFacade.Value.GetCluster(id);
-            return View("ClusterDetails", cluster);
+            return View("ClusterDetails", new ClusterModel(cluster));
         }
     }
 }
