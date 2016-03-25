@@ -40,10 +40,10 @@
                     if (data.ShowChart) {
                         self.clusters.data(data.PieClusters);
                     }
-                    setTimeout(function () { getDataWork(that); }, 5000);
+                    //setTimeout(function () { getDataWork(that); }, 5000);
                 },
                 error: function() {
-                    setTimeout(function () { getDataWork(that); }, 5000);
+                    //setTimeout(function () { getDataWork(that); }, 5000);
                 },
                 cache: false
             });
