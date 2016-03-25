@@ -49,7 +49,7 @@ namespace Logic.Dal.Hive
             var weigtData = data.Select(d => new {d.Mac, d.ClusterId, Freq = d.XCount/grouppedByMac[d.Mac]});
 
             if (filter.Id.HasValue)
-                weigtData = weigtData.Where(d => d.ClusterId == filter.Id.Value);
+                weigtData = weigtData.Where(d => d.ClusterId + 1 == filter.Id.Value);
 
             return weigtData.GroupBy(d => d.ClusterId).Select(g =>
             {
