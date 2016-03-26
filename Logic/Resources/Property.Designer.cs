@@ -124,6 +124,15 @@ namespace Logic.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Количество потерянных UDP-датаграмм, обнаруженных с помощью SmartTUBE PLC. Поле не заполняется, если нет PLC-потока.
+        /// </summary>
+        internal static string LOST {
+            get {
+                return ResourceManager.GetString("LOST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delay Factor - значение характеризующее минимально размер буфера (в миллисекундах), необходимый для устранения текущего джиттера (задержки и опережения в доставке пакетов) равный разнице между самыми большими отклонениями времени доставки за учетный интервал. Подробнее см. http://en.wikipedia.org/wiki/Media_Delivery_Index.
         /// </summary>
         internal static string MDI_DF {

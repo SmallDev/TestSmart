@@ -108,7 +108,7 @@ namespace Logic.Dal.Hive
                 if (filter.WithProperties)
                     cluster.Properties = clustersData.Where(c => c.ClusterId == cluster.Id).Select(c => new Property
                     {
-                        Type = (PropertyType) c.ColumnId,
+                        Type = ClusterDto.types[c.ColumnId],
                         Mean = c.Value
                     }).ToList();
 

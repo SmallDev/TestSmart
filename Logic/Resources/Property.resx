@@ -168,4 +168,7 @@
   <data name="VID_FRAMES" xml:space="preserve">
     <value>Количество декодированных видеокадров</value>
   </data>
+  <data name="LOST" xml:space="preserve">
+    <value>Количество потерянных UDP-датаграмм, обнаруженных с помощью SmartTUBE PLC. Поле не заполняется, если нет PLC-потока</value>
+  </data>
 </root>

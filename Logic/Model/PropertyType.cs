@@ -5,45 +5,54 @@ namespace Logic.Model
     public enum PropertyType
     {
         [Description("Received", typeof(Resources.Property))]
-        Received = 1,
+        Received,
 
         [Description("LINK_FAULTS", typeof(Resources.Property))]
-        LinkFaults = 2,
+        LinkFaults,
 
         [Description("RESTORED", typeof(Resources.Property))]
-        Restored = 3,
+        Restored,
 
         [Description("OVERFLOW", typeof(Resources.Property))]
-        Overflow = 4,
+        Overflow,
 
         [Description("UNDERFLOW", typeof(Resources.Property))]
-        Underflow = 5,
+        Underflow,
 
         [Description("UPTIME", typeof(Resources.Property))]
-        UpTime = 6,
+        UpTime,
 
         [Description("VID_DECODE_ERRORS", typeof(Resources.Property))]
-        VidDecodeErrors = 7,
+        VidDecodeErrors,
 
         [Description("VID_DATA_ERRORS", typeof(Resources.Property))]
-        VidDataErrors = 8,
+        VidDataErrors,
 
         [Description("AV_TIME_SKEW", typeof(Resources.Property))]
-        AvTimeSkew = 9,
+        AvTimeSkew,
 
         [Description("AV_PERIOD_SKEW", typeof(Resources.Property))]
-        AvPeriodSkew = 10,
+        AvPeriodSkew,
 
         [Description("BUF_UNDERRUNS", typeof(Resources.Property))]
-        BufUnderruns = 11,
+        BufUnderruns,
 
         [Description("BUF_OVERRUNS", typeof(Resources.Property))]
-        BufOverruns = 12,
+        BufOverruns,
 
         [Description("DVB_LEVEL", typeof(Resources.Property))]
-        DvbLevel = 13,
+        DvbLevel,
 
         [Description("CUR_BITRAT", typeof(Resources.Property))]
-        CurBitrate = 14
+        CurBitrate,
+
+        [Description("LOST", typeof(Resources.Property))]
+        Lost,
+
+        [Description("MDI_DF", typeof(Resources.Property))]
+        DelayFactor,
+
+        [Description("MDI_MLR", typeof(Resources.Property))]
+        MediaLossRate
     }
 }

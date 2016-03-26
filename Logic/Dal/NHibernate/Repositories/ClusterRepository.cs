@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Logic.Dal.NHibernate.Models;
 using Logic.Dal.Repositories;
@@ -12,11 +9,9 @@ namespace Logic.Dal.NHibernate.Repositories
 {
     class ClusterRepository : NHibernateRepositoryBase, IClusterRepository
     {
-        private readonly Func<SqlConnection> connectionFunc;
-        public ClusterRepository(ISession session, Func<SqlConnection> connectionFunc)
+        public ClusterRepository(ISession session)
             : base(session)
         {
-            this.connectionFunc = connectionFunc;
         }
 
         public IList<Cluster> GetList(ClusterFilter filter)
@@ -44,6 +39,17 @@ namespace Logic.Dal.NHibernate.Repositories
                             .OrderBy(p => p.Probability)
                             .Desc.Take(20).List();
                 }
+
+            if (filter.WithProperties)
+            {
+                foreach (var cluster in clusters)
+                {
+                    var clusterId = cluster.Id;
+                    cluster.RProfile = Session.QueryOver<ClusterRProfileDto>().Where(p => p.Cluster.Id == clusterId).List();
+                    cluster.NProfile = Session.QueryOver<ClusterNProfileDto>().Where(p => p.Cluster.Id == clusterId).List();
+                }
+                
+            }
 
             return clusters.Select(dto => (Cluster) dto).ToList();
         }
