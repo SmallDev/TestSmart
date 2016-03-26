@@ -9,7 +9,7 @@ namespace Logic.Dal.NHibernate.Repositories
 {
     class FakeHiveRepository : IHiveClusterRepository
     {
-        public IList<Cluster> GetList(ClusterFilter filter)
+        public IList<Cluster> GetList(Int32 allCount, ClusterFilter filter)
         {
             var clusters =  new[]
             {

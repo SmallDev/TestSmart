@@ -68,18 +68,18 @@ namespace Logic.Dal.Hive
             return clusters;
         }
 
-        public IList<Cluster> GetList(ClusterFilter filter)
+        public IList<Cluster> GetList(Int32 allCount, ClusterFilter filter)
         {
             var usersData = new List<UserDto>();
             var clustersData = new List<ClusterDto>();
 
             Task.WaitAll(Task.Run(() =>
             {
-                usersData = ReadUsers(6);
+                usersData = ReadUsers(allCount);
             }), Task.Run(() =>
             {
                 if (filter.WithProperties)
-                    clustersData = ReadClusters(6);
+                    clustersData = ReadClusters(allCount);
             }));
 
             var grouppedByMac = usersData.GroupBy(d => d.Mac).ToDictionary(d => d.Key, d => (Double)d.Sum(u => u.XCount));

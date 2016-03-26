@@ -48,15 +48,15 @@ namespace Logic.Facades
                 repo => repo.GetList(new ClusterFilter().Id(id).WithAll()).FirstOrDefault());
         }
 
-        public IList<Cluster> GetKMeansClusters()
+        public IList<Cluster> GetKMeansClusters(Int32 allCount)
         {
             return dataFactory.Value.WithRepository<IList<Cluster>, IHiveClusterRepository>(
-                repo => repo.GetList(new ClusterFilter().WithSize()));
+                repo => repo.GetList(allCount, new ClusterFilter().WithSize()));
         }
-        public Cluster GetKMeansCluster(Int32 id)
+        public Cluster GetKMeansCluster(Int32 id, Int32 allCount)
         {
             return dataFactory.Value.WithRepository<Cluster, IHiveClusterRepository>(
-                repo => repo.GetList(new ClusterFilter().Id(id).WithAll()).FirstOrDefault());
+                repo => repo.GetList(allCount, new ClusterFilter().Id(id).WithAll()).FirstOrDefault());
         }
     }
 }

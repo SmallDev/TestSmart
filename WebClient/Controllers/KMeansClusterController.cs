@@ -23,7 +23,8 @@ namespace WebClient.Controllers
         [HttpPost]
         public virtual JsonResult GetClusters()
         {
-            var clusters = statisticsFacade.Value.GetKMeansClusters();
+            //TODO: 6 поменять на параметр
+            var clusters = statisticsFacade.Value.GetKMeansClusters(6);
 
             var pieClusters = new List<ClusterPieModel>();
             if (clusters != null && clusters.Count > 0)
@@ -39,7 +40,8 @@ namespace WebClient.Controllers
         public virtual ActionResult Get(Int32 id)
         {
             ViewBag.Title = "K-means кластер";
-            var cluster = statisticsFacade.Value.GetKMeansCluster(id);
+            //TODO: 6 поменять на параметр
+            var cluster = statisticsFacade.Value.GetKMeansCluster(id, 6);
             return View(MVC.Cluster.Views.ClusterDetails, new ClusterModel(cluster));
         }
     }

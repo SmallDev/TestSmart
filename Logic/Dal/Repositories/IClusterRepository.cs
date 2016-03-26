@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Logic.Model;
 
 namespace Logic.Dal.Repositories
@@ -9,6 +10,6 @@ namespace Logic.Dal.Repositories
     }
     public interface IHiveClusterRepository : IRepository
     {
-        IList<Cluster> GetList(ClusterFilter filter);
+        IList<Cluster> GetList(Int32 allCount, ClusterFilter filter);
     }
 }
