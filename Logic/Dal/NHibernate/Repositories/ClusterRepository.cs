@@ -21,7 +21,9 @@ namespace Logic.Dal.NHibernate.Repositories
 
         public IList<Cluster> GetList(ClusterFilter filter)
         {
-            var query = Session.QueryOver<ClusterDto>().Future();
+            var query = Session.QueryOver<ClusterDto>();
+            if (filter.Id.HasValue)
+                query = query.Where(c => c.Id == filter.Id.Value);
 
             if (filter.WithSize)
                 Session.QueryOver<ClusterDto>()
@@ -29,7 +31,8 @@ namespace Logic.Dal.NHibernate.Repositories
                     .Eager.Fetch(dto => dto.Sizes[0].Learning)
                     .Eager.Future();
 
-            var clusters = query.ToList();
+            var clusters = query.Future().ToList();
+
             if (filter.WithUsers)
                 foreach (var cluster in clusters)
                 {
