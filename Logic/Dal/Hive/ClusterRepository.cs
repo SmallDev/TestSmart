@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Odbc;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Common.Logging;
 using Logic.Dal.Hive.Dto;
 using Logic.Dal.Repositories;
 using Logic.Model;
@@ -13,9 +15,12 @@ namespace Logic.Dal.Hive
     class ClusterRepository : IHiveClusterRepository
     {
         private readonly Func<OdbcConnection> connectionFunc;
-        public ClusterRepository(Func<OdbcConnection> connectionFunc)
+        private readonly Lazy<ILog> logger;
+
+        public ClusterRepository(Func<OdbcConnection> connectionFunc, Func<ILoggerFactoryAdapter> logger)
         {
             this.connectionFunc = connectionFunc;
+            this.logger = new Lazy<ILog>(() => logger().GetLogger(GetType()));
         }
 
         private List<UserDto> ReadUsers(Int32 clustersCount)
@@ -75,11 +80,11 @@ namespace Logic.Dal.Hive
 
             Task.WaitAll(Task.Run(() =>
             {
-                usersData = ReadUsers(allCount);
+                usersData = Reliable(() => ReadUsers(allCount));
             }), Task.Run(() =>
             {
                 if (filter.WithProperties)
-                    clustersData = ReadClusters(allCount);
+                    clustersData = Reliable(() => ReadClusters(allCount));
             }));
 
             var grouppedByMac = usersData.GroupBy(d => d.Mac).ToDictionary(d => d.Key, d => (Double)d.Sum(u => u.XCount));
@@ -109,6 +114,41 @@ namespace Logic.Dal.Hive
 
                 return cluster;
             }).ToList();
+        }
+        
+        private T Reliable<T>(Func<T> func)
+        {
+            var result = default(T);
+            Func<Exception> calc = () =>
+            {
+                try
+                {
+                    result = func();
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    return ex;
+                }
+            };
+
+            var count = 0;
+            const Int32 limit = 3;
+            Exception exception = new InvalidOperationException();
+            while (count < limit)
+            {
+                exception = calc();
+                if (exception == null)
+                    return result;
+
+                if (++count == limit)
+                    break;
+
+                logger.Value.Warn(exception);
+                Thread.Sleep(TimeSpan.FromSeconds(10));
+            }
+
+            throw exception;
         }
     }
 }

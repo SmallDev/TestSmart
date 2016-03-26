@@ -3,6 +3,7 @@ using System.Data.Odbc;
 using System.Data.SqlClient;
 using System.Linq;
 using Autofac;
+using Common.Logging;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using FluentNHibernate.Conventions.Helpers;
@@ -20,10 +21,10 @@ namespace Logic.Dal.NHibernate
         private readonly Lazy<IContainer> baseContainer;
         private readonly Lazy<ISessionFactory> sessionFactory;
         private readonly Lazy<IDbConfig> config;
-        public NHibernateDataManagerFactory(Func<IDbConfig> config)
+        public NHibernateDataManagerFactory(Func<IDbConfig> config, Func<ILoggerFactoryAdapter> logger)
         {
             this.config = new Lazy<IDbConfig>(config);
-            baseContainer = new Lazy<IContainer>(InitContainer);
+            baseContainer = new Lazy<IContainer>(() =>  InitContainer(logger));
             sessionFactory = new Lazy<ISessionFactory>(InitSessionFactory);
         }
 
@@ -38,10 +39,11 @@ namespace Logic.Dal.NHibernate
 
             return configuration.BuildSessionFactory();
         }
-        private IContainer InitContainer()
+        private IContainer InitContainer(Func<ILoggerFactoryAdapter> logger)
         {
             var builder = new ContainerBuilder();
 
+            builder.Register(context => logger()).As<ILoggerFactoryAdapter>();
             builder.Register(context => sessionFactory.Value.OpenSession()).InstancePerLifetimeScope();
             builder.Register(context => new SqlConnection(config.Value.ConnectionString));
             builder.Register(context => new OdbcConnection(config.Value.HiveConnectionString));
