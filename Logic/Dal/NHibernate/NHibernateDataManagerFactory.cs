@@ -11,6 +11,7 @@ using Logic.Dal.Repositories;
 using Logic.Model;
 using NHibernate;
 using NHibernate.Util;
+using ClusterRepository = Logic.Dal.Hive.ClusterRepository;
 
 namespace Logic.Dal.NHibernate
 {
@@ -52,6 +53,8 @@ namespace Logic.Dal.NHibernate
 
             if (String.IsNullOrEmpty(config.Value.HiveConnectionString))
                 builder.RegisterType<FakeHiveRepository>().As<IHiveClusterRepository>();
+            else
+                builder.RegisterType<ClusterRepository>().As<IHiveClusterRepository>();
 
             return builder.Build();
         }

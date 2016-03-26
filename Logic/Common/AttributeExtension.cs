@@ -9,6 +9,10 @@ namespace Logic.Common
         {
             return GetAttribute<CodeAttribute>(element).Code;
         }
+        public static String GetDescription(this Enum element)
+        {
+            return GetAttribute<DescriptionAttribute>(element).GetDescription();
+        }
         private static T GetAttribute<T>(this Enum element) where T: Attribute
         {
             var type = element.GetType();

@@ -45,7 +45,7 @@ namespace Logic.Facades
         public Cluster GetCluster(Int32 id)
         {
             return dataFactory.Value.WithRepository<Cluster, IClusterRepository>(
-                repo => repo.GetList(new ClusterFilter().Id(id).WithSize().WithUsers()).FirstOrDefault());
+                repo => repo.GetList(new ClusterFilter().Id(id).WithAll()).FirstOrDefault());
         }
 
         public IList<Cluster> GetKMeansClusters()
@@ -56,7 +56,7 @@ namespace Logic.Facades
         public Cluster GetKMeansCluster(Int32 id)
         {
             return dataFactory.Value.WithRepository<Cluster, IHiveClusterRepository>(
-                repo => repo.GetList(new ClusterFilter().Id(id).WithSize().WithUsers()).FirstOrDefault());
+                repo => repo.GetList(new ClusterFilter().Id(id).WithAll()).FirstOrDefault());
         }
     }
 }

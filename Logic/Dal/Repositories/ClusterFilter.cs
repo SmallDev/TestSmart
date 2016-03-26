@@ -32,5 +32,9 @@ namespace Logic.Dal.Repositories
             filter.WithProperties = true;
             return filter;
         }
+        public static ClusterFilter WithAll(this ClusterFilter filter)
+        {
+            return filter.WithSize().WithUsers().WithProperties();
+        }
     }
 }

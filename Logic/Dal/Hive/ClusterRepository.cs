@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Odbc;
 using System.Linq;
+using System.Threading.Tasks;
 using Logic.Dal.Hive.Dto;
 using Logic.Dal.Repositories;
 using Logic.Model;
@@ -41,12 +42,48 @@ namespace Logic.Dal.Hive
 
             return users;
         }
+        private List<ClusterDto> ReadClusters(Int32 clustersCount)
+        {
+            var clusters = new List<ClusterDto>();
+            using (var connection = connectionFunc())
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = String.Format("select cluster, col, value from [default].[stbkmeansclusters{0}]", clustersCount);
+                    var reader = command.ExecuteReader(CommandBehavior.CloseConnection);
+                    while (reader.Read())
+                    {
+                        clusters.Add(new ClusterDto
+                        {
+
+                            ClusterId = reader.GetFieldValue<Int32>(reader.GetOrdinal("cluster")),
+                            ColumnId = reader.GetFieldValue<Int32>(reader.GetOrdinal("col")),
+                            Value = Convert.ToDouble(reader.GetValue(reader.GetOrdinal("value")))
+                        });
+                    }
+                }
+            }
+
+            return clusters;
+        }
 
         public IList<Cluster> GetList(ClusterFilter filter)
         {
-            var data = ReadUsers(6);
-            var grouppedByMac = data.GroupBy(d => d.Mac).ToDictionary(d => d.Key, d => (Double) d.Sum(u => u.XCount));
-            var weigtData = data.Select(d => new {d.Mac, d.ClusterId, Freq = d.XCount/grouppedByMac[d.Mac]});
+            var usersData = new List<UserDto>();
+            var clustersData = new List<ClusterDto>();
+
+            Task.WaitAll(Task.Run(() =>
+            {
+                usersData = ReadUsers(6);
+            }), Task.Run(() =>
+            {
+                if (filter.WithProperties)
+                    clustersData = ReadClusters(6);
+            }));
+
+            var grouppedByMac = usersData.GroupBy(d => d.Mac).ToDictionary(d => d.Key, d => (Double)d.Sum(u => u.XCount));
+            var weigtData = usersData.Select(d => new { d.Mac, d.ClusterId, Freq = d.XCount / grouppedByMac[d.Mac] });
 
             if (filter.Id.HasValue)
                 weigtData = weigtData.Where(d => d.ClusterId + 1 == filter.Id.Value);
@@ -62,8 +99,16 @@ namespace Logic.Dal.Hive
                 if (filter.WithUsers)
                     cluster.UsersInfo = g.OrderByDescending(gg => gg.Freq)
                         .Select(gg => new Tuple<User, Double>(new User {MacAddress = gg.Mac}, gg.Freq)).ToList();
+
+                if (filter.WithProperties)
+                    cluster.Properties = clustersData.Where(c => c.ClusterId == cluster.Id).Select(c => new Property
+                    {
+                        Type = (PropertyType) c.ColumnId,
+                        Mean = c.Value
+                    }).ToList();
+
                 return cluster;
             }).ToList();
         }
-    }    
+    }
 }
