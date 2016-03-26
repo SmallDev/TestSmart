@@ -58,6 +58,12 @@ namespace WebClient.Controllers
 
         [NonAction]
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public virtual System.Web.Mvc.JsonResult GetClusters()
+        {
+            return new T4MVC_System_Web_Mvc_JsonResult(Area, Name, ActionNames.GetClusters);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public virtual System.Web.Mvc.ActionResult Get()
         {
             return new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Get);
@@ -92,12 +98,21 @@ namespace WebClient.Controllers
         }
 
 
+        static readonly ActionParamsClass_GetClusters s_params_GetClusters = new ActionParamsClass_GetClusters();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_GetClusters GetClustersParams { get { return s_params_GetClusters; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_GetClusters
+        {
+            public readonly string option = "option";
+        }
         static readonly ActionParamsClass_Get s_params_Get = new ActionParamsClass_Get();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public ActionParamsClass_Get GetParams { get { return s_params_Get; } }
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionParamsClass_Get
         {
+            public readonly string set = "set";
             public readonly string id = "id";
         }
         static readonly ViewsClass s_views = new ViewsClass();
@@ -131,25 +146,27 @@ namespace WebClient.Controllers
         }
 
         [NonAction]
-        partial void GetClustersOverride(T4MVC_System_Web_Mvc_JsonResult callInfo);
+        partial void GetClustersOverride(T4MVC_System_Web_Mvc_JsonResult callInfo, int option);
 
         [NonAction]
-        public override System.Web.Mvc.JsonResult GetClusters()
+        public override System.Web.Mvc.JsonResult GetClusters(int option)
         {
             var callInfo = new T4MVC_System_Web_Mvc_JsonResult(Area, Name, ActionNames.GetClusters);
-            GetClustersOverride(callInfo);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "option", option);
+            GetClustersOverride(callInfo, option);
             return callInfo;
         }
 
         [NonAction]
-        partial void GetOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, int id);
+        partial void GetOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, int set, int id);
 
         [NonAction]
-        public override System.Web.Mvc.ActionResult Get(int id)
+        public override System.Web.Mvc.ActionResult Get(int set, int id)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Get);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "set", set);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
-            GetOverride(callInfo, id);
+            GetOverride(callInfo, set, id);
             return callInfo;
         }
 

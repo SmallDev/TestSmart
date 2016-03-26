@@ -5,9 +5,10 @@
 }
 
 <div class="col-lg-1 col-md-1"></div>
-<div class="main-content-block col-lg-10 col-md-10">
+<div id="all-clusters-chart" class="main-content-block col-lg-10 col-md-10">
     <h2>Кластеры</h2>
-    <div id="all-clusters-chart" class="clusters-pie-block">
+    <div class="cluster-details-gears" data-bind="invisible:clusterDataDawnloaded"></div>
+    <div style="display:none" class="clusters-pie-block" data-bind="visible:clusterDataDawnloaded">
 
         <div style="display: none" class="no-clusters-text" data-bind="visible: showNoClustersMessage">Нет кластеров, либо они пусты</div>
 

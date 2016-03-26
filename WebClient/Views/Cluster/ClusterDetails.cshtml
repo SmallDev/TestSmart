@@ -6,36 +6,40 @@
 
 <div id="cluster-info-block" class="main-content-block main-cluster-block col-lg-11 col-md-11">
     <h2 class="cluster-details-header">@ViewBag.Title</h2>
-    <div class="cluser-property-block">
-        <span class="cluster-name-option">Название кластера</span>
-        <span  data-bind="text:name" class="cluster-name-text"></span>
-    </div>
-    <div>
-        <hr />
-        <div class="col-lg-3">
-            <div class="panel panel-default">
-                <div class="panel-heading values-table">Ожидаемые значения кластера</div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Наименование</th>
-                            <th>Значение</th>
-                        </tr>
-                    </thead>
-                    <tbody data-template="row-template" data-bind="source: properties"></tbody>
-                </table>
-            </div>
+    <div class="cluster-details-gears" data-bind="invisible:clusterDataDawnloaded"></div>
+    <div style="display: none" data-bind="visible:clusterDataDawnloaded">
+        <div class="cluser-property-block">
+            <span class="cluster-name-option">Название кластера</span>
+            <span data-bind="text:name" class="cluster-name-text"></span>
         </div>
-        <div class="col-lg-6 col-md-6 cluster-users-block">
-            <div class="panel panel-default">
-                <div class="panel-heading users-table">Пользователи
-                    <div class="pull-right">Всего: <span class="total-users-text" data-bind="text:usersCount"></span></div>
+        <div>
+            <hr />
+            <div class="col-lg-3">
+                <div class="panel panel-default">
+                    <div class="panel-heading values-table">Ожидаемые значения кластера</div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Наименование</th>
+                                <th>Значение</th>
+                            </tr>
+                        </thead>
+                        <tbody data-template="row-template" data-bind="source: properties"></tbody>
+                    </table>
                 </div>
-                <div data-template="mac-table-template" class="col-lg-6 col-md-6 mac-column" data-bind="source: users[0]">
-                    
-                </div>
-                <div data-template="mac-table-template" class="col-lg-6 col-md-6 mac-column" data-bind="source: users[1]">
-                    
+            </div>
+            <div class="col-lg-6 col-md-6 cluster-users-block">
+                <div class="panel panel-default">
+                    <div class="panel-heading users-table">
+                        Пользователи
+                        <div class="pull-right">Всего: <span class="total-users-text" data-bind="text:usersCount"></span></div>
+                    </div>
+                    <div data-template="mac-table-template" class="col-lg-6 col-md-6 mac-column" data-bind="source: users[0]">
+
+                    </div>
+                    <div data-template="mac-table-template" class="col-lg-6 col-md-6 mac-column" data-bind="source: users[1]">
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -46,10 +50,15 @@
 <div class="col-lg-0 col-md-0"></div>
 @section Scripts {
     <script type="text/javascript">
-        require(["clusterViewModel"], function (ClusterViewModel) {
-            var viewModel = kendo.observable(new ClusterViewModel(@Html.Raw(JsonConvert.SerializeObject(Model))));
-            kendo.bind($("#cluster-info-block"), viewModel);
+        $(document).ready(function () {
+            require(["clusterViewModel"], function (ClusterViewModel) {
+                var viewModel = kendo.observable(new ClusterViewModel(@Html.Raw(JsonConvert.SerializeObject(Model))));
+                kendo.bind($("#cluster-info-block"), viewModel);
+                $('[data-toggle="tooltip"]').tooltip({ container: "body" });
+            });
+            
         });
+        
     </script>
 }
 
@@ -59,7 +68,7 @@
 </script>
 <script id="row-template" type="text/x-kendo-template">
     <tr>
-        <td data-bind="text: Name"></td>
+        <td class="cluster-property-name" data-toggle="tooltip" data-bind="text: Name, attr: { title: Description }"></td>
         <td data-bind="text: Value"></td>
     </tr>
 </script>

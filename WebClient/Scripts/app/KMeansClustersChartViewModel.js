@@ -1,24 +1,32 @@
 ﻿define("kMeansClustersChartViewModel", function () {
     var vm = function KMeansClustersChartViewModel() {
-        var self = this;
-        self.clusterData = [];
-        self.showClustersChart = false;
-        self.showNoClustersMessage = false;
+        var thisself = this;
         
+        this.showClustersChart = false;
+        this.showNoClustersMessage = false;
+        this.sets = [4, 5, 6, 7, 8];
+        this.currentSet = 4;
+        this.clusterDataDawnloaded = false;
 
-        self.clusters = new kendo.data.DataSource({
-            data: self.clusterData
+
+        this.onSetChange = function () {
+            getClusters(this);
+        };
+
+        this.clusters = new kendo.data.DataSource({
+            data: []
         });
 
-        self.onClusterClick = function (e) {
+        this.onClusterClick = function (e) {
+            var _tempThat = this;
             explodePie(e);
-            setTimeout(function () { window.location = "/kmeans/" + e.category; }, 200);
+            setTimeout(function () { window.location = "/kmeans/" + _tempThat.get("currentSet") + "/" + e.category; }, 200);
         }
 
 
         function explodePie(e) {
             $.each(e.sender.dataSource.view(), function () {
-                this.explode = false;
+                self.explode = false;
             });
 
             e.sender.options.transitions = false;
@@ -26,24 +34,25 @@
             e.sender.refresh();
         };
 
-        self.startDataWorker = function() {
-            getDataWork(this);
+        this.initData = function () {
+            getClusters(this);
         };
 
-        function getDataWork(that) {
+
+        function getClusters(that) {
             jQuery.ajax({
                 url: "/KMeansCluster/GetClusters",
                 type: "POST",
+                data: { option: that.get("currentSet") },
                 success: function(data) {
                     that.set("showClustersChart", data.ShowChart);
                     that.set("showNoClustersMessage", !data.ShowChart);
+                    that.set("clusterDataDawnloaded", true);
                     if (data.ShowChart) {
-                        self.clusters.data(data.PieClusters);
+                        that.clusters.data(data.PieClusters);
                     }
-                    //setTimeout(function () { getDataWork(that); }, 5000);
                 },
                 error: function() {
-                    //setTimeout(function () { getDataWork(that); }, 5000);
                 },
                 cache: false
             });

@@ -4,6 +4,7 @@
         self.clusterData = [];
         self.showClustersChart = false;
         self.showNoClustersMessage = false;
+        self.clusterDataDawnloaded = false;
         
 
         self.clusters = new kendo.data.DataSource({
@@ -37,6 +38,7 @@
                 success: function(data) {
                     that.set("showClustersChart", data.ShowChart);
                     that.set("showNoClustersMessage", !data.ShowChart);
+                    that.set("clusterDataDawnloaded", true);
                     if (data.ShowChart) {
                         self.clusters.data(data.PieClusters);
                     }

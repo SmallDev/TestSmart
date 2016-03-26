@@ -19,8 +19,8 @@ namespace WebClient
                 constraints: new {id = @"\d+"});
 
             routes.MapRoute("KMeansClusters", "kmeans", MVC.KMeansCluster.GetList());
-            routes.MapRoute("KMeansCluster", "kmeans/{id}", MVC.KMeansCluster.Get(),
-                constraints: new {id = @"\d+"});
+            routes.MapRoute("KMeansCluster", "kmeans/{set}/{id}", MVC.KMeansCluster.Get(),
+                constraints: new { set = @"\d+", id = @"\d+" });
 
             routes.MapRoute("Default", "{controller}/{action}/{id}",
                 new
