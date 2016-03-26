@@ -6,6 +6,7 @@ using Autofac;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using FluentNHibernate.Conventions.Helpers;
+using Logic.Dal.NHibernate.Repositories;
 using Logic.Dal.Repositories;
 using Logic.Model;
 using NHibernate;
@@ -48,6 +49,9 @@ namespace Logic.Dal.NHibernate
                 .IsAssignableTo<IRepository>()).ForEach(type => type.GetInterfaces()
                     .Where(i => i.IsAssignableTo<IRepository>())
                     .Aggregate(builder.RegisterType(type), (current, i) => current.As(i)));
+
+            if (String.IsNullOrEmpty(config.Value.HiveConnectionString))
+                builder.RegisterType<FakeHiveRepository>().As<IHiveClusterRepository>();
 
             return builder.Build();
         }

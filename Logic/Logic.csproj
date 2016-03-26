@@ -88,6 +88,7 @@
     <Compile Include="Dal\NHibernate\Models\SettingsDto.cs" />
     <Compile Include="Dal\NHibernate\Models\UserProfileDto.cs" />
     <Compile Include="Dal\NHibernate\Models\UserDto.cs" />
+    <Compile Include="Dal\NHibernate\Repositories\FakeHiveRepository.cs" />
     <Compile Include="Dal\NHibernate\Repositories\LearingRepository.cs" />
     <Compile Include="Dal\NHibernate\Repositories\SqlExtensions.cs" />
     <Compile Include="Dal\Repositories\ClusterFilter.cs" />

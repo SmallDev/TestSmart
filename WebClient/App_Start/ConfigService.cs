@@ -18,7 +18,7 @@ namespace WebClient
 
         public string HiveConnectionString
         {
-            get { return GetKey(ConnectionStringsSection, "HiveConnection"); }
+            get { return GetKey(ConnectionStringsSection, "HiveConnection", false); }
         }
 
         public String FileName
