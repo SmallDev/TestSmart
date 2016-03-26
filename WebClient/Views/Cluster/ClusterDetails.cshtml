@@ -28,7 +28,9 @@
         </div>
         <div class="col-lg-6 col-md-6 cluster-users-block">
             <div class="panel panel-default">
-                <div class="panel-heading users-table">Пользователи</div>
+                <div class="panel-heading users-table">Пользователи
+                    <div class="pull-right">Всего: <span class="total-users-text" data-bind="text:usersCount"></span></div>
+                </div>
                 <div data-template="mac-table-template" class="col-lg-6 col-md-6 mac-column" data-bind="source: users[0]">
                     
                 </div>

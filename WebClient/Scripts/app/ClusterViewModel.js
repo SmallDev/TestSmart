@@ -4,6 +4,7 @@
 
         this.users = initData.Users;
         this.properties = initData.Properties;
+        this.usersCount = initData.ClusterSize;
     };
 
     return vm;

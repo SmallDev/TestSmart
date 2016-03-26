@@ -14,9 +14,15 @@ namespace WebClient.Models
             Users = SplitUsers(allUserModels);
             Properties = cluster.Properties.Select(p =>
                 new KeyValuePair<String, String>(p.Name, Convert.ToString(p.Mean))).ToList();
+            if (cluster.SizeHistory != null && cluster.SizeHistory.Count > 0)
+            {
+                ClusterSize = Math.Round(cluster.SizeHistory.Last().Item2, 2);
+            }
         }
 
         public string Name { get; set; }
+
+        public double ClusterSize { get; set; }
 
         public List<List<UserModel>>  Users { get; set; }
         public List<KeyValuePair<String, String>> Properties { get; set; }
