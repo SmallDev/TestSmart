@@ -210,7 +210,7 @@ body{
 }
 
 .main-clusters-chart{
-    height:600px;
+    height:500px;
 }
 
 .cluster-short-info-block{
@@ -295,6 +295,13 @@ body{
     width: 144px;
     margin: 10% 48%;
 }
+
+.cluster-main-gears{
+    background: transparent url("/Content/img/big-gears.gif") no-repeat 50% 50%;
+    height: 144px;
+    width: 144px;
+    margin: 23% 45%;
+}
 .slider-block  div{
     margin-left: 0;
 }
@@ -305,6 +312,15 @@ body{
 
 .clusters-pie-block {
     text-align: center;
+    width: 700px;
+    margin-left: 15%;
+}
+
+.clusters-main-pie-block {
+    text-align: center;
+    width: 850px;
+    margin-left: 9%;
+    margin-top: 4%
 }
 
 .no-clusters-text {
@@ -404,7 +420,9 @@ body{
     margin-left: 0 !important;
     margin-right: 0 !important;
     padding-left: 0 !important;
-    padding-right: 0 !important
+    padding-right: 0 !important;
+    width: 50%;
+    float: left;
 }
 
 .mac-column > span {
@@ -463,6 +481,53 @@ body{
         width: 80%;
         float: left;
         min-height: 1px;
+    }
+}
+
+.cluster-set-dropdawn {
+    margin-bottom: 5px;
+    width: 100px;
+}
+
+@media (min-width: 1700px) {
+    .cluster-properties-col {
+        float: left;
+        width: 25%;
+        padding: 0 10px;
+    }
+
+    .cluster-user-col {
+        float: left;
+        width: 55%;
+        padding: 0 10px;
+    }
+}
+
+@media (max-width: 1700px) {
+    .cluster-properties-col {
+        float: left;
+        width: 30%;
+        padding: 0 10px;
+    }
+
+    .cluster-user-col {
+        float: left;
+        width: 60%;
+        padding: 0 10px;
+    }
+}
+
+@media (max-width: 1500px) {
+    .cluster-properties-col {
+        float: left;
+        width: 40%;
+        padding: 0 10px;
+    }
+
+    .cluster-user-col {
+        float: left;
+        width: 60%;
+        padding: 0 10px;
     }
 }
 

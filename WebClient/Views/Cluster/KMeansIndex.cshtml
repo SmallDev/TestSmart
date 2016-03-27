@@ -6,13 +6,13 @@
     <div class="col-lg-1 col-md-1"></div>
     
     <div class="main-content-block col-lg-10 col-md-10">
-        <div class="col-md-3">
+        <div class="col-lg-2">
             <h2>K-means Кластеры</h2>
-            <input style="display:none"
+            <input class="cluster-set-dropdawn" style="display:none"
                    data-role="dropdownlist"
                    data-bind="value: currentSet, source: sets, events: {change: onSetChange }, visible:clusterDataDawnloaded" />
         </div>
-        <div class="col-md-6">
+        <div class="col-lg-10">
             <div class="kmean-gears" data-bind="invisible:clusterDataDawnloaded"></div>
             <div class="clusters-pie-block" style="display: none" data-bind="visible:clusterDataDawnloaded">
 
