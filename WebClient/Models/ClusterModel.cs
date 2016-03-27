@@ -49,7 +49,7 @@ namespace WebClient.Models
         {
             Name = property.Type.ToString();
             Description = property.Type.GetDescription();
-            Value = Convert.ToString(property.Mean);
+            Value = Convert.ToString(Math.Round(property.Mean, 2));
         }
     }
 }
