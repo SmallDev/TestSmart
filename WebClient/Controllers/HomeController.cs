@@ -93,11 +93,5 @@ namespace WebClient.Controllers
                 emulatorFacade.Value.Clear();
             }
         }
-
-        public FileResult DownloadPresentation()
-        {
-            Response.AddHeader("Content-Disposition", "attachment; filename=SmartSpy_Презентация.pptx");
-            return File(Resources.presentation, System.Net.Mime.MediaTypeNames.Application.Octet);
-        }
     }
 }
