@@ -88,7 +88,8 @@ namespace Logic.Dal.Hive
             }));
 
             var grouppedByMac = usersData.GroupBy(d => d.Mac).ToDictionary(d => d.Key, d => (Double)d.Sum(u => u.XCount));
-            var weigtData = usersData.Select(d => new { d.Mac, d.ClusterId, Freq = d.XCount / grouppedByMac[d.Mac] });
+            var weigtData = usersData.GroupBy(d => new {d.Mac, d.ClusterId})
+                .Select(d => new {d.Key.Mac, d.Key.ClusterId, Freq = d.Sum(f => f.XCount)/grouppedByMac[d.Key.Mac]});
 
             if (filter.Id.HasValue)
                 weigtData = weigtData.Where(d => d.ClusterId + 1 == filter.Id.Value);
