@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Logic.Facades;
 using WebClient.Models;
 using System.Net;
-using WebClient.Properties;
 
 namespace WebClient.Controllers
 {

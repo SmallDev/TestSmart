@@ -148,11 +148,6 @@
     <Compile Include="Models\ClusterModel.cs" />
     <Compile Include="Models\ClustersModel.cs" />
     <Compile Include="Models\InitClusterModel.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Services\DependencyHostFactory.cs" />
     <Compile Include="Services\IEmulatorService.cs" />
     <Compile Include="Services\EmulatorService.cs" />
@@ -283,8 +278,6 @@
     <Content Include="Scripts\app\require.bundle.config.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Resources\presentation.pptx" />
-    <None Include="Resources\RT_SmartSPY_Guide_v1.4.pdf" />
     <None Include="Templates\T4MVC.tt.settings.xml" />
     <Content Include="Scripts\app\ClustersChartViewModel.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -373,13 +366,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
