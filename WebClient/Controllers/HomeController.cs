@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Logic.Facades;
 using WebClient.Models;
 using System.Net;
+using WebClient.Properties;
 
 namespace WebClient.Controllers
 {
@@ -90,6 +92,12 @@ namespace WebClient.Controllers
             {
                 emulatorFacade.Value.Clear();
             }
-        }      
+        }
+
+        public FileResult DownloadPresentation()
+        {
+            Response.AddHeader("Content-Disposition", "attachment; filename=SmartSpy_Презентация.pptx");
+            return File(Resources.presentation, System.Net.Mime.MediaTypeNames.Application.Octet);
+        }
     }
 }

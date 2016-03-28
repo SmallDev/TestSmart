@@ -17,15 +17,12 @@
             <div class="cluster-properties-col">
                 <div class="panel panel-default">
                     <div class="panel-heading values-table">Ожидаемые значения кластера</div>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Наименование</th>
-                                <th>Значение</th>
-                            </tr>
-                        </thead>
-                        <tbody data-template="row-template" data-bind="source: properties"></tbody>
-                    </table>
+
+                    <div class="prperty-list-header">
+                        <span class="pr-header-name">Наименование</span>
+                        <span class="pr-header-val">Значение</span>
+                    </div>
+                    <div class="prop-list-block" data-template="property-row" data-bind="source: properties"></div>
                 </div>
             </div>
             <div class="cluster-user-col cluster-users-block">
@@ -56,9 +53,9 @@
                 kendo.bind($("#cluster-info-block"), viewModel);
                 $('[data-toggle="tooltip"]').tooltip({ container: "body" });
             });
-            
+
         });
-        
+
     </script>
 }
 
@@ -66,9 +63,9 @@
 <script id="mac-table-template" type="text/x-kendo-template">
     <span class="list-group-item"> #: Name # #: Weight #%</span>
 </script>
-<script id="row-template" type="text/x-kendo-template">
-    <tr>
-        <td class="cluster-property-name" data-toggle="tooltip" data-bind="text: Name, attr: { title: Description }"></td>
-        <td data-bind="text: Value"></td>
-    </tr>
+<script id="property-row" type="text/x-kendo-template">
+    <div class="property-scrol-block">
+        <span class="property-name" data-toggle="tooltip" data-bind="text: Name, attr: { title: Description }"></span>
+        <span class="property-val" data-toggle="tooltip" data-bind="text: Value"></span>
+    </div>
 </script>

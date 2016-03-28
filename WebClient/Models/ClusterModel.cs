@@ -14,7 +14,6 @@ namespace WebClient.Models
             var allUserModels = cluster.UsersInfo.Select(userInf => new UserModel(userInf.Item1, userInf.Item2)).ToList();
             Users = SplitUsers(allUserModels);
             Properties = cluster.Properties.Select(p => new PropertyModel(p)).ToList();
-
             if (cluster.SizeHistory != null && cluster.SizeHistory.Count > 0)
                 ClusterSize = Math.Round(cluster.SizeHistory.Last().Item2, 2);
         }
