@@ -7,6 +7,9 @@
         this.sets = [4, 5, 6, 7, 8];
         this.currentSet = 4;
         this.clusterDataDawnloaded = false;
+        this.dropdownEnabled = true;
+        this.dropdownVisible = false;
+
 
 
         this.onSetChange = function () {
@@ -40,6 +43,8 @@
 
 
         function getClusters(that) {
+            that.set("clusterDataDawnloaded", false);
+            that.set("dropdownEnabled", false);
             jQuery.ajax({
                 url: "/KMeansCluster/GetClusters",
                 type: "POST",
@@ -48,6 +53,8 @@
                     that.set("showClustersChart", data.ShowChart);
                     that.set("showNoClustersMessage", !data.ShowChart);
                     that.set("clusterDataDawnloaded", true);
+                    that.set("dropdownVisible", true);
+                    that.set("dropdownEnabled", true);
                     if (data.ShowChart) {
                         that.clusters.data(data.PieClusters);
                     }

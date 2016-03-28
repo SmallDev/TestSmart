@@ -10,7 +10,7 @@
             <h2>K-means Кластеры</h2>
             <input class="cluster-set-dropdawn" style="display:none"
                    data-role="dropdownlist"
-                   data-bind="value: currentSet, source: sets, events: {change: onSetChange }, visible:clusterDataDawnloaded" />
+                   data-bind="value: currentSet, source: sets, events: {change: onSetChange }, visible:dropdownVisible, enabled: dropdownEnabled" />
         </div>
         <div class="col-lg-10">
             <div class="kmean-gears" data-bind="invisible:clusterDataDawnloaded"></div>
